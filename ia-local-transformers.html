@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 IA Local (Transformers.js) - Nexus</title>
+    
+    <link rel="stylesheet" href="fontawesome-free-7.2.0-web/css/all.min.css">
+    
+    <!-- Transformers.js desde CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.0/dist/transformers.min.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0f1724;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --border-color: #2a2a4a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0b0;
+            --accent-blue: #528dd7;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+            --accent-purple: #764ba2;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            padding: 10px;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
+
+        .header {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 16px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header h1 { font-size: 1.8rem; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+        .header .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+        .badge { padding: 4px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: rgba(255,255,255,0.15); color: white; display: inline-flex; align-items: center; gap: 4px; }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            min-height: 70vh;
+        }
+
+        @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } }
+
+        .panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .panel-header h2 { font-size: 1.1rem; font-weight: 700; color: var(--accent-blue); display: flex; align-items: center; gap: 8px; }
+        .panel-body { flex: 1; overflow-y: auto; padding: 12px; }
+
+        .model-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .model-card:hover { border-color: var(--accent-blue); transform: translateY(-2px); }
+        .model-card.selected { border-color: var(--accent-green); box-shadow: 0 0 15px rgba(34,197,94,0.2); }
+        .model-card .model-name { font-weight: 600; font-size: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .model-card .model-name .status { font-size: 0.7rem; padding: 2px 10px; border-radius: 12px; }
+        .status.online { background: rgba(34,197,94,0.2); color: var(--accent-green); }
+        .status.offline { background: rgba(239,68,68,0.2); color: var(--accent-red); }
+        .status.downloading { background: rgba(245,158,11,0.2); color: var(--accent-yellow); }
+        .status.paused { background: rgba(150,150,150,0.2); color: #999; }
+        .model-card .model-desc { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
+        .model-card .model-info { display: flex; gap: 12px; margin-top: 8px; font-size: 0.75rem; color: var(--text-secondary); flex-wrap: wrap; }
+        .model-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+
+        .btn {
+            padding: 6px 14px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.8rem; font-weight: 500; transition: all 0.2s ease;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        .btn-primary { background: var(--accent-blue); color: white; }
+        .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
+        .btn-success { background: var(--accent-green); color: white; }
+        .btn-success:hover { filter: brightness(1.15); transform: translateY(-1px); }
+        .btn-danger { background: var(--accent-red); color: white; }
+        .btn-danger:hover { filter: brightness(1.15); transform: translateY(-1px); }
+        .btn-secondary { background: var(--border-color); color: var(--text-primary); }
+        .btn-secondary:hover { filter: brightness(1.15); }
+        .btn-sm { padding: 4px 10px; font-size: 0.7rem; }
+        .btn-warning { background: var(--accent-yellow); color: #000; }
+
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 16px;
+            display: flex; flex-direction: column; gap: 12px;
+            min-height: 300px; max-height: 500px;
+        }
+
+        .message { display: flex; gap: 10px; max-width: 85%; }
+        .message.user { align-self: flex-end; flex-direction: row-reverse; }
+        .message.ai { align-self: flex-start; }
+        .message .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+        .message.user .avatar { background: var(--accent-purple); }
+        .message.ai .avatar { background: var(--accent-blue); }
+        .message .bubble { padding: 10px 14px; border-radius: 12px; font-size: 0.9rem; line-height: 1.5; }
+        .message.user .bubble { background: var(--accent-blue); color: white; border-bottom-right-radius: 4px; }
+        .message.ai .bubble { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); border-bottom-left-radius: 4px; }
+        .message .bubble .timestamp { font-size: 0.65rem; color: var(--text-secondary); margin-top: 4px; display: block; }
+
+        .chat-input-area {
+            padding: 12px; border-top: 1px solid var(--border-color);
+            display: flex; gap: 8px;
+        }
+
+        .chat-input-area input {
+            flex: 1; padding: 10px 14px; border: 1px solid var(--border-color);
+            border-radius: 8px; background: var(--bg-card); color: var(--text-primary);
+            font-size: 0.9rem; outline: none; transition: border-color 0.3s;
+        }
+        .chat-input-area input:focus { border-color: var(--accent-blue); }
+        .chat-input-area input::placeholder { color: #555; }
+
+        .toast {
+            position: fixed; bottom: 20px; right: 20px;
+            padding: 12px 24px; border-radius: 8px; color: white;
+            font-weight: 500; display: none; z-index: 9999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+        }
+        .toast.show { display: block; }
+        .toast.success { background: var(--accent-green); }
+        .toast.error { background: var(--accent-red); }
+        .toast.info { background: var(--accent-blue); }
+
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
+        .empty-state i { font-size: 3rem; margin-bottom: 10px; }
+        .empty-state h3 { color: var(--text-secondary); font-weight: 600; }
+
+        .typing-indicator {
+            display: flex; gap: 4px; align-items: center; padding: 4px 0;
+        }
+        .typing-indicator span {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--text-secondary);
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+
+        .progress-container {
+            margin-top: 10px;
+        }
+        .progress-bar {
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-bar .fill {
+            height: 100%;
+            background: var(--accent-blue);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        .progress-text {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.3rem; }
+            .message { max-width: 95%; }
+            .chat-messages { min-height: 200px; max-height: 350px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>
+            <i class="fas fa-brain"></i> 
+            IA Local (Transformers.js)
+        </h1>
+        <div class="badges">
+            <span class="badge"><i class="fas fa-globe"></i> 100% Navegador</span>
+            <span class="badge"><i class="fas fa-server"></i> Sin backend</span>
+            <span class="badge"><i class="fas fa-microchip"></i> WebGPU/CPU</span>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <!-- PANEL IZQUIERDO -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2><i class="fas fa-cubes"></i> Modelos Transformers.js</h2>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <button class="btn btn-primary btn-sm" onclick="refreshModels()">
+                        <i class="fas fa-sync"></i> Actualizar
+                    </button>
+                </div>
+            </div>
+            <div class="panel-body" id="modelList">
+                <div class="empty-state">
+                    <i class="fas fa-sync fa-spin"></i>
+                    <h3>Cargando modelos compatibles...</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Modelos pequeños que funcionan en el navegador</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL DERECHO: CHAT -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2><i class="fas fa-comment-dots"></i> Chat con IA Local</h2>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary btn-sm" onclick="clearChat()">
+                        <i class="fas fa-trash"></i> Limpiar
+                    </button>
+                    <button class="btn btn-success btn-sm" onclick="saveConversation()">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                </div>
+            </div>
+
+            <div id="modelStatusBar" style="padding: 8px 12px; border-bottom: 1px solid var(--border-color); background: var(--bg-card); font-size: 0.85rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span id="modelStatus">
+                    <i class="fas fa-circle" style="color: var(--accent-red); font-size: 0.5rem;"></i> 
+                    Sin modelo cargado
+                </span>
+                <span id="modelMemory" style="color: var(--text-secondary); font-size: 0.75rem;"></span>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="empty-state">
+                    <i class="fas fa-comment-dots"></i>
+                    <h3>Selecciona un modelo y cárgalo en el navegador</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                        Los modelos se descargan desde Hugging Face y se ejecutan localmente
+                    </p>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Carga un modelo primero..." disabled>
+                <button class="btn btn-primary" id="sendBtn" onclick="sendMessage()" disabled>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// MODELOS COMPATIBLES CON TRANSFORMERS.JS
+// ============================================================
+const AVAILABLE_MODELS = [
+    {
+        id: 'Xenova/phi-2',
+        name: 'Phi-2 (Microsoft)',
+        description: 'Modelo ligero de 2.7B params. Bueno para razonamiento y código.',
+        size: '~1.6 GB',
+        ram: '~3 GB',
+        type: 'Text Generation',
+        recommended: true,
+        pipeline: 'text-generation'
+    },
+    {
+        id: 'Xenova/tiny-llama-1.1b-chat-v1.0',
+        name: 'TinyLlama 1.1B Chat',
+        description: 'Modelo pequeño. Bueno para chat básico. Funciona en CPU.',
+        size: '~700 MB',
+        ram: '~1.5 GB',
+        type: 'Text Generation',
+        recommended: true,
+        pipeline: 'text-generation'
+    },
+    {
+        id: 'Xenova/Qwen2.5-0.5B-Instruct',
+        name: 'Qwen 0.5B Instruct',
+        description: 'Modelo ultraligero. Rápido y eficiente.',
+        size: '~350 MB',
+        ram: '~1 GB',
+        type: 'Text Generation',
+        recommended: true,
+        pipeline: 'text-generation'
+    },
+    {
+        id: 'Xenova/Qwen2.5-1.5B-Instruct',
+        name: 'Qwen 1.5B Instruct',
+        description: 'Balance entre tamaño y calidad. Buen rendimiento.',
+        size: '~900 MB',
+        ram: '~2 GB',
+        type: 'Text Generation',
+        recommended: true,
+        pipeline: 'text-generation'
+    },
+    {
+        id: 'Xenova/gemma-2b-it',
+        name: 'Gemma 2B (Google)',
+        description: 'Modelo de Google. Buen rendimiento general.',
+        size: '~1.4 GB',
+        ram: '~3 GB',
+        type: 'Text Generation',
+        recommended: false,
+        pipeline: 'text-generation'
+    },
+    {
+        id: 'Xenova/distilgpt2',
+        name: 'DistilGPT2',
+        description: 'Modelo muy pequeño para pruebas. Rápido pero menos preciso.',
+        size: '~350 MB',
+        ram: '~1 GB',
+        type: 'Text Generation',
+        recommended: true,
+        pipeline: 'text-generation'
+    },
+    {
+        id: 'Xenova/codegen-350M-mono',
+        name: 'CodeGen 350M',
+        description: 'Especializado en generación de código.',
+        size: '~700 MB',
+        ram: '~1.5 GB',
+        type: 'Code Generation',
+        recommended: true,
+        pipeline: 'text-generation'
+    },
+    {
+        id: 'Xenova/bert-base-uncased',
+        name: 'BERT Base',
+        description: 'Para clasificación y análisis de texto. No es chat.',
+        size: '~440 MB',
+        ram: '~1 GB',
+        type: 'Embeddings',
+        recommended: true,
+        pipeline: 'fill-mask'
+    }
+];
+
+// ============================================================
+// ESTADO GLOBAL
+// ============================================================
+let loadedModel = null;
+let pipeline = null;
+let isModelLoading = false;
+let chatHistory = [];
+let isProcessing = false;
+let modelInstance = null;
+
+// ============================================================
+// INICIALIZAR
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+    renderModels();
+    loadChatHistory();
+    setupChatInput();
+});
+
+// ============================================================
+// RENDERIZAR MODELOS
+// ============================================================
+function renderModels() {
+    const container = document.getElementById('modelList');
+    container.innerHTML = '';
+    
+    AVAILABLE_MODELS.forEach(model => {
+        const card = document.createElement('div');
+        card.className = 'model-card';
+        card.dataset.modelId = model.id;
+        
+        if (loadedModel?.id === model.id) {
+            card.classList.add('selected');
+        }
+        
+        const statusClass = loadedModel?.id === model.id ? 'online' : 'offline';
+        const statusText = loadedModel?.id === model.id ? '✅ Cargado' : 'No cargado';
+        
+        card.innerHTML = `
+            <div class="model-name">
+                <span>
+                    <i class="fas fa-brain" style="color: ${model.recommended ? 'var(--accent-green)' : 'var(--accent-blue)'};"></i> 
+                    ${model.name}
+                    ${model.recommended ? '<span style="font-size: 0.6rem; background: var(--accent-green); color: white; padding: 1px 6px; border-radius: 8px; margin-left: 4px;">RECOMENDADO</span>' : ''}
+                </span>
+                <span class="status ${statusClass}">${statusText}</span>
+            </div>
+            <div class="model-desc">${model.description}</div>
+            <div class="model-info">
+                <span><i class="fas fa-database"></i> ${model.size}</span>
+                <span><i class="fas fa-microchip"></i> ${model.ram} RAM</span>
+                <span><i class="fas fa-tag"></i> ${model.type}</span>
+            </div>
+            <div class="model-actions">
+                <button class="btn btn-primary btn-sm" onclick="loadModel('${model.id}')" ${isModelLoading ? 'disabled' : ''}>
+                    <i class="fas fa-download"></i> ${loadedModel?.id === model.id ? 'Recargar' : 'Cargar en navegador'}
+                </button>
+                <button class="btn btn-success btn-sm" onclick="selectModel('${model.id}')" ${!loadedModel || loadedModel.id !== model.id ? 'disabled' : ''}>
+                    <i class="fas fa-comment"></i> Usar en Chat
+                </button>
+            </div>
+            ${isModelLoading ? '<div class="progress-container"><div class="progress-bar"><div class="fill" style="width: 50%;"></div></div><div class="progress-text">⏳ Cargando modelo...</div></div>' : ''}
+        `;
+        
+        container.appendChild(card);
+    });
+    
+    // Banner informativo
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background: rgba(82, 141, 215, 0.1); border: 1px solid var(--accent-blue); border-radius: 8px; padding: 12px; margin-bottom: 15px; font-size: 0.8rem; line-height: 1.5;';
+    banner.innerHTML = `
+        <strong><i class="fas fa-info-circle"></i> ¿Cómo funciona?</strong><br>
+        1. Haz clic en <strong>"Cargar en navegador"</strong> en un modelo<br>
+        2. El modelo se descarga desde Hugging Face (solo la primera vez)<br>
+        3. Una vez cargado, haz clic en <strong>"Usar en Chat"</strong><br>
+        4. ¡La IA funciona 100% en tu navegador, sin servidores!<br>
+        <small style="color: var(--text-secondary);">✅ Modelos recomendados: Qwen 0.5B, TinyLlama, DistilGPT2</small>
+    `;
+    container.insertBefore(banner, container.firstChild);
+}
+
+// ============================================================
+// CARGAR MODELO EN EL NAVEGADOR
+// ============================================================
+async function loadModel(modelId) {
+    const model = AVAILABLE_MODELS.find(m => m.id === modelId);
+    if (!model) return;
+    
+    if (isModelLoading) {
+        showToast('⏳ Ya hay un modelo cargándose...', 'info');
+        return;
+    }
+    
+    isModelLoading = true;
+    renderModels(); // Actualizar UI
+    
+    showToast(`⬇️ Descargando ${model.name} desde Hugging Face...`, 'info');
+    addSystemMessage(`⏳ Cargando modelo "${model.name}" en el navegador...\n📦 Tamaño: ${model.size}\n💾 Esto solo ocurre la primera vez.`);
+    
+    try {
+        // Verificar si Transformers.js está disponible
+        if (typeof transformers === 'undefined') {
+            throw new Error('Transformers.js no está cargado. Verifica tu conexión a Internet.');
+        }
+        
+        // Cargar el pipeline
+        const { pipeline: hfPipeline } = transformers;
+        
+        // Configurar progreso
+        const config = {
+            progress_callback: (progress) => {
+                updateLoadingProgress(progress, modelId);
+            }
+        };
+        
+        // Cargar el modelo (esto puede tomar tiempo)
+        const pipe = await hfPipeline(model.pipeline, model.id, config);
+        
+        modelInstance = pipe;
+        loadedModel = model;
+        
+        showToast(`✅ Modelo "${model.name}" cargado en el navegador`, 'success');
+        addSystemMessage(`✅ Modelo "${model.name}" cargado exitosamente.\n💡 Ahora haz clic en "Usar en Chat" para empezar a conversar.`);
+        
+        // Habilitar el botón de "Usar en Chat"
+        renderModels();
+        
+        // Seleccionar automáticamente
+        selectModel(modelId);
+        
+    } catch (error) {
+        console.error('Error cargando modelo:', error);
+        showToast(`❌ Error: ${error.message}`, 'error');
+        addSystemMessage(`❌ Error cargando modelo: ${error.message}\n\nSugerencias:\n1. Verifica tu conexión a Internet\n2. Intenta con un modelo más pequeño (Qwen 0.5B o DistilGPT2)\n3. Abre la consola del navegador (F12) para más detalles`);
+    } finally {
+        isModelLoading = false;
+        renderModels();
+    }
+}
+
+function updateLoadingProgress(progress, modelId) {
+    // Actualizar la barra de progreso si existe
+    const cards = document.querySelectorAll('.model-card');
+    cards.forEach(card => {
+        if (card.dataset.modelId === modelId) {
+            const progressContainer = card.querySelector('.progress-container');
+            if (progressContainer) {
+                const fill = progressContainer.querySelector('.fill');
+                const text = progressContainer.querySelector('.progress-text');
+                if (progress.status === 'progress' && fill) {
+                    const percent = Math.round((progress.loaded / progress.total) * 100);
+                    fill.style.width = `${percent}%`;
+                    if (text) {
+                        const loadedMB = (progress.loaded / 1048576).toFixed(1);
+                        const totalMB = (progress.total / 1048576).toFixed(1);
+                        text.textContent = `⏳ Descargando: ${loadedMB} MB / ${totalMB} MB (${percent}%)`;
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ============================================================
+// SELECCIONAR MODELO
+// ============================================================
+function selectModel(modelId) {
+    if (!loadedModel || loadedModel.id !== modelId) {
+        showToast('❌ Primero carga el modelo con el botón "Cargar en navegador"', 'error');
+        return;
+    }
+    
+    const statusBar = document.getElementById('modelStatus');
+    statusBar.innerHTML = `<i class="fas fa-circle" style="color: var(--accent-green); font-size: 0.5rem;"></i> ${loadedModel.name}`;
+    
+    const memory = document.getElementById('modelMemory');
+    memory.textContent = `🧠 ${loadedModel.size} en RAM del navegador`;
+    
+    // Habilitar chat
+    document.getElementById('chatInput').disabled = false;
+    document.getElementById('sendBtn').disabled = false;
+    document.getElementById('chatInput').placeholder = `Escribe tu mensaje para ${loadedModel.name}...`;
+    
+    document.querySelectorAll('.model-card').forEach(card => {
+        card.classList.remove('selected');
+        if (card.dataset.modelId === modelId) {
+            card.classList.add('selected');
+        }
+    });
+    
+    showToast(`✅ Modelo "${loadedModel.name}" listo para usar`, 'success');
+}
+
+// ============================================================
+// CHAT
+// ============================================================
+function setupChatInput() {
+    const input = document.getElementById('chatInput');
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+}
+
+async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    
+    if (!message || isProcessing || !loadedModel || !modelInstance) {
+        if (!loadedModel) showToast('❌ Carga un modelo primero', 'error');
+        return;
+    }
+    
+    addMessage('user', message);
+    input.value = '';
+    isProcessing = true;
+    
+    const loadingId = showLoading();
+    
+    try {
+        // Preparar el prompt según el tipo de modelo
+        let prompt = message;
+        
+        // Para modelos instruct, formatear como chat
+        if (loadedModel.id.includes('Instruct') || loadedModel.id.includes('chat')) {
+            const history = chatHistory.slice(-6).map(m => 
+                m.role === 'user' ? `Usuario: ${m.content}` : `Asistente: ${m.content}`
+            ).join('\n');
+            prompt = `${history}\nUsuario: ${message}\nAsistente:`;
+        }
+        
+        // Ejecutar el modelo
+        const result = await modelInstance(prompt, {
+            max_new_tokens: 256,  // Respuestas más cortas para velocidad
+            temperature: 0.7,
+            do_sample: true,
+            top_k: 50,
+            top_p: 0.95
+        });
+        
+        removeLoading(loadingId);
+        
+        // Extraer el texto generado
+        let response = '';
+        if (Array.isArray(result)) {
+            response = result[0]?.generated_text || '';
+        } else if (typeof result === 'object' && result.generated_text) {
+            response = result.generated_text;
+        } else if (typeof result === 'string') {
+            response = result;
+        }
+        
+        // Limpiar el prompt de la respuesta
+        response = response.replace(prompt, '').trim();
+        
+        if (!response) {
+            response = '(El modelo no generó una respuesta. Intenta con otro modelo o reformula tu pregunta.)';
+        }
+        
+        addMessage('ai', response);
+        
+    } catch (error) {
+        removeLoading(loadingId);
+        console.error('Error generando respuesta:', error);
+        addMessage('ai', `❌ Error generando respuesta: ${error.message}`);
+    } finally {
+        isProcessing = false;
+        saveChatToLocal();
+    }
+}
+
+function addMessage(role, content) {
+    const container = document.getElementById('chatMessages');
+    
+    const emptyState = container.querySelector('.empty-state');
+    if (emptyState) emptyState.remove();
+    
+    const div = document.createElement('div');
+    div.className = `message ${role}`;
+    
+    const avatar = role === 'ai' ? '🤖' : '👤';
+    const avatarBg = role === 'ai' ? 'var(--accent-blue)' : 'var(--accent-purple)';
+    const now = new Date();
+    const timestamp = now.toLocaleTimeString();
+    
+    div.innerHTML = `
+        <div class="avatar" style="background: ${avatarBg};">${avatar}</div>
+        <div class="bubble">
+            ${content.replace(/\n/g, '<br>')}
+            <span class="timestamp">${timestamp} · ${loadedModel?.name || 'IA'}</span>
+        </div>
+    `;
+    
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    
+    chatHistory.push({ role, content, timestamp: now.toISOString() });
+}
+
+function addSystemMessage(content) {
+    const container = document.getElementById('chatMessages');
+    
+    const emptyState = container.querySelector('.empty-state');
+    if (emptyState) emptyState.remove();
+    
+    const div = document.createElement('div');
+    div.className = 'message ai';
+    div.style.cssText = 'align-self: center; max-width: 100%;';
+    
+    div.innerHTML = `
+        <div class="bubble" style="background: rgba(245, 158, 11, 0.1); border: 1px solid var(--accent-yellow); color: var(--accent-yellow); font-size: 0.8rem; text-align: center;">
+            ${content.replace(/\n/g, '<br>')}
+        </div>
+    `;
+    
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
+
+function showLoading() {
+    const container = document.getElementById('chatMessages');
+    const id = 'loading-' + Date.now();
+    
+    const div = document.createElement('div');
+    div.className = 'message ai';
+    div.id = id;
+    div.innerHTML = `
+        <div class="avatar" style="background: var(--accent-blue);">🤖</div>
+        <div class="bubble">
+            <div class="typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    return id;
+}
+
+function removeLoading(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+}
+
+function clearChat() {
+    if (!confirm('¿Limpiar el chat?')) return;
+    
+    const container = document.getElementById('chatMessages');
+    container.innerHTML = `
+        <div class="empty-state">
+            <i class="fas fa-comment-dots"></i>
+            <h3>Chat limpiado</h3>
+        </div>
+    `;
+    
+    chatHistory = [];
+    showToast('🧹 Chat limpiado', 'info');
+}
+
+// ============================================================
+// GUARDAR CONVERSACIONES
+// ============================================================
+function saveConversation() {
+    if (chatHistory.length === 0) {
+        showToast('❌ No hay mensajes para guardar', 'error');
+        return;
+    }
+    
+    const name = prompt('Nombre para la conversación:', 
+        `Chat ${new Date().toLocaleDateString()} - ${loadedModel?.name || 'Transformers'}`);
+    if (!name) return;
+    
+    const conversations = JSON.parse(localStorage.getItem('nexus_transformers_conversations') || '[]');
+    
+    conversations.push({
+        id: Date.now(),
+        name: name,
+        model: loadedModel?.id || 'desconocido',
+        modelName: loadedModel?.name || 'Desconocido',
+        messages: [...chatHistory],
+        date: new Date().toISOString()
+    });
+    
+    localStorage.setItem('nexus_transformers_conversations', JSON.stringify(conversations));
+    showToast(`✅ Conversación "${name}" guardada`, 'success');
+}
+
+function saveChatToLocal() {
+    sessionStorage.setItem('nexus_transformers_last_chat', JSON.stringify({
+        model: loadedModel?.id,
+        messages: chatHistory,
+        date: new Date().toISOString()
+    }));
+}
+
+function loadChatHistory() {
+    const saved = sessionStorage.getItem('nexus_transformers_last_chat');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            if (data.messages && data.messages.length > 0) {
+                chatHistory = data.messages;
+                const container = document.getElementById('chatMessages');
+                container.innerHTML = '';
+                chatHistory.forEach(msg => addMessage(msg.role, msg.content));
+            }
+        } catch (e) {
+            console.log('No hay chat anterior');
+        }
+    }
+}
+
+function refreshModels() {
+    renderModels();
+    showToast('🔄 Lista de modelos actualizada', 'info');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(message, type = 'info') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ============================================================
+// INFORMACIÓN DEL SISTEMA
+// ============================================================
+function getSystemInfo() {
+    const info = {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        memory: navigator.deviceMemory || 'Desconocido',
+        cores: navigator.hardwareConcurrency || 'Desconocido',
+        webgpu: typeof navigator.gpu !== 'undefined'
+    };
+    
+    console.log('🖥️ Información del sistema:', info);
+    return info;
+}
+
+// Mostrar info al cargar
+console.log('🧠 IA Local (Transformers.js) cargada');
+console.log('📦 Modelos disponibles:', AVAILABLE_MODELS.length);
+getSystemInfo();
+
+// ============================================================
+// EXPORTAR PARA USO DESDE OTROS ARCHIVOS
+// ============================================================
+window.loadTransformersModel = loadModel;
+window.chatWithTransformers = sendMessage;
+
+console.log('✅ Funciones exportadas: loadTransformersModel(), chatWithTransformers()');
+</script>
+</body>
+</html>               
+

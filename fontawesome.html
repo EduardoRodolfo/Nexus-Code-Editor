@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧩 Chuleta Font Awesome 7.2.0 - Local</title>
+    
+    <!-- FONT AWESOME LOCAL -->
+    <link rel="stylesheet" href="fontawesome-free-7.2.0-web/css/all.min.css">
+    
+    <!-- BOOTSTRAP LOCAL (opcional, solo para estilos de la página) -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    
+    <style>
+        /* ============================================
+           ESTILOS PERSONALIZADOS PARA LA CHULETA
+           ============================================ */
+        :root {
+            --fa-primary: #528dd7;
+            --fa-secondary: #306998;
+            --fa-bg-dark: #0f1724;
+            --fa-bg-card: #1a1a2e;
+            --fa-border: #2a2a4a;
+        }
+
+        body {
+           background: var(--fa-bg-dark);
+           color: #e0e0e0;
+           font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+           display: flex;
+           justify-content:space-around
+           
+        }
+        .container {
+            max-width: 1400px;
+        }
+
+        /* HEADER */
+        .fa-header {
+            background: linear-gradient(135deg, var(--fa-primary), var(--fa-secondary));
+            color: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .fa-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .fa-header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .fa-header .badge-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        /* TARJETAS DE CATEGORÍAS */
+        .category-card {
+            background: var(--fa-bg-card);
+            border: 1px solid var(--fa-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(82, 141, 215, 0.15);
+        }
+
+        .category-card h3 {
+            color: var(--fa-primary);
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--fa-border);
+            padding-bottom: 10px;
+        }
+
+        /* CUADRÍCULA DE ICONOS */
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .icon-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--fa-border);
+            border-radius: 10px;
+            padding: 15px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .icon-item:hover {
+            background: rgba(82, 141, 215, 0.1);
+            border-color: var(--fa-primary);
+            transform: scale(1.05);
+        }
+
+        .icon-item i {
+            font-size: 1.8rem;
+            color: #fff;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .icon-item .icon-name {
+            font-size: 0.65rem;
+            color: #a0a0b0;
+            word-break: break-all;
+            display: block;
+        }
+
+        /* TARJETA DE EJEMPLOS */
+        .example-card {
+            background: var(--fa-bg-card);
+            border: 1px solid var(--fa-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .example-card h3 {
+            color: var(--fa-primary);
+            font-weight: 700;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--fa-border);
+            padding-bottom: 10px;
+        }
+
+        .example-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .example-box .demo {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .example-box .demo i {
+            font-size: 1.5rem;
+        }
+
+        .example-box .code-snippet {
+            background: #0a0a1a;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #22c55e;
+            margin-top: 8px;
+            overflow-x: auto;
+        }
+
+        /* TABLA DE TAMAÑOS */
+        .size-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .size-table th, .size-table td {
+            padding: 10px 15px;
+            border: 1px solid var(--fa-border);
+            text-align: left;
+        }
+
+        .size-table th {
+            background: var(--fa-bg-dark);
+            color: var(--fa-primary);
+            font-weight: 600;
+        }
+
+        .size-table td {
+            background: var(--fa-bg-card);
+        }
+
+        .size-table .demo-cell {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* CÓDIGO INLINE */
+        code {
+            background: #0a0a1a;
+            color: #22c55e;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        pre {
+            background: #0a0a1a;
+            color: #22c55e;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--fa-border);
+            overflow-x: auto;
+        }
+
+        /* TABS PERSONALIZADOS (SIN BOOTSTRAP) */
+        .tabs-container {
+            margin-bottom: 30px;
+        }
+
+        .tabs-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: var(--fa-bg-card);
+            border: 1px solid var(--fa-border);
+            color: #a0a0b0;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            justify-content: center;
+            min-width: 120px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(82, 141, 215, 0.1);
+            border-color: var(--fa-primary);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--fa-primary), var(--fa-secondary));
+            border-color: var(--fa-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(82, 141, 215, 0.3);
+        }
+
+        .tab-btn .tab-icon {
+            font-size: 1.1rem;
+        }
+
+        .tab-count {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .tab-btn.active .tab-count {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* TOAST DE COPIA */
+        .copy-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #22c55e;
+            color: white;
+            padding: 15px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+            display: none;
+            z-index: 9999;
+            font-weight: 500;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .copy-toast.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* BÚSQUEDA */
+        .search-box {
+            background: var(--fa-bg-card);
+            border: 2px solid var(--fa-border);
+            color: #fff;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            width: 100%;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box:focus {
+            border-color: var(--fa-primary);
+            outline: none;
+            box-shadow: 0 0 20px rgba(82, 141, 215, 0.2);
+        }
+
+        .search-box::placeholder {
+            color: #666;
+        }
+
+        /* COLORES DE ICONOS */
+        .text-fa-primary { color: var(--fa-primary); }
+        .text-fa-success { color: #22c55e; }
+        .text-fa-danger { color: #ef4444; }
+        .text-fa-warning { color: #f59e0b; }
+        .text-fa-info { color: #06b6d4; }
+
+        /* ANIMACIONES */
+        .demo-animation {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 15px;
+        }
+
+        .demo-animation i {
+            font-size: 2.5rem !important;
+        }
+
+        .demo-animation .code-label {
+            background: #0a0a1a;
+            color: #22c55e;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+        }
+
+        /* BLOQUE DE CÓDIGO CON COPIA */
+        .code-block {
+            background: #0a0a1a;
+            border: 1px solid var(--fa-border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .code-block .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 12px;
+            background: #12122a;
+            border-bottom: 1px solid var(--fa-border);
+        }
+
+        .code-block .code-header span {
+            color: #666;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .code-block .code-header button {
+            background: var(--fa-primary);
+            color: white;
+            border: none;
+            padding: 3px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: background 0.2s;
+        }
+
+        .code-block .code-header button:hover {
+            background: var(--fa-secondary);
+        }
+
+        .code-block pre {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+        }
+
+        /* ENLACES A DOCUMENTACIÓN */
+        .docs-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .docs-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--fa-bg-card);
+            border: 1px solid var(--fa-border);
+            border-radius: 8px;
+            color: var(--fa-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .docs-links a:hover {
+            background: rgba(82, 141, 215, 0.1);
+            border-color: var(--fa-primary);
+            transform: translateY(-2px);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .fa-header h1 { font-size: 1.8rem; }
+            .fa-header { padding: 20px; }
+            .icon-grid {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+                gap: 6px;
+            }
+            .icon-item { padding: 10px 5px; }
+            .icon-item i { font-size: 1.4rem; }
+            .icon-item .icon-name { font-size: 0.55rem; }
+        }
+
+        /* SCROLL PERSONALIZADO */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--fa-bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--fa-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--fa-primary); }
+
+        /* PREVENIR SCROLL AL HACER CLIC EN ENLACES */
+        a.no-scroll {
+            scroll-behavior: auto !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- HEADER                                       -->
+    <!-- ============================================ -->
+    <div class="container py-4">
+        <div class="fa-header">
+            <h1>🧩 Font Awesome 7.2.0</h1>
+            <p>Chuleta completa con iconos, estilos y ejemplos — Versión local desde <code>fontawesome-free-7.2.0-web/</code></p>
+            <div class="badge-container">
+                <span class="badge bg-light text-dark">📦 7.2.0</span>
+                <span class="badge bg-success">✅ Local</span>
+                <span class="badge bg-info text-dark">🎨 3 Estilos</span>
+                <span class="badge bg-warning text-dark">🔤 2000+ Iconos</span>
+                <span class="badge bg-primary">🚀 Gratis</span>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- INSTRUCCIONES DE USO                         -->
+        <!-- ============================================ -->
+        <div class="example-card">
+            <h3>📖 Cómo usar Font Awesome en tus proyectos</h3>
+            <p class="text-secondary mb-3">Agrega esta línea en el <code>&lt;head&gt;</code> de tu HTML para usar Font Awesome desde tu servidor local:</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span>📄 HTML</span>
+                    <button onclick="copyText('&lt;link rel=&quot;stylesheet&quot; href=&quot;fontawesome-free-7.2.0-web/css/all.min.css&quot;&gt;')">📋 Copiar</button>
+                </div>
+                <pre>&lt;link rel="stylesheet" href="fontawesome-free-7.2.0-web/css/all.min.css"&gt;</pre>
+            </div>
+            <p class="text-secondary mt-3">También puedes combinar con Bootstrap local (desde <code>node_modules/</code>):</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span>📄 HTML</span>
+                    <button onclick="copyText('&lt;link rel=&quot;stylesheet&quot; href=&quot;../node_modules/bootstrap/dist/css/bootstrap.min.css&quot;&gt;')">📋 Copiar</button>
+                </div>
+                <pre>&lt;link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css"&gt;</pre>
+            </div>
+            <p class="text-secondary mt-3"><strong>💡 Tip:</strong> Haz clic en cualquier ícono de esta página para copiar su código automáticamente.</p>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- BARRA DE BÚSQUEDA                           -->
+        <!-- ============================================ -->
+        <div class="mb-4">
+            <input type="text" class="search-box" id="searchIcons" placeholder="🔍 Buscar iconos (ej: home, user, gear, rocket...)">
+        </div>
+
+        <!-- ============================================ -->
+        <!-- TABS: ESTILOS DE ICONOS (MANUAL, SIN BS)     -->
+        <!-- ============================================ -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="solid" onclick="switchTab('solid')">
+                    <span class="tab-icon">●</span> Solid (Sólido)
+                    <span class="tab-count" id="count-solid">0</span>
+                </button>
+                <button class="tab-btn" data-tab="regular" onclick="switchTab('regular')">
+                    <span class="tab-icon">○</span> Regular (Contorno)
+                    <span class="tab-count" id="count-regular">0</span>
+                </button>
+                <button class="tab-btn" data-tab="brands" onclick="switchTab('brands')">
+                    <span class="tab-icon">Ⓜ</span> Brands (Marcas)
+                    <span class="tab-count" id="count-brands">0</span>
+                </button>
+            </div>
+
+            <div class="tabs-content">
+                <!-- TAB: SOLID -->
+                <div class="tab-panel active" id="tab-solid">
+                    <div class="category-card">
+                        <h3>🔷 Font Awesome Solid (fas)</h3>
+                        <p class="text-secondary mb-3">Clase: <code>fas fa-nombre</code> — Los iconos sólidos son los más usados y versátiles.</p>
+                        
+                        <div class="icon-grid" id="solidIcons">
+                            <!-- Generado por JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: REGULAR -->
+                <div class="tab-panel" id="tab-regular">
+                    <div class="category-card">
+                        <h3>🔷 Font Awesome Regular (far)</h3>
+                        <p class="text-secondary mb-3">Clase: <code>far fa-nombre</code> — Iconos con estilo de contorno, más sutiles.</p>
+                        
+                        <div class="icon-grid" id="regularIcons">
+                            <!-- Generado por JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: BRANDS -->
+                <div class="tab-panel" id="tab-brands">
+                    <div class="category-card">
+                        <h3>🔷 Font Awesome Brands (fab)</h3>
+                        <p class="text-secondary mb-3">Clase: <code>fab fa-nombre</code> — Logos de marcas, redes sociales y tecnologías.</p>
+                        
+                        <div class="icon-grid" id="brandsIcons">
+                            <!-- Generado por JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- TAMAÑOS                                      -->
+        <!-- ============================================ -->
+        <div class="example-card">
+            <h3>📏 Tamaños de Iconos</h3>
+            <p class="text-secondary mb-3">Font Awesome usa clases <code>fa-xs</code>, <code>fa-sm</code>, <code>fa-lg</code>, <code>fa-2x</code> hasta <code>fa-10x</code></p>
+            
+            <table class="size-table">
+                <thead>
+                    <tr>
+                        <th>Clase</th>
+                        <th>Ejemplo</th>
+                        <th>Código</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>fa-xs</code></td>
+                        <td class="demo-cell"><i class="fas fa-star fa-xs" style="color: #f59e0b;"></i></td>
+                        <td><code>&lt;i class="fas fa-star fa-xs"&gt;&lt;/i&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>fa-sm</code></td>
+                        <td class="demo-cell"><i class="fas fa-star fa-sm" style="color: #f59e0b;"></i></td>
+                        <td><code>&lt;i class="fas fa-star fa-sm"&gt;&lt;/i&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>fa-lg</code></td>
+                        <td class="demo-cell"><i class="fas fa-star fa-lg" style="color: #f59e0b;"></i></td>
+                        <td><code>&lt;i class="fas fa-star fa-lg"&gt;&lt;/i&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>fa-2x</code></td>
+                        <td class="demo-cell"><i class="fas fa-star fa-2x" style="color: #f59e0b;"></i></td>
+                        <td><code>&lt;i class="fas fa-star fa-2x"&gt;&lt;/i&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>fa-3x</code></td>
+                        <td class="demo-cell"><i class="fas fa-star fa-3x" style="color: #f59e0b;"></i></td>
+                        <td><code>&lt;i class="fas fa-star fa-3x"&gt;&lt;/i&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>fa-5x</code></td>
+                        <td class="demo-cell"><i class="fas fa-star fa-5x" style="color: #f59e0b;"></i></td>
+                        <td><code>&lt;i class="fas fa-star fa-5x"&gt;&lt;/i&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>fa-10x</code></td>
+                        <td class="demo-cell"><i class="fas fa-star fa-10x" style="color: #f59e0b;"></i></td>
+                        <td><code>&lt;i class="fas fa-star fa-10x"&gt;&lt;/i&gt;</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- COLORES - CORREGIDO                         -->
+        <!-- ============================================ -->
+        <div class="example-card">
+            <h3>🎨 Colores</h3>
+            <p class="text-secondary mb-3">Los iconos heredan el color del texto. Usa clases de Bootstrap o estilo <code>style="color: ..."</code>.</p>
+            
+            <div class="row g-3">
+                <div class="col-md-3 col-6">
+                    <div class="example-box text-center">
+                        <i class="fas fa-heart fa-3x" style="color: #ef4444;"></i>
+                        <p class="mt-2"><code>style="color: #ef4444;"</code></p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="example-box text-center">
+                        <i class="fas fa-heart fa-3x" style="color: #22c55e;"></i>
+                        <p class="mt-2"><code>style="color: #22c55e;"</code></p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="example-box text-center">
+                        <i class="fas fa-heart fa-3x" style="color: #528dd7;"></i>
+                        <p class="mt-2"><code>style="color: #528dd7;"</code></p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="example-box text-center">
+                        <i class="fas fa-heart fa-3x" style="color: #f59e0b;"></i>
+                        <p class="mt-2"><code>style="color: #f59e0b;"</code></p>
+                    </div>
+                </div>
+            </div>
+            <div class="code-block mt-3">
+                <div class="code-header">
+                    <span>📄 Código</span>
+                    <button onclick="copyText('&lt;i class=&quot;fas fa-heart fa-3x&quot; style=&quot;color: #ef4444;&quot;&gt;&lt;/i&gt;')">📋 Copiar</button>
+                </div>
+                <pre>&lt;i class="fas fa-heart fa-3x" style="color: #ef4444;"&gt;&lt;/i&gt;</pre>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- ANIMACIONES - CORREGIDO                     -->
+        <!-- ============================================ -->
+        <div class="example-card">
+            <h3>🔄 Animaciones</h3>
+            <p class="text-secondary mb-3">Font Awesome incluye animaciones nativas: <code>fa-spin</code>, <code>fa-pulse</code>, <code>fa-bounce</code>, <code>fa-shake</code>, <code>fa-beat</code>, <code>fa-fade</code></p>
+            
+            <div class="row g-3">
+                <div class="col-md-4 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-spinner fa-3x fa-spin" style="color: #528dd7;"></i>
+                        <span class="code-label">&lt;i class="fas fa-spinner fa-spin"&gt;&lt;/i&gt;</span>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-circle-notch fa-3x fa-spin" style="color: #22c55e;"></i>
+                        <span class="code-label">&lt;i class="fas fa-circle-notch fa-spin"&gt;&lt;/i&gt;</span>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-sync-alt fa-3x fa-spin" style="color: #06b6d4;"></i>
+                        <span class="code-label">&lt;i class="fas fa-sync-alt fa-spin"&gt;&lt;/i&gt;</span>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-cog fa-3x fa-spin" style="color: #f59e0b;"></i>
+                        <span class="code-label">&lt;i class="fas fa-cog fa-spin"&gt;&lt;/i&gt;</span>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-bell fa-3x fa-shake" style="color: #ef4444;"></i>
+                        <span class="code-label">&lt;i class="fas fa-bell fa-shake"&gt;&lt;/i&gt;</span>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-heart fa-3x fa-beat" style="color: #ef4444;"></i>
+                        <span class="code-label">&lt;i class="fas fa-heart fa-beat"&gt;&lt;/i&gt;</span>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-flag fa-3x fa-bounce" style="color: #22c55e;"></i>
+                        <span class="code-label">&lt;i class="fas fa-flag fa-bounce"&gt;&lt;/i&gt;</span>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-battery-three-quarters fa-3x fa-fade" style="color: #f59e0b;"></i>
+                        <span class="code-label">&lt;i class="fas fa-battery-three-quarters fa-fade"&gt;&lt;/i&gt;</span>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-hand-peace fa-3x fa-flip" style="color: #528dd7;"></i>
+                        <span class="code-label">&lt;i class="fas fa-hand-peace fa-flip"&gt;&lt;/i&gt;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- ROTACIÓN Y FLIP - CORREGIDO                -->
+        <!-- ============================================ -->
+        <div class="example-card">
+            <h3>🔄 Rotación y Flip</h3>
+            <p class="text-secondary mb-3">Clases: <code>fa-rotate-*</code> (90, 180, 270) y <code>fa-flip-*</code> (horizontal, vertical, both)</p>
+            
+            <div class="row g-3">
+                <div class="col-md-3 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-arrow-right fa-3x" style="color: #528dd7;"></i>
+                        <span class="code-label">Normal</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-arrow-right fa-3x fa-rotate-90" style="color: #528dd7;"></i>
+                        <span class="code-label">fa-rotate-90</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-arrow-right fa-3x fa-rotate-180" style="color: #528dd7;"></i>
+                        <span class="code-label">fa-rotate-180</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-arrow-right fa-3x fa-rotate-270" style="color: #528dd7;"></i>
+                        <span class="code-label">fa-rotate-270</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-arrow-right fa-3x fa-flip-horizontal" style="color: #528dd7;"></i>
+                        <span class="code-label">fa-flip-horizontal</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-arrow-right fa-3x fa-flip-vertical" style="color: #528dd7;"></i>
+                        <span class="code-label">fa-flip-vertical</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="example-box demo-animation text-center">
+                        <i class="fas fa-arrow-right fa-3x fa-flip-both" style="color: #528dd7;"></i>
+                        <span class="code-label">fa-flip-both</span>
+                    </div>
+                </div>
+            </div>
+            <div class="code-block mt-3">
+                <div class="code-header">
+                    <span>📄 Código</span>
+                    <button onclick="copyText('&lt;i class=&quot;fas fa-arrow-right fa-3x fa-rotate-90&quot;&gt;&lt;/i&gt;')">📋 Copiar</button>
+                </div>
+                <pre>&lt;i class="fas fa-arrow-right fa-3x fa-rotate-90"&gt;&lt;/i&gt;</pre>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- ICONOS COMO BOTONES - CORREGIDO             -->
+        <!-- ============================================ -->
+        <div class="example-card">
+            <h3>🔘 Iconos como Botones</h3>
+            <p class="text-secondary mb-3">Usa iconos dentro de botones Bootstrap para crear interfaces atractivas.</p>
+            
+            <div class="d-flex gap-2 flex-wrap mb-3">
+                <button class="btn btn-primary"><i class="fas fa-download me-1"></i> Descargar</button>
+                <button class="btn btn-success"><i class="fas fa-check me-1"></i> Guardar</button>
+                <button class="btn btn-danger"><i class="fas fa-trash me-1"></i> Eliminar</button>
+                <button class="btn btn-warning"><i class="fas fa-edit me-1"></i> Editar</button>
+                <button class="btn btn-info"><i class="fas fa-info-circle me-1"></i> Info</button>
+                <button class="btn btn-dark"><i class="fas fa-cog me-1"></i> Configurar</button>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>📄 Código</span>
+                    <button onclick="copyText('&lt;button class=&quot;btn btn-primary&quot;&gt;&lt;i class=&quot;fas fa-download me-1&quot;&gt;&lt;/i&gt; Descargar&lt;/button&gt;')">📋 Copiar</button>
+                </div>
+                <pre>&lt;button class="btn btn-primary"&gt;
+    &lt;i class="fas fa-download"&gt;&lt;/i&gt; Descargar
+&lt;/button&gt;</pre>
+            </div>
+        </div>
+
+               <!-- ============================================ -->
+        <!-- LISTAS CON ICONOS - CORREGIDO               -->
+        <!-- ============================================ -->
+        <div class="example-card">
+            <h3>📋 Listas con Iconos</h3>
+            <p class="text-secondary mb-3">Ejemplos de listas con iconos de Font Awesome. Haz clic en cualquier ícono para copiar su código individual.</p>
+            
+            <div class="row">
+                <!-- LISTA DE TAREAS -->
+                <div class="col-md-6 mb-4">
+                    <h5>✅ Lista de tareas</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <span class="icon-item" onclick="copyIcon('fas fa-check-circle')" style="padding: 2px 4px; display: inline;">
+                                <i class="fas fa-check-circle" style="color: #22c55e;"></i>
+                            </span> Tarea completada
+                        </li>
+                        <li class="mb-2">
+                            <span class="icon-item" onclick="copyIcon('fas fa-clock')" style="padding: 2px 4px; display: inline;">
+                                <i class="fas fa-clock" style="color: #f59e0b;"></i>
+                            </span> Tarea pendiente
+                        </li>
+                        <li class="mb-2">
+                            <span class="icon-item" onclick="copyIcon('fas fa-times-circle')" style="padding: 2px 4px; display: inline;">
+                                <i class="fas fa-times-circle" style="color: #ef4444;"></i>
+                            </span> Tarea cancelada
+                        </li>
+                        <li class="mb-2">
+                            <span class="icon-item" onclick="copyIcon('fas fa-play-circle')" style="padding: 2px 4px; display: inline;">
+                                <i class="fas fa-play-circle" style="color: #06b6d4;"></i>
+                            </span> Tarea en progreso
+                        </li>
+                    </ul>
+
+                    <div class="code-block mt-2">
+                        <div class="code-header">
+                            <span>📄 Código completo</span>
+                            <button onclick="copyText('&lt;ul class=&quot;list-unstyled&quot;&gt;\n    &lt;li class=&quot;mb-2&quot;&gt;&lt;i class=&quot;fas fa-check-circle&quot; style=&quot;color: #22c55e;&quot;&gt;&lt;/i&gt; Tarea completada&lt;/li&gt;\n    &lt;li class=&quot;mb-2&quot;&gt;&lt;i class=&quot;fas fa-clock&quot; style=&quot;color: #f59e0b;&quot;&gt;&lt;/i&gt; Tarea pendiente&lt;/li&gt;\n    &lt;li class=&quot;mb-2&quot;&gt;&lt;i class=&quot;fas fa-times-circle&quot; style=&quot;color: #ef4444;&quot;&gt;&lt;/i&gt; Tarea cancelada&lt;/li&gt;\n    &lt;li class=&quot;mb-2&quot;&gt;&lt;i class=&quot;fas fa-play-circle&quot; style=&quot;color: #06b6d4;&quot;&gt;&lt;/i&gt; Tarea en progreso&lt;/li&gt;\n&lt;/ul&gt;')">📋 Copiar</button>
+                        </div>
+                        <pre>&lt;ul class="list-unstyled"&gt;
+    &lt;li&gt;&lt;i class="fas fa-check-circle" style="color: #22c55e;"&gt;&lt;/i&gt; Tarea completada&lt;/li&gt;
+    &lt;li&gt;&lt;i class="fas fa-clock" style="color: #f59e0b;"&gt;&lt;/i&gt; Tarea pendiente&lt;/li&gt;
+    &lt;li&gt;&lt;i class="fas fa-times-circle" style="color: #ef4444;"&gt;&lt;/i&gt; Tarea cancelada&lt;/li&gt;
+    &lt;li&gt;&lt;i class="fas fa-play-circle" style="color: #06b6d4;"&gt;&lt;/i&gt; Tarea en progreso&lt;/li&gt;
+&lt;/ul&gt;</pre>
+                    </div>
+                </div>
+
+                <!-- LISTA DE ARCHIVOS -->
+                <div class="col-md-6 mb-4">
+                    <h5>📁 Archivos</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <span class="icon-item" onclick="copyIcon('fas fa-file-code')" style="padding: 2px 4px; display: inline;">
+                                <i class="fas fa-file-code" style="color: #528dd7;"></i>
+                            </span> index.html
+                        </li>
+                        <li class="mb-2">
+                            <span class="icon-item" onclick="copyIcon('fas fa-file-css')" style="padding: 2px 4px; display: inline;">
+                                <i class="fas fa-file-css" style="color: #06b6d4;"></i>
+                            </span> style.css
+                        </li>
+                        <li class="mb-2">
+                            <span class="icon-item" onclick="copyIcon('fas fa-file-js')" style="padding: 2px 4px; display: inline;">
+                                <i class="fas fa-file-js" style="color: #f59e0b;"></i>
+                            </span> script.js
+                        </li>
+                        <li class="mb-2">
+                            <span class="icon-item" onclick="copyIcon('fas fa-file-image')" style="padding: 2px 4px; display: inline;">
+                                <i class="fas fa-file-image" style="color: #22c55e;"></i>
+                            </span> imagen.png
+                        </li>
+                    </ul>
+
+                    <div class="code-block mt-2">
+                        <div class="code-header">
+                            <span>📄 Código completo</span>
+                            <button onclick="copyText('&lt;ul class=&quot;list-unstyled&quot;&gt;\n    &lt;li class=&quot;mb-2&quot;&gt;&lt;i class=&quot;fas fa-file-code&quot; style=&quot;color: #528dd7;&quot;&gt;&lt;/i&gt; index.html&lt;/li&gt;\n    &lt;li class=&quot;mb-2&quot;&gt;&lt;i class=&quot;fas fa-file-css&quot; style=&quot;color: #06b6d4;&quot;&gt;&lt;/i&gt; style.css&lt;/li&gt;\n    &lt;li class=&quot;mb-2&quot;&gt;&lt;i class=&quot;fas fa-file-js&quot; style=&quot;color: #f59e0b;&quot;&gt;&lt;/i&gt; script.js&lt;/li&gt;\n    &lt;li class=&quot;mb-2&quot;&gt;&lt;i class=&quot;fas fa-file-image&quot; style=&quot;color: #22c55e;&quot;&gt;&lt;/i&gt; imagen.png&lt;/li&gt;\n&lt;/ul&gt;')">📋 Copiar</button>
+                        </div>
+                        <pre>&lt;ul class="list-unstyled"&gt;
+    &lt;li&gt;&lt;i class="fas fa-file-code" style="color: #528dd7;"&gt;&lt;/i&gt; index.html&lt;/li&gt;
+    &lt;li&gt;&lt;i class="fas fa-file-css" style="color: #06b6d4;"&gt;&lt;/i&gt; style.css&lt;/li&gt;
+    &lt;li&gt;&lt;i class="fas fa-file-js" style="color: #f59e0b;"&gt;&lt;/i&gt; script.js&lt;/li&gt;
+    &lt;li&gt;&lt;i class="fas fa-file-image" style="color: #22c55e;"&gt;&lt;/i&gt; imagen.png&lt;/li&gt;
+&lt;/ul&gt;</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================ -->
+        <!-- ICONOS SOCIALES - CORREGIDO (sin scroll)     -->
+        <!-- ============================================ -->
+        <div class="example-card">
+            <h3>🌐 Iconos de Redes Sociales (Brands)</h3>
+            <p class="text-secondary mb-3">Usa la clase <code>fab</code> para iconos de marcas y redes sociales. Haz clic para copiar el código.</p>
+            
+            <div class="d-flex gap-3 flex-wrap justify-content-center">
+                <span class="icon-item" onclick="copyIcon('fab fa-facebook')" style="padding: 15px 20px; min-width: 60px;">
+                    <i class="fab fa-facebook fa-2x" style="color: #1877f2;"></i>
+                </span>
+                <span class="icon-item" onclick="copyIcon('fab fa-twitter')" style="padding: 15px 20px; min-width: 60px;">
+                    <i class="fab fa-twitter fa-2x" style="color: #1da1f2;"></i>
+                </span>
+                <span class="icon-item" onclick="copyIcon('fab fa-instagram')" style="padding: 15px 20px; min-width: 60px;">
+                    <i class="fab fa-instagram fa-2x" style="color: #e4405f;"></i>
+                </span>
+                <span class="icon-item" onclick="copyIcon('fab fa-youtube')" style="padding: 15px 20px; min-width: 60px;">
+                    <i class="fab fa-youtube fa-2x" style="color: #ff0000;"></i>
+                </span>
+                <span class="icon-item" onclick="copyIcon('fab fa-github')" style="padding: 15px 20px; min-width: 60px;">
+                    <i class="fab fa-github fa-2x" style="color: #fff;"></i>
+                </span>
+                <span class="icon-item" onclick="copyIcon('fab fa-linkedin')" style="padding: 15px 20px; min-width: 60px;">
+                    <i class="fab fa-linkedin fa-2x" style="color: #0a66c2;"></i>
+                </span>
+                <span class="icon-item" onclick="copyIcon('fab fa-whatsapp')" style="padding: 15px 20px; min-width: 60px;">
+                    <i class="fab fa-whatsapp fa-2x" style="color: #25d366;"></i>
+                </span>
+                <span class="icon-item" onclick="copyIcon('fab fa-telegram')" style="padding: 15px 20px; min-width: 60px;">
+                    <i class="fab fa-telegram fa-2x" style="color: #0088cc;"></i>
+                </span>
+                <span class="icon-item" onclick="copyIcon('fab fa-discord')" style="padding: 15px 20px; min-width: 60px;">
+                    <i class="fab fa-discord fa-2x" style="color: #5865f2;"></i>
+                </span>
+                <span class="icon-item" onclick="copyIcon('fab fa-tiktok')" style="padding: 15px 20px; min-width: 60px;">
+                    <i class="fab fa-tiktok fa-2x" style="color: #fff;"></i>
+                </span>
+                <span class="icon-item" onclick="copyIcon('fab fa-twitch')" style="padding: 15px 20px; min-width: 60px;">
+                    <i class="fab fa-twitch fa-2x" style="color: #9146ff;"></i>
+                </span>
+                <span class="icon-item" onclick="copyIcon('fab fa-spotify')" style="padding: 15px 20px; min-width: 60px;">
+                    <i class="fab fa-spotify fa-2x" style="color: #1db954;"></i>
+                </span>
+            </div>
+
+            <div class="code-block mt-3">
+                <div class="code-header">
+                    <span>📄 Código</span>
+                    <button onclick="copyText('&lt;i class=&quot;fab fa-facebook fa-2x&quot; style=&quot;color: #1877f2;&quot;&gt;&lt;/i&gt;')">📋 Copiar</button>
+                </div>
+                <pre>&lt;i class="fab fa-facebook fa-2x" style="color: #1877f2;"&gt;&lt;/i&gt;</pre>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- ICONOS ÚTILES POR CATEGORÍA - CORREGIDO     -->
+        <!-- ============================================ -->
+        <div class="example-card">
+            <h3>📂 Iconos Útiles por Categoría</h3>
+            <p class="text-secondary mb-3">Haz clic en cualquier ícono para copiar su código. También puedes copiar el código de cada categoría.</p>
+            
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="example-box">
+                        <h6>🖥️ Interfaz de Usuario</h6>
+                        <div class="demo">
+                            <span class="icon-item" onclick="copyIcon('fas fa-home')" style="padding: 5px 10px;"><i class="fas fa-home" style="color: #528dd7;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-user')" style="padding: 5px 10px;"><i class="fas fa-user" style="color: #06b6d4;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-cog')" style="padding: 5px 10px;"><i class="fas fa-cog" style="color: #f59e0b;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-search')" style="padding: 5px 10px;"><i class="fas fa-search" style="color: #22c55e;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-bell')" style="padding: 5px 10px;"><i class="fas fa-bell" style="color: #ef4444;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-envelope')" style="padding: 5px 10px;"><i class="fas fa-envelope" style="color: #528dd7;"></i></span>
+                        </div>
+                        <div class="code-block mt-2">
+                            <div class="code-header">
+                                <span>Código</span>
+                                <button onclick="copyText('&lt;i class=&quot;fas fa-home&quot;&gt;&lt;/i&gt;')">📋</button>
+                            </div>
+                            <pre style="font-size: 0.75rem;">&lt;i class="fas fa-home"&gt;&lt;/i&gt;</pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="example-box">
+                        <h6>📝 Acciones</h6>
+                        <div class="demo">
+                            <span class="icon-item" onclick="copyIcon('fas fa-plus')" style="padding: 5px 10px;"><i class="fas fa-plus" style="color: #22c55e;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-edit')" style="padding: 5px 10px;"><i class="fas fa-edit" style="color: #f59e0b;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-trash')" style="padding: 5px 10px;"><i class="fas fa-trash" style="color: #ef4444;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-save')" style="padding: 5px 10px;"><i class="fas fa-save" style="color: #528dd7;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-download')" style="padding: 5px 10px;"><i class="fas fa-download" style="color: #06b6d4;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-upload')" style="padding: 5px 10px;"><i class="fas fa-upload" style="color: #22c55e;"></i></span>
+                        </div>
+                        <div class="code-block mt-2">
+                            <div class="code-header">
+                                <span>Código</span>
+                                <button onclick="copyText('&lt;i class=&quot;fas fa-plus&quot;&gt;&lt;/i&gt;')">📋</button>
+                            </div>
+                            <pre style="font-size: 0.75rem;">&lt;i class="fas fa-plus"&gt;&lt;/i&gt;</pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="example-box">
+                        <h6>🔤 Texto</h6>
+                        <div class="demo">
+                            <span class="icon-item" onclick="copyIcon('fas fa-font')" style="padding: 5px 10px;"><i class="fas fa-font" style="color: #528dd7;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-bold')" style="padding: 5px 10px;"><i class="fas fa-bold" style="color: #06b6d4;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-italic')" style="padding: 5px 10px;"><i class="fas fa-italic" style="color: #f59e0b;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-underline')" style="padding: 5px 10px;"><i class="fas fa-underline" style="color: #22c55e;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-align-left')" style="padding: 5px 10px;"><i class="fas fa-align-left" style="color: #ef4444;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-list')" style="padding: 5px 10px;"><i class="fas fa-list" style="color: #528dd7;"></i></span>
+                        </div>
+                        <div class="code-block mt-2">
+                            <div class="code-header">
+                                <span>Código</span>
+                                <button onclick="copyText('&lt;i class=&quot;fas fa-font&quot;&gt;&lt;/i&gt;')">📋</button>
+                            </div>
+                            <pre style="font-size: 0.75rem;">&lt;i class="fas fa-font"&gt;&lt;/i&gt;</pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="example-box">
+                        <h6>🔒 Seguridad</h6>
+                        <div class="demo">
+                            <span class="icon-item" onclick="copyIcon('fas fa-lock')" style="padding: 5px 10px;"><i class="fas fa-lock" style="color: #22c55e;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-unlock')" style="padding: 5px 10px;"><i class="fas fa-unlock" style="color: #f59e0b;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-shield')" style="padding: 5px 10px;"><i class="fas fa-shield" style="color: #528dd7;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-key')" style="padding: 5px 10px;"><i class="fas fa-key" style="color: #06b6d4;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-eye')" style="padding: 5px 10px;"><i class="fas fa-eye" style="color: #ef4444;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-eye-slash')" style="padding: 5px 10px;"><i class="fas fa-eye-slash" style="color: #a0a0b0;"></i></span>
+                        </div>
+                        <div class="code-block mt-2">
+                            <div class="code-header">
+                                <span>Código</span>
+                                <button onclick="copyText('&lt;i class=&quot;fas fa-lock&quot;&gt;&lt;/i&gt;')">📋</button>
+                            </div>
+                            <pre style="font-size: 0.75rem;">&lt;i class="fas fa-lock"&gt;&lt;/i&gt;</pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="example-box">
+                        <h6>📱 Dispositivos</h6>
+                        <div class="demo">
+                            <span class="icon-item" onclick="copyIcon('fas fa-mobile')" style="padding: 5px 10px;"><i class="fas fa-mobile" style="color: #528dd7;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-tablet')" style="padding: 5px 10px;"><i class="fas fa-tablet" style="color: #06b6d4;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-laptop')" style="padding: 5px 10px;"><i class="fas fa-laptop" style="color: #f59e0b;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-desktop')" style="padding: 5px 10px;"><i class="fas fa-desktop" style="color: #22c55e;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-print')" style="padding: 5px 10px;"><i class="fas fa-print" style="color: #ef4444;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-microchip')" style="padding: 5px 10px;"><i class="fas fa-microchip" style="color: #528dd7;"></i></span>
+                        </div>
+                        <div class="code-block mt-2">
+                            <div class="code-header">
+                                <span>Código</span>
+                                <button onclick="copyText('&lt;i class=&quot;fas fa-mobile&quot;&gt;&lt;/i&gt;')">📋</button>
+                            </div>
+                            <pre style="font-size: 0.75rem;">&lt;i class="fas fa-mobile"&gt;&lt;/i&gt;</pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="example-box">
+                        <h6>🌍 Mapas</h6>
+                        <div class="demo">
+                            <span class="icon-item" onclick="copyIcon('fas fa-map-marker')" style="padding: 5px 10px;"><i class="fas fa-map-marker" style="color: #ef4444;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-map')" style="padding: 5px 10px;"><i class="fas fa-map" style="color: #22c55e;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-globe')" style="padding: 5px 10px;"><i class="fas fa-globe" style="color: #528dd7;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-compass')" style="padding: 5px 10px;"><i class="fas fa-compass" style="color: #06b6d4;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-road')" style="padding: 5px 10px;"><i class="fas fa-road" style="color: #f59e0b;"></i></span>
+                            <span class="icon-item" onclick="copyIcon('fas fa-flag')" style="padding: 5px 10px;"><i class="fas fa-flag" style="color: #ef4444;"></i></span>
+                        </div>
+                        <div class="code-block mt-2">
+                            <div class="code-header">
+                                <span>Código</span>
+                                <button onclick="copyText('&lt;i class=&quot;fas fa-map-marker&quot;&gt;&lt;/i&gt;')">📋</button>
+                            </div>
+                            <pre style="font-size: 0.75rem;">&lt;i class="fas fa-map-marker"&gt;&lt;/i&gt;</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- ENLACES A DOCUMENTACIÓN                     -->
+        <!-- ============================================ -->
+        <div class="example-card">
+            <h3>🔗 Enlaces útiles</h3>
+            <div class="docs-links">
+                <a href="https://fontawesome.com/icons" target="_blank">
+                    <i class="fas fa-search"></i> Font Awesome Icons
+                </a>
+                <a href="https://fontawesome.com/docs" target="_blank">
+                    <i class="fas fa-book"></i> Documentación
+                </a>
+                <a href="https://fontawesome.com/search" target="_blank">
+                    <i class="fas fa-filter"></i> Buscador de iconos
+                </a>
+                <a href="fontawesome-free-7.2.0-web/" target="_blank">
+                    <i class="fas fa-folder-open"></i> Carpeta local
+                </a>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- ICONOS DESTACADOS                            -->
+        <!-- ============================================ -->
+        <div class="example-card">
+            <h3>⭐ Iconos Más Usados</h3>
+            <p class="text-secondary mb-3">Haz clic en cualquier ícono para copiar su código.</p>
+            
+            <div class="icon-grid" id="featuredIcons">
+                <!-- Generado por JS -->
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- FOOTER                                       -->
+        <!-- ============================================ -->
+        <hr class="my-4" style="border-color: var(--fa-border);">
+        <footer class="text-center text-secondary py-3">
+            <p class="mb-0">
+                🧩 <strong>Chuleta Font Awesome 7.2.0</strong> — Iconos locales sin conexión a Internet
+            </p>
+            <small>
+                Creado con ❤️ para Nexus Code Editor · 
+                <a href="https://fontawesome.com" target="_blank" class="text-decoration-none" style="color: var(--fa-primary);">fontawesome.com</a>
+            </small>
+        </footer>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TOAST DE COPIA                               -->
+    <!-- ============================================ -->
+    <div class="copy-toast" id="copyToast">✅ ¡Copiado al portapapeles!</div>
+
+    <!-- ============================================ -->
+    <!-- SCRIPTS                                      -->
+    <!-- ============================================ -->
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // ============================================================
+        // LISTA DE ICONOS POPULARES
+        // ============================================================
+        const ICONS = {
+            solid: [
+                'home', 'user', 'cog', 'search', 'bell', 'envelope', 'star', 'heart',
+                'plus', 'minus', 'times', 'check', 'trash', 'edit', 'save', 'download',
+                'upload', 'print', 'share', 'link', 'lock', 'unlock', 'key', 'shield',
+                'eye', 'eye-slash', 'sync', 'redo', 'undo', 'filter', 'sort', 'sliders',
+                'info-circle', 'question-circle', 'exclamation-circle', 'exclamation-triangle',
+                'check-circle', 'times-circle', 'plus-circle', 'minus-circle',
+                'arrow-right', 'arrow-left', 'arrow-up', 'arrow-down',
+                'chevron-right', 'chevron-left', 'chevron-up', 'chevron-down',
+                'angle-right', 'angle-left', 'angle-up', 'angle-down',
+                'file', 'folder', 'folder-open', 'image', 'camera', 'video',
+                'music', 'headphones', 'microphone', 'play', 'pause', 'stop',
+                'forward', 'backward', 'step-forward', 'step-backward',
+                'phone', 'mobile', 'tablet', 'laptop', 'desktop',
+                'clock', 'calendar', 'calendar-alt', 'birthday-cake', 'gift',
+                'shopping-cart', 'shopping-bag', 'shopping-basket', 'credit-card',
+                'map-marker', 'map', 'globe', 'compass', 'road', 'flag',
+                'cloud', 'cloud-upload', 'cloud-download', 'wifi', 'signal',
+                'font', 'bold', 'italic', 'underline', 'strikethrough', 'list',
+                'table', 'chart-bar', 'chart-pie', 'chart-line', 'chart-area',
+                'code', 'bug', 'terminal', 'database', 'server', 'network-wired',
+                'rocket', 'plane', 'car', 'bus', 'train', 'bicycle', 'walking',
+                'coffee', 'beer', 'utensils', 'pizza-slice', 'hamburger', 'ice-cream',
+                'sun', 'moon', 'cloud-sun', 'cloud-moon', 'rainbow', 'snowflake',
+                'palette', 'paint-brush', 'paint-roller', 'pen', 'pen-fancy', 'highlighter',
+                'book', 'book-open', 'newspaper', 'graduation-cap', 'school',
+                'hand-peace', 'handshake', 'thumbs-up', 'thumbs-down', 'smile', 'frown',
+                'basketball-ball', 'football-ball', 'baseball-ball', 'volleyball-ball',
+                'dog', 'cat', 'fish', 'crow', 'dove', 'hippo', 'horse', 'dragon',
+                'apple-alt', 'carrot', 'lemon', 'seedling', 'tree', 'flower'
+            ],
+            regular: [
+                'star', 'heart', 'bell', 'envelope', 'calendar', 'calendar-alt',
+                'clock', 'comment', 'comments', 'file', 'folder', 'folder-open',
+                'image', 'keyboard', 'lightbulb', 'map', 'moon', 'newspaper',
+                'object-group', 'object-ungroup', 'paper-plane', 'pause-circle',
+                'play-circle', 'plus-square', 'question-circle', 'check-circle',
+                'times-circle', 'trash-alt', 'user', 'user-circle',
+                'chart-bar', 'clipboard', 'compass', 'copy', 'copyright',
+                'credit-card', 'dot-circle', 'edit', 'eye', 'eye-slash',
+                'file-alt', 'file-archive', 'file-audio', 'file-code',
+                'file-excel', 'file-image', 'file-pdf', 'file-powerpoint',
+                'file-video', 'file-word', 'flag', 'frown', 'futbol',
+                'gem', 'hand-peace', 'handshake', 'hdd', 'heart',
+                'hospital', 'hourglass', 'id-badge', 'id-card',
+                'keyboard', 'kiss', 'laugh', 'lemon', 'life-ring',
+                'lightbulb', 'list-alt', 'map', 'meh', 'moon',
+                'newspaper', 'object-group', 'object-ungroup',
+                'paper-plane', 'pause-circle', 'play-circle',
+                'plus-square', 'question-circle', 'registered',
+                'save', 'share-square', 'smile', 'snowflake',
+                'square', 'star', 'star-half', 'sticky-note',
+                'stop-circle', 'sun', 'surprise', 'thumbs-down',
+                'thumbs-up', 'times-circle', 'trash-alt',
+                'user', 'user-circle', 'window-close', 'window-maximize',
+                'window-minimize', 'window-restore'
+            ],
+            brands: [
+                'facebook', 'twitter', 'instagram', 'youtube', 'github', 'linkedin',
+                'whatsapp', 'telegram', 'discord', 'tiktok', 'twitch', 'spotify',
+                'apple', 'android', 'windows', 'linux', 'ubuntu', 'debian',
+                'chrome', 'firefox', 'safari', 'edge', 'opera', 'internet-explorer',
+                'angular', 'bootstrap', 'css3', 'html5', 'js',
+                'node', 'npm', 'python', 'php', 'java', 'swift',
+                'react', 'vuejs', 'sass', 'less', 'git',
+                'docker', 'kubernetes', 'aws', 'google', 'microsoft',
+                'facebook-messenger', 'pinterest', 'reddit', 'snapchat',
+                'soundcloud', 'stack-overflow', 'telegram-plane', 'trello',
+                'tumblr', 'vimeo', 'vk', 'weixin',
+                'wordpress', 'xbox', 'yahoo', 'zoom'
+            ]
+        };
+
+        // ============================================================
+        // FUNCIONES
+        // ============================================================
+
+        // Cambiar de tab
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.tab === tabId) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        // Generar grid de iconos
+        function renderIconGrid(containerId, iconList, prefix) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            container.innerHTML = iconList.map(name => `
+                <div class="icon-item" onclick="copyIcon('${prefix} fa-${name}')" title="Copiar: ${prefix} fa-${name}">
+                    <i class="${prefix} fa-${name}"></i>
+                    <span class="icon-name">${name}</span>
+                </div>
+            `).join('');
+        }
+
+        // Copiar al portapapeles
+        function copyIcon(iconClass) {
+            const htmlCode = `<i class="${iconClass}"></i>`;
+            navigator.clipboard.writeText(htmlCode).then(() => {
+                const toast = document.getElementById('copyToast');
+                toast.textContent = `✅ ${htmlCode}`;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            });
+        }
+
+        // Función auxiliar para copiar texto personalizado
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('copyToast');
+                toast.textContent = `✅ Código copiado`;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            });
+        }
+
+        // Buscar iconos
+        function searchIcons() {
+            const query = document.getElementById('searchIcons').value.toLowerCase().trim();
+            
+            ['solid', 'regular', 'brands'].forEach(type => {
+                const container = document.getElementById(`${type}Icons`);
+                const items = container ? container.querySelectorAll('.icon-item') : [];
+                
+                items.forEach(item => {
+                    const name = item.querySelector('.icon-name').textContent.toLowerCase();
+                    const display = !query || name.includes(query);
+                    item.style.display = display ? 'block' : 'none';
+                });
+            });
+        }
+
+        // Actualizar contadores
+        function updateCounters() {
+            ['solid', 'regular', 'brands'].forEach(type => {
+                const container = document.getElementById(`${type}Icons`);
+                const count = container ? container.querySelectorAll('.icon-item').length : 0;
+                const counter = document.getElementById(`count-${type}`);
+                if (counter) counter.textContent = count;
+            });
+        }
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Renderizar iconos
+            renderIconGrid('solidIcons', ICONS.solid, 'fas');
+            renderIconGrid('regularIcons', ICONS.regular, 'far');
+            renderIconGrid('brandsIcons', ICONS.brands, 'fab');
+            renderIconGrid('featuredIcons', 
+                ['home', 'user', 'cog', 'search', 'bell', 'envelope', 'star', 'heart',
+                 'plus', 'edit', 'trash', 'save', 'download', 'upload', 'print',
+                 'lock', 'key', 'eye', 'sync', 'filter', 'camera', 'music', 'play',
+                 'phone', 'clock', 'calendar', 'gift', 'map-marker', 'globe',
+                 'cloud', 'code', 'bug', 'rocket', 'coffee', 'sun', 'moon', 'book',
+                 'thumbs-up', 'smile', 'handshake', 'palette', 'graduation-cap',
+                 'shopping-cart', 'credit-card', 'chart-bar', 'database', 'server'],
+                'fas'
+            );
+            
+            // Actualizar contadores
+            updateCounters();
+            
+            // Evento de búsqueda
+            document.getElementById('searchIcons').addEventListener('input', searchIcons);
+        });
+    </script>
+</body>
+</html>    

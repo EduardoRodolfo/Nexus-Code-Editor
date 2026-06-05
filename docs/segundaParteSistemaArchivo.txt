@@ -1,0 +1,767 @@
+﻿¡Perfecto! Veo que ya tienes una estructura de carpetas organizada. Voy a ayudarte a integrar el sistema de proyectos manteniendo tu estructura actual. Aquí tienes la solución adaptada:
+
+## 1. Estructura Actual de tu Proyecto
+
+```
+tu-editor/
+├── .vscode/
+├── ace/           # Librería Ace Editor
+├── css/           # Estilos del editor
+├── docs/          # Documentación
+├── js/           # JavaScript del editor
+├── node_modules/
+├── páginas html/  # Tus páginas HTML
+├── index.html     # Página principal
+├── package.json
+└── package-lock.json
+```
+
+## 2. Modificación del index.html
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Código</title>
+    <link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Barra de herramientas -->
+        <div id="toolbar">
+            <button id="new-project">📁 Nuevo Proyecto</button>
+            <button id="open-project">📂 Abrir Proyecto</button>
+            <button id="save-file">💾 Guardar</button>
+            <span id="project-name">Sin proyecto abierto</span>
+        </div>
+
+        <div id="main-content">
+            <!-- Panel lateral - Explorador de archivos -->
+            <div id="sidebar">
+                <div id="file-explorer"></div>
+            </div>
+
+            <!-- Editor principal -->
+            <div id="editor-panel">
+                <div id="editor-tabs"></div>
+                <div id="editor"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ace Editor -->
+    <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/projectManager.js" type="module"></script>
+    <script src="js/fileExplorer.js" type="module"></script>
+    <script src="js/main.js" type="module"></script>
+</body>
+</html>
+```
+
+## 3. CSS para el Layout (css/editor.css)
+
+```css
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#toolbar {
+    background: #2c3e50;
+    color: white;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 50px;
+}
+
+#toolbar button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#toolbar button:hover {
+    background: #2980b9;
+}
+
+#project-name {
+    margin-left: auto;
+    font-weight: bold;
+}
+
+#main-content {
+    display: flex;
+    height: calc(100vh - 50px);
+}
+
+#sidebar {
+    width: 300px;
+    background: #34495e;
+    color: white;
+    overflow-y: auto;
+}
+
+#editor-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#editor-tabs {
+    background: #ecf0f1;
+    padding: 5px;
+    display: flex;
+    gap: 5px;
+    min-height: 40px;
+}
+
+.tab {
+    background: #bdc3c7;
+    padding: 8px 15px;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.tab.active {
+    background: #3498db;
+    color: white;
+}
+
+#editor {
+    flex: 1;
+}
+
+/* Estilos para el explorador de archivos */
+.tree-item {
+    padding: 5px 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tree-item:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.tree-children {
+    margin-left: 20px;
+    display: none;
+}
+
+.tree-item.expanded > .tree-children {
+    display: block;
+}
+
+.file-icon::before {
+    margin-right: 5px;
+}
+
+.folder-icon::before {
+    margin-right: 5px;
+}
+```
+
+## 4. Project Manager Adaptado (js/projectManager.js)
+
+```javascript
+class ProjectManager {
+    constructor() {
+        this.currentProject = null;
+        this.isVirtualMode = false; // Para cuando no usemos la API de archivos
+    }
+
+    // Abrir proyecto existente
+    async openProject() {
+        try {
+            if ('showDirectoryPicker' in window) {
+                // Modo real con API de archivos
+                const directoryHandle = await window.showDirectoryPicker();
+                this.currentProject = await this.loadProjectStructure(directoryHandle);
+                this.isVirtualMode = false;
+            } else {
+                // Modo virtual para desarrollo
+                this.currentProject = await this.openVirtualProject();
+                this.isVirtualMode = true;
+            }
+            
+            this.updateProjectName();
+            return this.currentProject;
+        } catch (error) {
+            console.error('Error al abrir proyecto:', error);
+            this.showError('No se pudo abrir el proyecto: ' + error.message);
+        }
+    }
+
+    // Modo virtual para desarrollo
+    async openVirtualProject() {
+        return new Promise((resolve) => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.webkitdirectory = true;
+            input.multiple = true;
+            
+            input.onchange = (e) => {
+                const files = Array.from(e.target.files);
+                const structure = this.processFiles(files);
+                resolve(structure);
+            };
+            
+            input.click();
+        });
+    }
+
+    // Crear nuevo proyecto
+    async createNewProject() {
+        const projectName = prompt('Nombre del nuevo proyecto:');
+        if (!projectName) return null;
+
+        try {
+            if ('showDirectoryPicker' in window) {
+                const directoryHandle = await window.showDirectoryPicker();
+                await this.createProjectStructure(directoryHandle, projectName);
+                this.currentProject = await this.loadProjectStructure(directoryHandle);
+                this.isVirtualMode = false;
+            } else {
+                // Modo virtual - crear estructura en memoria
+                this.currentProject = this.createVirtualProject(projectName);
+                this.isVirtualMode = true;
+            }
+            
+            this.updateProjectName();
+            return this.currentProject;
+        } catch (error) {
+            console.error('Error al crear proyecto:', error);
+            this.showError('No se pudo crear el proyecto: ' + error.message);
+        }
+    }
+
+    // Crear estructura de proyecto virtual
+    createVirtualProject(projectName) {
+        return {
+            name: projectName,
+            type: 'directory',
+            path: '/',
+            children: [
+                {
+                    name: 'index.html',
+                    type: 'file',
+                    path: '/index.html',
+                    content: this.getDefaultHTML(projectName),
+                    virtual: true
+                },
+                {
+                    name: 'css',
+                    type: 'directory',
+                    path: '/css',
+                    children: [
+                        {
+                            name: 'style.css',
+                            type: 'file',
+                            path: '/css/style.css',
+                            content: this.getDefaultCSS(),
+                            virtual: true
+                        }
+                    ]
+                },
+                {
+                    name: 'js',
+                    type: 'directory',
+                    path: '/js',
+                    children: [
+                        {
+                            name: 'app.js',
+                            type: 'file',
+                            path: '/js/app.js',
+                            content: this.getDefaultJS(projectName),
+                            virtual: true
+                        }
+                    ]
+                },
+                {
+                    name: 'assets',
+                    type: 'directory',
+                    path: '/assets',
+                    children: [],
+                    virtual: true
+                }
+            ]
+        };
+    }
+
+    // Procesar archivos para el modo virtual
+    processFiles(files) {
+        const root = { 
+            name: files[0]?.webkitRelativePath.split('/')[0] || 'project',
+            type: 'directory', 
+            path: '/',
+            children: [] 
+        };
+        
+        files.forEach(file => {
+            const pathParts = file.webkitRelativePath.split('/');
+            this.addFileToStructure(root, pathParts, file);
+        });
+        
+        return root;
+    }
+
+    addFileToStructure(node, pathParts, file) {
+        if (pathParts.length === 1) {
+            // Es un archivo en la raíz
+            node.children.push({
+                name: pathParts[0],
+                type: 'file',
+                path: '/' + pathParts[0],
+                file: file,
+                virtual: false
+            });
+        } else {
+            // Es un directorio o archivo en subcarpeta
+            const dirName = pathParts.shift();
+            let dirNode = node.children.find(child => child.name === dirName);
+            
+            if (!dirNode) {
+                dirNode = { 
+                    name: dirName, 
+                    type: 'directory', 
+                    path: node.path + dirName + '/',
+                    children: [] 
+                };
+                node.children.push(dirNode);
+            }
+            
+            this.addFileToStructure(dirNode, pathParts, file);
+        }
+    }
+
+    // Contenidos por defecto
+    getDefaultHTML(projectName) {
+        return `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${projectName}</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>¡Bienvenido a ${projectName}!</h1>
+    <p>Este es tu nuevo proyecto.</p>
+    <script src="js/app.js"></script>
+</body>
+</html>`;
+    }
+
+    getDefaultCSS() {
+        return `/* Estilos para ${projectName} */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+h1 {
+    color: #2c3e50;
+}`;
+    }
+
+    getDefaultJS(projectName) {
+        return `// JavaScript para ${projectName}
+console.log('¡Proyecto ${projectName} cargado!');
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM completamente cargado y procesado');
+});`;
+    }
+
+    updateProjectName() {
+        if (this.currentProject) {
+            document.getElementById('project-name').textContent = 
+                `Proyecto: ${this.currentProject.name}`;
+        }
+    }
+
+    showError(message) {
+        alert(message);
+    }
+}
+
+export default ProjectManager;
+```
+
+## 5. File Explorer Mejorado (js/fileExplorer.js)
+
+```javascript
+class FileExplorer {
+    constructor(container, onFileSelect) {
+        this.container = container;
+        this.onFileSelect = onFileSelect;
+        this.project = null;
+    }
+
+    loadProject(project) {
+        this.project = project;
+        this.render();
+    }
+
+    render() {
+        this.container.innerHTML = '<h3 style="padding: 10px; border-bottom: 1px solid #555;">Explorador</h3>';
+        
+        if (this.project) {
+            this.renderTree(this.project, this.container);
+        } else {
+            this.container.innerHTML += '<p style="padding: 10px; color: #ccc;">No hay proyecto abierto</p>';
+        }
+    }
+
+    renderTree(node, parentElement) {
+        const item = document.createElement('div');
+        item.className = 'tree-item';
+        item.dataset.path = node.path;
+
+        const icon = node.type === 'directory' ? '📁' : this.getFileIcon(node.name);
+        const nameSpan = document.createElement('span');
+        nameSpan.innerHTML = `${icon} ${node.name}`;
+        nameSpan.className = node.type === 'directory' ? 'folder-icon' : 'file-icon';
+
+        nameSpan.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (node.type === 'file') {
+                this.onFileSelect(node);
+            } else {
+                item.classList.toggle('expanded');
+            }
+        });
+
+        item.appendChild(nameSpan);
+
+        if (node.type === 'directory' && node.children && node.children.length > 0) {
+            const childrenContainer = document.createElement('div');
+            childrenContainer.className = 'tree-children';
+            
+            node.children.forEach(child => {
+                this.renderTree(child, childrenContainer);
+            });
+            
+            item.appendChild(childrenContainer);
+            item.classList.add('expanded'); // Expandir por defecto
+        }
+
+        parentElement.appendChild(item);
+    }
+
+    getFileIcon(filename) {
+        const ext = filename.split('.').pop().toLowerCase();
+        const icons = {
+            'html': '🌐',
+            'css': '🎨',
+            'js': '⚡',
+            'json': '📋',
+            'md': '📝',
+            'jpg': '🖼️',
+            'png': '🖼️',
+            'gif': '🖼️'
+        };
+        return icons[ext] || '📄';
+    }
+}
+
+export default FileExplorer;
+```
+
+## 6. Integración Principal (js/main.js)
+
+```javascript
+import ProjectManager from './projectManager.js';
+import FileExplorer from './fileExplorer.js';
+
+class CodeEditor {
+    constructor() {
+        this.projectManager = new ProjectManager();
+        this.currentFile = null;
+        this.openTabs = new Map();
+        this.init();
+    }
+
+    init() {
+        this.initAceEditor();
+        this.initFileExplorer();
+        this.setupEventListeners();
+        console.log('Editor de código inicializado ✅');
+    }
+
+    initAceEditor() {
+        this.aceEditor = ace.edit('editor');
+        this.aceEditor.setTheme('ace/theme/monokai');
+        this.aceEditor.session.setMode('ace/mode/html');
+        this.aceEditor.setFontSize('14px');
+        
+        // Configuración adicional
+        this.aceEditor.setOptions({
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            showPrintMargin: false
+        });
+    }
+
+    initFileExplorer() {
+        const explorerContainer = document.getElementById('file-explorer');
+        this.fileExplorer = new FileExplorer(explorerContainer, (file) => {
+            this.openFile(file);
+        });
+    }
+
+    setupEventListeners() {
+        document.getElementById('open-project').addEventListener('click', () => {
+            this.openProject();
+        });
+
+        document.getElementById('new-project').addEventListener('click', () => {
+            this.createNewProject();
+        });
+
+        document.getElementById('save-file').addEventListener('click', () => {
+            this.saveCurrentFile();
+        });
+    }
+
+    async openProject() {
+        const project = await this.projectManager.openProject();
+        if (project) {
+            this.fileExplorer.loadProject(project);
+            this.closeAllTabs();
+        }
+    }
+
+    async createNewProject() {
+        const project = await this.projectManager.createNewProject();
+        if (project) {
+            this.fileExplorer.loadProject(project);
+            this.closeAllTabs();
+        }
+    }
+
+    openFile(file) {
+        if (!file) return;
+
+        // Verificar si el archivo ya está abierto
+        if (this.openTabs.has(file.path)) {
+            this.switchToTab(file.path);
+            return;
+        }
+
+        // Crear nueva pestaña
+        this.createTab(file);
+        
+        // Cargar contenido
+        this.loadFileContent(file);
+        
+        // Configurar modo del editor
+        this.setEditorMode(file.name);
+    }
+
+    createTab(file) {
+        const tabsContainer = document.getElementById('editor-tabs');
+        const tab = document.createElement('div');
+        tab.className = 'tab';
+        tab.textContent = file.name;
+        tab.dataset.filePath = file.path;
+
+        tab.addEventListener('click', () => {
+            this.switchToTab(file.path);
+        });
+
+        // Botón de cerrar
+        const closeBtn = document.createElement('span');
+        closeBtn.textContent = ' ×';
+        closeBtn.style.cursor = 'pointer';
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.closeTab(file.path);
+        });
+
+        tab.appendChild(closeBtn);
+        tabsContainer.appendChild(tab);
+
+        this.openTabs.set(file.path, { file, tab });
+        this.setActiveTab(file.path);
+    }
+
+    switchToTab(filePath) {
+        const tabInfo = this.openTabs.get(filePath);
+        if (tabInfo) {
+            this.currentFile = tabInfo.file;
+            this.setActiveTab(filePath);
+            this.setEditorMode(tabInfo.file.name);
+            
+            // Si es un archivo virtual, cargar el contenido desde la memoria
+            if (tabInfo.file.virtual || tabInfo.file.content) {
+                this.aceEditor.setValue(tabInfo.file.content || '', -1);
+            }
+        }
+    }
+
+    setActiveTab(filePath) {
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        const tabInfo = this.openTabs.get(filePath);
+        if (tabInfo) {
+            tabInfo.tab.classList.add('active');
+        }
+    }
+
+    closeTab(filePath) {
+        const tabInfo = this.openTabs.get(filePath);
+        if (tabInfo) {
+            tabInfo.tab.remove();
+            this.openTabs.delete(filePath);
+            
+            // Si era la pestaña activa, activar otra
+            if (this.currentFile && this.currentFile.path === filePath) {
+                const remainingTabs = Array.from(this.openTabs.values());
+                if (remainingTabs.length > 0) {
+                    this.switchToTab(remainingTabs[0].file.path);
+                } else {
+                    this.currentFile = null;
+                    this.aceEditor.setValue('', -1);
+                }
+            }
+        }
+    }
+
+    closeAllTabs() {
+        this.openTabs.forEach((tabInfo, filePath) => {
+            tabInfo.tab.remove();
+        });
+        this.openTabs.clear();
+        this.currentFile = null;
+        this.aceEditor.setValue('', -1);
+    }
+
+    async loadFileContent(file) {
+        try {
+            if (file.content) {
+                // Contenido ya en memoria (modo virtual)
+                this.aceEditor.setValue(file.content, -1);
+            } else if (file.file) {
+                // Leer archivo del sistema
+                const content = await this.readFileContent(file.file);
+                this.aceEditor.setValue(content, -1);
+                file.content = content; // Cachear contenido
+            }
+        } catch (error) {
+            console.error('Error al cargar archivo:', error);
+            this.aceEditor.setValue('// Error al cargar el archivo', -1);
+        }
+    }
+
+    readFileContent(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.readAsText(file);
+        });
+    }
+
+    setEditorMode(filename) {
+        const ext = filename.split('.').pop().toLowerCase();
+        const modes = {
+            'html': 'html',
+            'css': 'css',
+            'js': 'javascript',
+            'json': 'json',
+            'md': 'markdown',
+            'php': 'php',
+            'py': 'python'
+        };
+        
+        const mode = modes[ext] || 'text';
+        this.aceEditor.session.setMode(`ace/mode/${mode}`);
+    }
+
+    saveCurrentFile() {
+        if (!this.currentFile) {
+            alert('No hay archivo abierto para guardar');
+            return;
+        }
+
+        const content = this.aceEditor.getValue();
+        
+        if (this.projectManager.isVirtualMode) {
+            // Modo virtual: guardar en memoria
+            this.currentFile.content = content;
+            alert('Archivo guardado en memoria (modo virtual)');
+        } else {
+            // Modo real: intentar guardar en el sistema de archivos
+            this.saveToFileSystem(this.currentFile, content);
+        }
+    }
+
+    async saveToFileSystem(file, content) {
+        try {
+            if (file.fileHandle) {
+                const writable = await file.fileHandle.createWritable();
+                await writable.write(content);
+                await writable.close();
+                alert('Archivo guardado correctamente');
+            }
+        } catch (error) {
+            console.error('Error al guardar:', error);
+            alert('Error al guardar el archivo');
+        }
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    window.codeEditor = new CodeEditor();
+});
+```
+
+## 7. Configuración de Vite (vite.config.js)
+
+```javascript
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+    server: {
+        port: 3000,
+        open: true // Abrir automáticamente en el navegador
+    },
+    build: {
+        outDir: 'dist',
+        assetsDir: 'assets'
+    }
+});
+```
+
+## Características implementadas:
+
+✅ **Abrir proyecto** - Carga estructura completa de carpetas  
+✅ **Nuevo proyecto** - Crea estructura web básica  
+✅ **Explorador de archivos** con árbol interactivo  
+✅ **Pestañas** para archivos abiertos  
+✅ **Resaltado de sintaxis** automático  
+✅ **Modo virtual** para desarrollo  
+✅ **Guardado** de archivos  
+
+¿Te gustaría que ajuste alguna parte específica o necesitas ayuda con la integración con tu código actual?

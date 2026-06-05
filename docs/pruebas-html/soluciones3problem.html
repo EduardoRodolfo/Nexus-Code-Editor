@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios de programación  Interactivos</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-blue: #caf0f8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: var(--light);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #4cc9f0, #f72585);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .problems-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .problem-card {
+            background: rgba(25, 25, 60, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(92, 107, 192, 0.3);
+        }
+        
+        .problem-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+        
+        .problem-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .problem-title h2 {
+            font-size: 1.8rem;
+            color: #4cc9f0;
+        }
+        
+        .icon {
+            font-size: 2rem;
+        }
+        
+        .explanation {
+            background: rgba(67, 97, 238, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .explanation h3 {
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+        
+        .solution-options {
+            margin: 20px 0;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            background: rgba(76, 201, 240, 0.15);
+            border-color: rgba(76, 201, 240, 0.3);
+        }
+        
+        .option.correct {
+            background: rgba(40, 167, 69, 0.2);
+            border-color: rgba(40, 167, 69, 0.4);
+        }
+        
+        .option.incorrect {
+            background: rgba(220, 53, 69, 0.2);
+            border-color: rgba(220, 53, 69, 0.4);
+        }
+        
+        .feedback {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .feedback.correct {
+            display: block;
+            background: rgba(40, 167, 69, 0.2);
+            border-left: 4px solid #28a745;
+        }
+        
+        .feedback.incorrect {
+            display: block;
+            background: rgba(220, 53, 69, 0.2);
+            border-left: 4px solid #dc3545;
+        }
+        
+        .editor-container {
+            height: 200px;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #editorFactorial, #editorPalindromo, #editorFibonacci {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .btn-run {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+            display: block;
+            margin: 15px 0;
+        }
+        
+        .btn-run:hover {
+            background: var(--secondary);
+        }
+        
+        .output {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            min-height: 60px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        @media (max-width: 768px) {
+            .problems-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Ejercicios Interactivos</h1>
+            <p class="subtitle">Practica conceptos fundamentales de programación: factoriales, palíndromos y la secuencia Fibonacci. Selecciona soluciones, recibe retroalimentación inmediata y prueba código en tiempo real.</p>
+        </header>
+        
+        <div class="problems-container">
+            <!-- Problema 1: Factorial -->
+            <div class="problem-card">
+                <div class="problem-title">
+                    <div class="icon">🔢</div>
+                    <h2>Calculadora de Factorial</h2>
+                </div>
+                
+                <div class="explanation">
+                    <h3>Concepto y aplicaciones</h3>
+                    <p>El factorial de un número entero no negativo n (denotado n!) es el producto de todos los enteros positivos menores o iguales a n. En matemáticas, los factoriales son fundamentales en combinatoria, probabilidad y estadística. En la naturaleza, aparecen en cálculos de permutaciones genéticas y en la teoría de probabilidades aplicada a fenómenos naturales.</p>
+                </div>
+                
+                <p><strong>Descripción:</strong> Crear una función que calcule el factorial de un número.</p>
+                
+                <div class="solution-options">
+                    <h3>Selecciona una solución:</h3>
+                    <div class="option" data-problem="factorial" data-correct="true">
+                        function calcularFactorial(n) {
+                            if (n === 0) return 1;
+                            let resultado = 1;
+                            for (let i = 1; i <= n; i++) {
+                                resultado *= i;
+                            }
+                            return resultado;
+                        }
+                    </div>
+                    
+                    <div class="option" data-problem="factorial" data-correct="false">
+                        function calcularFactorial(n) {
+                            let resultado = 0; // Error: inicializado a 0
+                            for (let i = 1; i <= n; i++) {
+                                resultado *= i;
+                            }
+                            return resultado;
+                        }
+                    </div>
+                    
+                    <div class="option" data-problem="factorial" data-correct="false">
+                        function calcularFactorial(n) {
+                            if (n < 0) return -1; // Error: no maneja caso 0
+                            let resultado = 1;
+                            for (let i = n; i > 0; i++) { // Error: i++ en lugar de i--
+                                resultado *= i;
+                            }
+                            return resultado;
+                        }
+                    </div>
+                </div>
+                
+                <div class="feedback correct">
+                    ✅ <strong>Correcto!</strong> Esta solución maneja correctamente el caso base (0! = 1) y utiliza un bucle for para multiplicar secuencialmente los números.
+                </div>
+                
+                <div class="feedback incorrect">
+                    ❌ <strong>Incorrecto!</strong> Esta solución tiene errores. La primera opción inicializa el resultado a 0 (debería ser 1). La segunda no maneja el caso n=0 y tiene un bucle infinito (i++ en lugar de i--).
+                </div>
+                
+                <button class="btn-run" data-editor="editorFactorial">Ejecutar Código</button>
+                
+                <div class="editor-container">
+                    <div id="editorFactorial">function calcularFactorial(n) {
+    if (n === 0) return 1;
+    let resultado = 1;
+    for (let i = 1; i <= n; i++) {
+        resultado *= i;
+    }
+    return resultado;
+}
+
+console.log("5! =", calcularFactorial(5));
+console.log("0! =", calcularFactorial(0));
+console.log("3! =", calcularFactorial(3));</div>
+                </div>
+                
+                <div class="output" id="outputFactorial"></div>
+            </div>
+            
+            <!-- Problema 2: Palíndromo -->
+            <div class="problem-card">
+                <div class="problem-title">
+                    <div class="icon">🔄</div>
+                    <h2>Validar Palíndromos</h2>
+                </div>
+                
+                <div class="explanation">
+                    <h3>Concepto y aplicaciones</h3>
+                    <p>Un palíndromo es una palabra, frase o secuencia que se lee igual en ambas direcciones. En biología, las secuencias palindrómicas de ADN son importantes porque son sitios de reconocimiento para enzimas de restricción. Estas secuencias son fundamentales en ingeniería genética y biotecnología.</p>
+                </div>
+                
+                <p><strong>Descripción:</strong> Crear una función que determine si una palabra es palíndromo.</p>
+                
+                <div class="solution-options">
+                    <h3>Selecciona una solución:</h3>
+                    <div class="option" data-problem="palindromo" data-correct="true">
+                        function esPalindromo(palabra) {
+                            const limpia = palabra.toLowerCase().replace(/[^a-z]/g, '');
+                            return limpia === limpia.split('').reverse().join('');
+                        }
+                    </div>
+                    
+                    <div class="option" data-problem="palindromo" data-correct="false">
+                        function esPalindromo(palabra) {
+                            // Error: no convierte a minúsculas ni limpia
+                            return palabra === palabra.reverse(); // Error: reverse no existe en strings
+                        }
+                    </div>
+                    
+                    <div class="option" data-problem="palindromo" data-correct="false">
+                        function esPalindromo(palabra) {
+                            // Error: solo compara el primer y último carácter
+                            return palabra[0] === palabra[palabra.length-1];
+                        }
+                    </div>
+                </div>
+                
+                <div class="feedback correct">
+                    ✅ <strong>Correcto!</strong> Esta solución limpia la cadena (elimina espacios y caracteres no alfabéticos) y convierte a minúsculas antes de comparar con su reverso.
+                </div>
+                
+                <div class="feedback incorrect">
+                    ❌ <strong>Incorrecto!</strong> La primera opción intenta usar reverse() directamente en un string (no es posible). La segunda solo compara el primer y último carácter, ignorando el resto.
+                </div>
+                
+                <button class="btn-run" data-editor="editorPalindromo">Ejecutar Código</button>
+                
+                <div class="editor-container">
+                    <div id="editorPalindromo">function esPalindromo(palabra) {
+    const limpia = palabra.toLowerCase().replace(/[^a-z]/g, '');
+    return limpia === limpia.split('').reverse().join('');
+}
+
+console.log("'reconocer' es palíndromo:", esPalindromo("reconocer"));
+console.log("'Anita lava la tina' es palíndromo:", esPalindromo("Anita lava la tina"));
+console.log("'javascript' es palíndromo:", esPalindromo("javascript"));</div>
+                </div>
+                
+                <div class="output" id="outputPalindromo"></div>
+            </div>
+            
+            <!-- Problema 3: Fibonacci -->
+            <div class="problem-card">
+                <div class="problem-title">
+                    <div class="icon">🐚</div>
+                    <h2>Secuencia Fibonacci</h2>
+                </div>
+                
+                <div class="explanation">
+                    <h3>Concepto y aplicaciones</h3>
+                    <p>La secuencia Fibonacci es una serie donde cada número es la suma de los dos anteriores (0, 1, 1, 2, 3, 5, 8...). En la naturaleza, aparece en la disposición de hojas en plantas, en la estructura de piñas, en la concha del nautilus, en la familia de conejos y en la espiral de galaxias, demostrando patrones matemáticos fundamentales en el universo.</p>
+                </div>
+                
+                <p><strong>Descripción:</strong> Crear una función que retorne un array con los primeros n números de Fibonacci.</p>
+                
+                <div class="solution-options">
+                    <h3>Selecciona una solución:</h3>
+                    <div class="option" data-problem="fibonacci" data-correct="true">
+                        function fibonacci(n) {
+                            if (n <= 0) return [];
+                            if (n === 1) return [0];
+                            
+                            const secuencia = [0, 1];
+                            for (let i = 2; i < n; i++) {
+                                secuencia.push(secuencia[i-1] + secuencia[i-2]);
+                            }
+                            return secuencia;
+                        }
+                    </div>
+                    
+                    <div class="option" data-problem="fibonacci" data-correct="false">
+                        function fibonacci(n) {
+                            // Error: no maneja n=0 ni n=1
+                            const secuencia = [0, 1];
+                            for (let i = 2; i <= n; i++) { // Error: debe ser i < n
+                                secuencia.push(secuencia[i-1] + secuencia[i-2]);
+                            }
+                            return secuencia;
+                        }
+                    </div>
+                    
+                    <div class="option" data-problem="fibonacci" data-correct="false">
+                        function fibonacci(n) {
+                            // Error: devuelve números incorrectos
+                            const secuencia = [1, 1]; // Error: debe empezar con 0,1
+                            for (let i = 2; i < n; i++) {
+                                secuencia.push(secuencia[i-1] + secuencia[i-2]);
+                            }
+                            return secuencia;
+                        }
+                    </div>
+                </div>
+                
+                <div class="feedback correct">
+                    ✅ <strong>Correcto!</strong> Esta solución maneja correctamente los casos base (n=0 y n=1) y genera la secuencia exacta usando un bucle for.
+                </div>
+                
+                <div class="feedback incorrect">
+                    ❌ <strong>Incorrecto!</strong> La primera opción produce un array más largo de lo necesario (usa <= en lugar de <). La segunda comienza con [1,1] en lugar de [0,1], alterando toda la secuencia.
+                </div>
+                
+                <button class="btn-run" data-editor="editorFibonacci">Ejecutar Código</button>
+                
+                <div class="editor-container">
+                    <div id="editorFibonacci">function fibonacci(n) {
+    if (n <= 0) return [];
+    if (n === 1) return [0];
+    
+    const secuencia = [0, 1];
+    for (let i = 2; i < n; i++) {
+        secuencia.push(secuencia[i-1] + secuencia[i-2]);
+    }
+    return secuencia;
+}
+
+console.log("Fibonacci(6):", fibonacci(6));
+console.log("Fibonacci(1):", fibonacci(1));
+console.log("Fibonacci(10):", fibonacci(10));</div>
+                </div>
+                
+                <div class="output" id="outputFibonacci"></div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Ejercicios interactivos de programación | Factorial, Palíndromo y Fibonacci</p>
+            <p>Selecciona soluciones, recibe retroalimentación y prueba tu código en tiempo real</p>
+        </footer>
+    </div>
+
+    <script>
+        // Inicializar editores ACE
+        const editors = {
+            editorFactorial: ace.edit("editorFactorial"),
+            editorPalindromo: ace.edit("editorPalindromo"),
+            editorFibonacci: ace.edit("editorFibonacci")
+        };
+        
+        // Configurar editores
+        Object.keys(editors).forEach(editorId => {
+            editors[editorId].setTheme("ace/theme/monokai");
+            editors[editorId].session.setMode("ace/mode/javascript");
+            editors[editorId].setFontSize(14);
+            editors[editorId].setOptions({
+                enableBasicAutocompletion: true,
+                enableLiveAutocompletion: true
+            });
+        });
+        
+        // Manejar selección de soluciones
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const problem = this.dataset.problem;
+                const isCorrect = this.dataset.correct === "true";
+                
+                // Remover selecciones anteriores
+                document.querySelectorAll(`.option[data-problem="${problem}"]`).forEach(opt => {
+                    opt.classList.remove('correct', 'incorrect');
+                });
+                
+                // Aplicar estilos según corrección
+                this.classList.add(isCorrect ? 'correct' : 'incorrect');
+                
+                // Mostrar retroalimentación
+                document.querySelectorAll(`.problem-card .feedback`).forEach(fb => {
+                    fb.style.display = 'none';
+                });
+                
+                const feedback = this.closest('.problem-card').querySelector(
+                    isCorrect ? '.feedback.correct' : '.feedback.incorrect'
+                );
+                if (feedback) feedback.style.display = 'block';
+            });
+        });
+        
+        // Manejar ejecución de código
+        document.querySelectorAll('.btn-run').forEach(button => {
+            button.addEventListener('click', function() {
+                const editorId = this.dataset.editor;
+                const outputId = `output${editorId.replace('editor', '')}`;
+                const outputElement = document.getElementById(outputId);
+                
+                try {
+                    // Capturar console.log
+                    const originalLog = console.log;
+                    let outputText = "";
+                    
+                    console.log = function(...args) {
+                        outputText += args.map(arg => 
+                            typeof arg === 'object' ? JSON.stringify(arg) : arg
+                        ).join(' ') + '\n';
+                        originalLog.apply(console, args);
+                    };
+                    
+                    // Ejecutar código
+                    eval(editors[editorId].getValue());
+                    
+                    console.log = originalLog;
+                    outputElement.textContent = outputText;
+                } catch (error) {
+                    outputElement.textContent = `Error: ${error.message}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

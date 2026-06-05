@@ -1,0 +1,244 @@
+﻿¡Perfecto, amigo! Veo que el código está muy bien estructurado. El problema es que el sidebar del proyecto se muestra automáticamente cuando abres/creas un proyecto, pero necesitas un botón para abrirlo manualmente. Te ayudo a implementarlo.
+
+## Modificaciones necesarias:
+
+### 1. En `index.html` - Agregar botón de toggle para el sidebar
+
+**Busca esta sección en el nav y modifícala:**
+
+```html
+<nav>
+  <ul class="menu">
+    <li class="menu-item dropdown">
+      <a href="#"><span class="menu-icon">≡</span> Archivo</a>
+      <div class="dropdown-content">
+        <!-- ... opciones existentes ... -->
+      </div>
+    </li>
+    <!-- AGREGAR ESTE NUEVO ELEMENTO DEL MENÚ -->
+    <li class="menu-item">
+      <a href="#" id="toggle-sidebar">
+        <span class="menu-icon">📁</span> Explorador
+      </a>
+    </li>
+  </ul>
+</nav>
+```
+
+### 2. En `index.js` - Agregar las funciones de toggle
+
+**Agrega este event listener después de los demás event listeners en DOMContentLoaded:**
+
+```javascript
+// Agregar después de los event listeners existentes
+document.getElementById('toggle-sidebar').addEventListener('click', toggleProjectSidebar);
+document.getElementById('close-sidebar').addEventListener('click', closeProjectSidebar);
+```
+
+**Agrega estas nuevas funciones en `index.js`:**
+
+```javascript
+// =====================================
+// Funciones para mostrar/ocultar sidebar
+// =====================================
+
+function toggleProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    
+    if (currentProjectHandle) {
+        // Si hay proyecto abierto, alternar visibilidad
+        if (sidebar.style.display === 'none' || sidebar.style.display === '') {
+            showProjectSidebar();
+        } else {
+            hideProjectSidebar();
+        }
+    } else {
+        // Si no hay proyecto, preguntar si abrir uno
+        if (confirm('No hay proyecto abierto. ¿Deseas abrir un proyecto?')) {
+            openProject();
+        }
+    }
+}
+
+function showProjectSidebar() {
+    if (!currentProjectHandle) {
+        showNotification('No hay proyecto abierto', true);
+        return;
+    }
+    
+    document.getElementById('project-sidebar').style.display = 'block';
+    // Asegurarnos de que el contenido principal se ajuste
+    const mainContent = document.querySelector('.container');
+    if (mainContent) {
+        mainContent.style.marginLeft = '300px';
+    }
+    showNotification('Explorador de proyecto abierto');
+}
+
+function hideProjectSidebar() {
+    document.getElementById('project-sidebar').style.display = 'none';
+    const mainContent = document.querySelector('.container');
+    if (mainContent) {
+        mainContent.style.marginLeft = '0';
+    }
+}
+
+// Modificar la función closeProjectSidebar existente
+function closeProjectSidebar() {
+    hideProjectSidebar();
+    // No cerramos el proyecto, solo ocultamos el sidebar
+    showNotification('Explorador de proyecto cerrado');
+}
+```
+
+### 3. En `index.css` - Agregar estilos para el botón y mejoras del sidebar
+
+**Agrega estos estilos al final del CSS:**
+
+```css
+/* Estilos para el botón del explorador */
+.menu-item#toggle-sidebar {
+    margin-left: auto; /* Para posicionarlo a la derecha */
+}
+
+/* Mejoras para el sidebar */
+.project-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 300px;
+    height: 100vh;
+    background: #252526;
+    border-right: 1px solid #3c3c3c;
+    z-index: 1000;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+/* Ajuste del contenido principal cuando el sidebar está visible */
+.container {
+    transition: margin-left 0.3s ease;
+}
+
+/* Estilos para el botón toggle cuando hay proyecto */
+.menu-item#toggle-sidebar.active {
+    background-color: #007acc;
+    border-radius: 4px;
+}
+
+.menu-item#toggle-sidebar.active a {
+    color: #4ec9b0;
+}
+
+/* Mejorar la visibilidad del sidebar */
+.sidebar-header {
+    background: #2d2d30;
+    border-bottom: 1px solid #3c3c3c;
+    padding: 15px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    color: #4ec9b0;
+    font-size: 1.1rem;
+}
+```
+
+### 4. Mejora adicional - Estado visual del botón
+
+**Modifica la función `showProjectSidebar` para incluir estado visual:**
+
+```javascript
+function showProjectSidebar() {
+    if (!currentProjectHandle) {
+        showNotification('No hay proyecto abierto', true);
+        return;
+    }
+    
+    document.getElementById('project-sidebar').style.display = 'block';
+    const mainContent = document.querySelector('.container');
+    if (mainContent) {
+        mainContent.style.marginLeft = '300px';
+    }
+    
+    // Agregar clase active al botón
+    document.getElementById('toggle-sidebar').classList.add('active');
+    
+    showNotification('Explorador de proyecto abierto');
+}
+
+function hideProjectSidebar() {
+    document.getElementById('project-sidebar').style.display = 'none';
+    const mainContent = document.querySelector('.container');
+    if (mainContent) {
+        mainContent.style.marginLeft = '0';
+    }
+    
+    // Remover clase active del botón
+    document.getElementById('toggle-sidebar').classList.remove('active');
+}
+```
+
+### 5. También mejora las funciones de proyecto para sincronizar el estado
+
+**Modifica `newProject` y `openProject`:**
+
+```javascript
+// En newProject y openProject, después de loadProjectStructure():
+async function newProject() {
+    if (!isFileSystemAccessSupported()) {
+        showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+        return;
+    }
+
+    try {
+        currentProjectHandle = await window.showDirectoryPicker();
+        await loadProjectStructure();
+        // Mostrar sidebar automáticamente al crear proyecto
+        showProjectSidebar();
+        showNotification('Nuevo proyecto creado');
+        
+        await createDefaultProjectStructure();
+    } catch (error) {
+        if (error.name !== 'AbortError') {
+            console.error('Error creando proyecto:', error);
+            showNotification(`Error: ${error.message}`, true);
+        }
+    }
+}
+
+async function openProject() {
+    if (!isFileSystemAccessSupported()) {
+        showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+        return;
+    }
+
+    try {
+        currentProjectHandle = await window.showDirectoryPicker();
+        await loadProjectStructure();
+        // Mostrar sidebar automáticamente al abrir proyecto
+        showProjectSidebar();
+        showNotification('Proyecto abierto correctamente');
+    } catch (error) {
+        if (error.name !== 'AbortError') {
+            console.error('Error abriendo proyecto:', error);
+            showNotification(`Error: ${error.message}`, true);
+        }
+    }
+}
+```
+
+## Resumen de los cambios:
+
+1. **✅ Botón "Explorador"** en el menú principal
+2. **✅ Funcionalidad de toggle** para mostrar/ocultar el sidebar
+3. **✅ Estado visual** del botón cuando el sidebar está activo
+4. **✅ Comportamiento inteligente**: Si no hay proyecto, pregunta si abrir uno
+5. **✅ Transiciones suaves** y mejoras visuales
+
+Ahora tendrás un botón "📁 Explorador" en el menú que puedes usar para abrir y cerrar el panel del proyecto cuando quieras. El botón también cambiará visualmente cuando el sidebar esté visible.
+
+¿Te parece bien esta implementación? ¿Quieres que ajuste algo más?

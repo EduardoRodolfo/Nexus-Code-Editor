@@ -1,0 +1,26 @@
+@echo off
+title Nexus Engine v1.0
+color 0A
+
+echo ========================================
+echo      NEXUS ENGINE - Motor de IA Local
+echo ========================================
+echo.
+echo Iniciando Nexus Engine...
+echo.
+
+:: Compilar si no existe
+if not exist "nexus-engine.exe" (
+    echo Compilando Nexus Engine...
+    g++ nexus-engine.cpp -o nexus-engine.exe -lws2_32
+    if errorlevel 1 (
+        echo Error: No se pudo compilar. Instala MinGW.
+        pause
+        exit /b 1
+    )
+)
+
+:: Ejecutar
+nexus-engine.exe
+
+pause

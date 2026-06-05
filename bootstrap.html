@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Chuleta Bootstrap 5 - Local</title>
+
+    <!-- BOOTSTRAP CSS LOCAL -->
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+
+    <style>
+        /* Pequeños estilos extra para la chuleta */
+        body {
+            background: #f8f9fa;
+        }
+        .section-title {
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 40px;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            margin-bottom: 15px;
+        }
+        .demo-box {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .color-swatch {
+            width: 100%;
+            height: 60px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1050;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .nav-link.active-custom {
+            background-color: #0d6efd !important;
+            color: white !important;
+            border-radius: 20px;
+        }
+        .badge-demo {
+            font-size: 0.9rem;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- BARRA DE NAVEGACIÓN PRINCIPAL (STICKY)      -->
+    <!-- ════════════════════════════════════════════ -->
+    <nav class="sticky-nav navbar navbar-expand-lg navbar-light bg-light py-2 px-3">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-primary" href="#">
+                🎯 Bootstrap 5 · Chuleta
+            </a>
+            <span class="badge bg-success">v5.x Local</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#colores">🎨 Colores</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tipografia">📝 Tipografía</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#botones">🔘 Botones</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tarjetas">🃏 Tarjetas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#grid">📐 Grid</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#formularios">📋 Formularios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tablas">📊 Tablas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#alertas">⚠️ Alertas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#modales">💬 Modales</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#acordeon">🔽 Acordeón</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#badges">🏷️ Badges</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tooltips">💡 Tooltips</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- ENCABEZADO                                   -->
+        <!-- ════════════════════════════════════════════ -->
+        <div class="text-center mb-5 mt-3">
+            <h1 class="display-4 fw-bold text-primary">🚀 Chuleta de Bootstrap 5</h1>
+            <p class="lead text-muted">Todos los componentes esenciales con enlace local a <code>node_modules</code></p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <span class="badge bg-primary fs-6">✅ Sin CDN</span>
+                <span class="badge bg-success fs-6">📁 Archivos locales</span>
+                <span class="badge bg-warning text-dark fs-6">⚡ 100% funcional</span>
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 1. COLORES                                  -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="colores" class="section-title">🎨 Colores de Bootstrap</h2>
+
+        <div class="demo-box">
+            <div class="row">
+                <div class="col-6 col-md-3">
+                    <div class="color-swatch bg-primary">Primary</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="color-swatch bg-secondary">Secondary</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="color-swatch bg-success">Success</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="color-swatch bg-danger">Danger</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="color-swatch bg-warning text-dark">Warning</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="color-swatch bg-info text-dark">Info</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="color-swatch bg-light text-dark border">Light</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="color-swatch bg-dark">Dark</div>
+                </div>
+            </div>
+            <div class="code-block">&lt;div class="bg-primary"&gt;...&lt;/div&gt;
+&lt;div class="bg-secondary"&gt;...&lt;/div&gt;
+&lt;div class="bg-success"&gt;...&lt;/div&gt;
+&lt;div class="bg-danger"&gt;...&lt;/div&gt;
+&lt;div class="bg-warning"&gt;...&lt;/div&gt;
+&lt;div class="bg-info"&gt;...&lt;/div&gt;
+&lt;div class="bg-light"&gt;...&lt;/div&gt;
+&lt;div class="bg-dark"&gt;...&lt;/div&gt;</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 2. TIPOGRAFÍA                               -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="tipografia" class="section-title">📝 Tipografía</h2>
+
+        <div class="demo-box">
+            <h1>h1. Encabezado Bootstrap</h1>
+            <h2>h2. Encabezado Bootstrap</h2>
+            <h3>h3. Encabezado Bootstrap</h3>
+            <h4>h4. Encabezado Bootstrap</h4>
+            <h5>h5. Encabezado Bootstrap</h5>
+            <h6>h6. Encabezado Bootstrap</h6>
+
+            <hr>
+
+            <p class="display-1">Display 1</p>
+            <p class="display-2">Display 2</p>
+            <p class="display-3">Display 3</p>
+            <p class="display-4">Display 4</p>
+            <p class="display-5">Display 5</p>
+            <p class="display-6">Display 6</p>
+
+            <hr>
+
+            <p class="lead">Este es un párrafo con la clase <code>.lead</code> para destacar texto importante.</p>
+            <p>Texto normal con <mark>marcado</mark>, <del>tachado</del>, <s>incorrecto</s>, <ins>insertado</ins>, <u>subrayado</u>, <small>pequeño</small>, <strong>negrita</strong> y <em>cursiva</em>.</p>
+            <p class="text-muted">Texto atenuado con .text-muted</p>
+
+            <div class="code-block">&lt;h1&gt; a &lt;h6&gt; — Encabezados
+&lt;p class="display-1"&gt; a &lt;p class="display-6"&gt;
+&lt;p class="lead"&gt; — Destacar texto
+&lt;mark&gt;, &lt;del&gt;, &lt;strong&gt;, &lt;em&gt; — Formato inline</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 3. BOTONES                                  -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="botones" class="section-title">🔘 Botones</h2>
+
+        <div class="demo-box">
+            <div class="mb-3">
+                <button type="button" class="btn btn-primary">Primary</button>
+                <button type="button" class="btn btn-secondary">Secondary</button>
+                <button type="button" class="btn btn-success">Success</button>
+                <button type="button" class="btn btn-danger">Danger</button>
+                <button type="button" class="btn btn-warning">Warning</button>
+                <button type="button" class="btn btn-info">Info</button>
+                <button type="button" class="btn btn-light">Light</button>
+                <button type="button" class="btn btn-dark">Dark</button>
+                <button type="button" class="btn btn-link">Link</button>
+            </div>
+
+            <div class="mb-3">
+                <button type="button" class="btn btn-outline-primary">Primary</button>
+                <button type="button" class="btn btn-outline-secondary">Secondary</button>
+                <button type="button" class="btn btn-outline-success">Success</button>
+                <button type="button" class="btn btn-outline-danger">Danger</button>
+                <button type="button" class="btn btn-outline-warning">Warning</button>
+                <button type="button" class="btn btn-outline-info">Info</button>
+                <button type="button" class="btn btn-outline-light">Light</button>
+                <button type="button" class="btn btn-outline-dark">Dark</button>
+            </div>
+
+            <div class="mb-3">
+                <button type="button" class="btn btn-primary btn-lg">Grande</button>
+                <button type="button" class="btn btn-primary">Normal</button>
+                <button type="button" class="btn btn-primary btn-sm">Pequeño</button>
+            </div>
+
+            <div>
+                <button type="button" class="btn btn-primary" disabled>Deshabilitado</button>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary">Izquierda</button>
+                    <button type="button" class="btn btn-primary">Centro</button>
+                    <button type="button" class="btn btn-primary">Derecha</button>
+                </div>
+            </div>
+
+            <div class="code-block">&lt;button class="btn btn-primary"&gt;Primary&lt;/button&gt;
+&lt;button class="btn btn-outline-danger"&gt;Borde&lt;/button&gt;
+&lt;button class="btn btn-primary btn-lg"&gt;Grande&lt;/button&gt;
+&lt;button class="btn btn-primary btn-sm"&gt;Pequeño&lt;/button&gt;
+&lt;button class="btn btn-primary" disabled&gt;Deshabilitado&lt;/button&gt;
+&lt;div class="btn-group"&gt;...&lt;/div&gt;</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 4. TARJETAS (CARDS)                         -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="tarjetas" class="section-title">🃏 Tarjetas (Cards)</h2>
+
+        <div class="demo-box">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card card-hover">
+                        <div class="card-header">Encabezado</div>
+                        <div class="card-body">
+                            <h5 class="card-title">Título de la tarjeta</h5>
+                            <p class="card-text">Texto de ejemplo para el cuerpo de la tarjeta. Bootstrap ofrece un diseño limpio y responsive.</p>
+                            <a href="#" class="btn btn-primary">Ir a algún lado</a>
+                        </div>
+                        <div class="card-footer text-muted">Footer</div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card bg-dark text-white card-hover">
+                        <div class="card-body">
+                            <h5 class="card-title">Tarjeta oscura</h5>
+                            <p class="card-text">Fondo oscuro con texto blanco usando <code>.bg-dark .text-white</code>.</p>
+                            <a href="#" class="btn btn-outline-light">Botón</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card border-primary card-hover">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Tarjeta con borde</h5>
+                            <p class="card-text">Usando <code>.border-primary</code> para destacar.</p>
+                            <a href="#" class="btn btn-primary">Acción</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">&lt;div class="card"&gt;
+  &lt;div class="card-header"&gt;Encabezado&lt;/div&gt;
+  &lt;div class="card-body"&gt;
+    &lt;h5 class="card-title"&gt;Título&lt;/h5&gt;
+    &lt;p class="card-text"&gt;Texto&lt;/p&gt;
+    &lt;a href="#" class="btn btn-primary"&gt;Ir&lt;/a&gt;
+  &lt;/div&gt;
+  &lt;div class="card-footer"&gt;Footer&lt;/div&gt;
+&lt;/div&gt;</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 5. SISTEMA DE GRID                          -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="grid" class="section-title">📐 Sistema de Grid</h2>
+
+        <div class="demo-box">
+            <div class="row mb-2">
+                <div class="col bg-primary text-white p-3 text-center border">.col</div>
+                <div class="col bg-secondary text-white p-3 text-center border">.col</div>
+                <div class="col bg-primary text-white p-3 text-center border">.col</div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-4 bg-success text-white p-3 text-center border">.col-4</div>
+                <div class="col-8 bg-info text-dark p-3 text-center border">.col-8</div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-6 bg-warning text-dark p-3 text-center border">.col-md-6</div>
+                <div class="col-md-6 bg-danger text-white p-3 text-center border">.col-md-6</div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-lg-3 col-md-6 bg-primary text-white p-3 text-center border">.col-lg-3 .col-md-6</div>
+                <div class="col-lg-3 col-md-6 bg-secondary text-white p-3 text-center border">.col-lg-3 .col-md-6</div>
+                <div class="col-lg-3 col-md-6 bg-success text-white p-3 text-center border">.col-lg-3 .col-md-6</div>
+                <div class="col-lg-3 col-md-6 bg-danger text-white p-3 text-center border">.col-lg-3 .col-md-6</div>
+            </div>
+
+            <div class="code-block">&lt;div class="row"&gt;
+  &lt;div class="col"&gt;Automático&lt;/div&gt;
+  &lt;div class="col-4"&gt;4 columnas&lt;/div&gt;
+  &lt;div class="col-8"&gt;8 columnas&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Responsive: .col-md-6 = 50% en md, 100% en móvil --&gt;
+&lt;div class="col-lg-3 col-md-6"&gt;...&lt;/div&gt;</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 6. FORMULARIOS                              -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="formularios" class="section-title">📋 Formularios</h2>
+
+        <div class="demo-box">
+            <form>
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Correo electrónico</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="nombre@ejemplo.com">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="••••••••">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleSelect" class="form-label">Seleccionar</label>
+                    <select class="form-select" id="exampleSelect">
+                        <option selected>Elige una opción...</option>
+                        <option value="1">Opción 1</option>
+                        <option value="2">Opción 2</option>
+                        <option value="3">Opción 3</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleTextarea" class="form-label">Área de texto</label>
+                    <textarea class="form-control" id="exampleTextarea" rows="3" placeholder="Escribe algo..."></textarea>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">Acepto los términos</label>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="radio" name="radioGroup" class="form-check-input" id="radio1">
+                    <label class="form-check-label" for="radio1">Opción A</label>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="radio" name="radioGroup" class="form-check-input" id="radio2">
+                    <label class="form-check-label" for="radio2">Opción B</label>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="switchDemo" checked>
+                        <label class="form-check-label" for="switchDemo">Interruptor (switch)</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="formFile" class="form-label">Subir archivo</label>
+                    <input class="form-control" type="file" id="formFile">
+                </div>
+                <div class="mb-3">
+                    <label for="rangeDemo" class="form-label">Rango</label>
+                    <input type="range" class="form-range" id="rangeDemo">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Validación</label>
+                    <input type="text" class="form-control is-valid" placeholder="Válido ✅" value="Correcto">
+                    <input type="text" class="form-control is-invalid mt-2" placeholder="Inválido ❌" value="Error">
+                    <div class="invalid-feedback">Este campo tiene un error.</div>
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
+
+            <div class="code-block">&lt;input class="form-control" placeholder="Texto"&gt;
+&lt;select class="form-select"&gt;...&lt;/select&gt;
+&lt;textarea class="form-control"&gt;...&lt;/textarea&gt;
+&lt;div class="form-check"&gt;
+  &lt;input class="form-check-input" type="checkbox"&gt;
+  &lt;label class="form-check-label"&gt;Check&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-switch"&gt;...&lt;/div&gt;
+&lt;input class="form-control is-valid"&gt; ✅
+&lt;input class="form-control is-invalid"&gt; ❌</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 7. TABLAS                                   -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="tablas" class="section-title">📊 Tablas</h2>
+
+        <div class="demo-box">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>María García</td>
+                        <td>maria@ejemplo.com</td>
+                        <td>Admin</td>
+                        <td><span class="badge bg-success">Activo</span></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Carlos López</td>
+                        <td>carlos@ejemplo.com</td>
+                        <td>Usuario</td>
+                        <td><span class="badge bg-warning text-dark">Pendiente</span></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Ana Martínez</td>
+                        <td>ana@ejemplo.com</td>
+                        <td>Editor</td>
+                        <td><span class="badge bg-danger">Inactivo</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">&lt;table class="table table-striped table-hover"&gt;
+  &lt;thead class="table-dark"&gt;...&lt;/thead&gt;
+  &lt;tbody&gt;...&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;!-- Otras clases: table-bordered, table-sm, table-responsive --&gt;</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 8. ALERTAS                                  -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="alertas" class="section-title">⚠️ Alertas</h2>
+
+        <div class="demo-box">
+            <div class="alert alert-primary" role="alert">Alerta <strong>primary</strong> — información general.</div>
+            <div class="alert alert-secondary" role="alert">Alerta <strong>secondary</strong> — información secundaria.</div>
+            <div class="alert alert-success" role="alert">✅ Alerta <strong>success</strong> — operación exitosa.</div>
+            <div class="alert alert-danger" role="alert">❌ Alerta <strong>danger</strong> — error o peligro.</div>
+            <div class="alert alert-warning" role="alert">⚠️ Alerta <strong>warning</strong> — atención requerida.</div>
+            <div class="alert alert-info" role="alert">ℹ️ Alerta <strong>info</strong> — información neutral.</div>
+            <div class="alert alert-light border" role="alert">Alerta <strong>light</strong> — clara y sutil.</div>
+            <div class="alert alert-dark" role="alert">Alerta <strong>dark</strong> — oscura.</div>
+
+            <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                🎉 Alerta <strong>descartable</strong> — haz clic en la X para cerrarla.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="code-block">&lt;div class="alert alert-success" role="alert"&gt;...&lt;/div&gt;
+
+&lt;!-- Descartable --&gt;
+&lt;div class="alert alert-success alert-dismissible fade show"&gt;
+  Mensaje...
+  &lt;button type="button" class="btn-close" data-bs-dismiss="alert"&gt;&lt;/button&gt;
+&lt;/div&gt;</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 9. MODALES                                  -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="modales" class="section-title">💬 Modales</h2>
+
+        <div class="demo-box">
+            <!-- Botón para abrir modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Abrir Modal
+            </button>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalGrande">
+                Modal Grande
+            </button>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCentrado">
+                Modal Centrado
+            </button>
+
+            <!-- Modal estándar -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Título del Modal</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Contenido del modal. Puedes poner lo que quieras aquí.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary">Guardar cambios</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal grande -->
+            <div class="modal fade" id="modalGrande" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Modal Grande (.modal-lg)</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">Contenido del modal grande.</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal centrado -->
+            <div class="modal fade" id="modalCentrado" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Modal Centrado</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">Este modal aparece centrado verticalmente.</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">&lt;!-- Botón para abrir --&gt;
+&lt;button data-bs-toggle="modal" data-bs-target="#miModal"&gt;Abrir&lt;/button&gt;
+
+&lt;!-- Modal --&gt;
+&lt;div class="modal fade" id="miModal" tabindex="-1"&gt;
+  &lt;div class="modal-dialog"&gt; &lt;!-- .modal-lg, .modal-dialog-centered --&gt;
+    &lt;div class="modal-content"&gt;
+      &lt;div class="modal-header"&gt;...&lt;/div&gt;
+      &lt;div class="modal-body"&gt;...&lt;/div&gt;
+      &lt;div class="modal-footer"&gt;...&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 10. ACORDEÓN                                -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="acordeon" class="section-title">🔽 Acordeón</h2>
+
+        <div class="demo-box">
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                        📌 Elemento #1 — ¿Qué es Bootstrap?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Bootstrap es un framework CSS gratuito y de código abierto para desarrollar sitios web responsivos y móviles primero.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                        🎯 Elemento #2 — Ventajas
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Componentes listos, grid responsive, personalizable con SASS, gran comunidad y documentación excelente.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                        🚀 Elemento #3 — ¿Cómo empezar?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Incluye el CSS y JS en tu HTML ¡y ya! Todo el poder de Bootstrap a tu alcance.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">&lt;div class="accordion" id="accordionExample"&gt;
+  &lt;div class="accordion-item"&gt;
+    &lt;h2 class="accordion-header"&gt;
+      &lt;button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#collapseUno"&gt;
+        Título
+      &lt;/button&gt;
+    &lt;/h2&gt;
+    &lt;div id="collapseUno" class="accordion-collapse collapse show" data-bs-parent="#accordionExample"&gt;
+      &lt;div class="accordion-body"&gt;Contenido&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 11. BADGES                                  -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="badges" class="section-title">🏷️ Badges (Insignias)</h2>
+
+        <div class="demo-box">
+            <div class="d-flex gap-2 flex-wrap align-items-center mb-3">
+                <span class="badge bg-primary">Primary</span>
+                <span class="badge bg-secondary">Secondary</span>
+                <span class="badge bg-success">Success</span>
+                <span class="badge bg-danger">Danger</span>
+                <span class="badge bg-warning text-dark">Warning</span>
+                <span class="badge bg-info text-dark">Info</span>
+                <span class="badge bg-light text-dark">Light</span>
+                <span class="badge bg-dark">Dark</span>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap align-items-center mb-3">
+                <span class="badge rounded-pill bg-primary">Píldora Primary</span>
+                <span class="badge rounded-pill bg-success">Píldora Success</span>
+                <span class="badge rounded-pill bg-danger">Píldora Danger</span>
+            </div>
+
+            <div>
+                <h1>Ejemplo con heading <span class="badge bg-secondary">Nuevo</span></h1>
+                <button type="button" class="btn btn-primary position-relative">
+                    Notificaciones
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">99+</span>
+                </button>
+            </div>
+
+            <div class="code-block">&lt;span class="badge bg-primary"&gt;Primary&lt;/span&gt;
+&lt;span class="badge rounded-pill bg-success"&gt;Píldora&lt;/span&gt;
+&lt;h1&gt;Título &lt;span class="badge bg-secondary"&gt;Nuevo&lt;/span&gt;&lt;/h1&gt;
+&lt;button class="btn btn-primary position-relative"&gt;
+  Notificaciones
+  &lt;span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"&gt;99+&lt;/span&gt;
+&lt;/button&gt;</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 12. TOOLTIPS                                -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="tooltips" class="section-title">💡 Tooltips</h2>
+
+        <div class="demo-box">
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip en la parte superior">
+                    Tooltip Top
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="right" title="Tooltip a la derecha">
+                    Tooltip Right
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tooltip en la parte inferior">
+                    Tooltip Bottom
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="left" title="Tooltip a la izquierda">
+                    Tooltip Left
+                </button>
+            </div>
+
+            <div class="code-block">&lt;button data-bs-toggle="tooltip" data-bs-placement="top" title="Texto"&gt;
+  Tooltip Top
+&lt;/button&gt;
+
+&lt;!-- ⚠️ IMPORTANTE: Inicializar con JS --&gt;
+&lt;script&gt;
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  var tooltipList = tooltipTriggerList.map(function (el) {
+    return new bootstrap.Tooltip(el);
+  });
+&lt;/script&gt;</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 13. MÁS COMPONENTES ÚTILES                  -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="extras" class="section-title">🧩 Más componentes útiles</h2>
+
+        <div class="demo-box">
+            <!-- Progress Bars -->
+            <h5 class="mb-3">📊 Barras de progreso</h5>
+            <div class="progress mb-2" style="height: 25px;">
+                <div class="progress-bar" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75%</div>
+            </div>
+            <div class="progress mb-3" style="height: 20px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 40%;">40%</div>
+                <div class="progress-bar bg-warning" role="progressbar" style="width: 30%;">30%</div>
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 20%;">20%</div>
+            </div>
+
+            <!-- Spinners -->
+            <h5 class="mb-3">🔄 Spinners</h5>
+            <div class="d-flex gap-3 align-items-center mb-3">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <div class="spinner-border text-success" role="status"></div>
+                <div class="spinner-border text-danger" role="status"></div>
+                <div class="spinner-grow text-warning" role="status"></div>
+                <div class="spinner-grow text-info" role="status"></div>
+                <button class="btn btn-primary" disabled>
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                    Cargando...
+                </button>
+            </div>
+
+            <!-- Pagination -->
+            <h5 class="mb-3">📄 Paginación</h5>
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
+                </ul>
+            </nav>
+
+            <!-- List Group -->
+            <h5 class="mb-3">📋 List Group</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-group">
+                        <li class="list-group-item active">Elemento activo</li>
+                        <li class="list-group-item">Elemento normal</li>
+                        <li class="list-group-item disabled">Elemento deshabilitado</li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Con badge
+                            <span class="badge bg-primary rounded-pill">14</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action">Enlace 1</a>
+                        <a href="#" class="list-group-item list-group-item-action active">Enlace 2 (activo)</a>
+                        <a href="#" class="list-group-item list-group-item-action list-group-item-danger">Enlace 3 (peligro)</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dropdown -->
+            <h5 class="mb-3 mt-3">📁 Dropdowns</h5>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Desplegable
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Acción</a></li>
+                    <li><a class="dropdown-item" href="#">Otra acción</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Algo más</a></li>
+                </ul>
+            </div>
+
+            <!-- Navs & Tabs -->
+            <h5 class="mb-3 mt-3">📑 Pestañas (Tabs)</h5>
+            <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab1">HTML</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab2">CSS</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab3">JS</button>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab1">Contenido de la pestaña HTML</div>
+                <div class="tab-pane fade" id="tab2">Contenido de la pestaña CSS</div>
+                <div class="tab-pane fade" id="tab3">Contenido de la pestaña JS</div>
+            </div>
+
+            <!-- Carousel -->
+            <h5 class="mb-3 mt-3">🎠 Carrusel</h5>
+            <div id="carouselDemo" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="bg-primary text-white text-center p-5" style="height: 200px;">
+                            <h3>Slide 1</h3>
+                            <p>Contenido del primer slide</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="bg-success text-white text-center p-5" style="height: 200px;">
+                            <h3>Slide 2</h3>
+                            <p>Contenido del segundo slide</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="bg-warning text-dark text-center p-5" style="height: 200px;">
+                            <h3>Slide 3</h3>
+                            <p>Contenido del tercer slide</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselDemo" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselDemo" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 14. CLASES DE UTILIDAD                      -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="utilidades" class="section-title">⚡ Clases de Utilidad (Utilities)</h2>
+
+        <div class="demo-box">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h5>📏 Espaciado (Margin & Padding)</h5>
+                    <div class="bg-light p-3 border rounded">
+                        <div class="bg-primary text-white p-2 mb-2 rounded">.p-2 .mb-2</div>
+                        <div class="bg-success text-white p-3 mb-3 rounded">.p-3 .mb-3</div>
+                        <div class="bg-info text-dark p-4 rounded">.p-4</div>
+                    </div>
+                    <div class="code-block mt-2">.m-0 a .m-5 — Margin
+.p-0 a .p-5 — Padding
+.mt-*, .mb-*, .ms-*, .me-* — Direcciones
+.mx-* (eje X), .my-* (eje Y)</div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <h5>📐 Flexbox</h5>
+                    <div class="d-flex justify-content-between align-items-center bg-light p-3 border rounded" style="height: 100px;">
+                        <div class="bg-primary text-white p-2 rounded">Izq</div>
+                        <div class="bg-success text-white p-2 rounded">Centro</div>
+                        <div class="bg-danger text-white p-2 rounded">Der</div>
+                    </div>
+                    <div class="code-block mt-2">.d-flex — Flexbox
+.justify-content-center / between / end
+.align-items-center / start / end
+.flex-row / flex-column</div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <h5>📏 Tamaño y bordes</h5>
+                    <div class="d-flex gap-2">
+                        <div class="w-25 bg-primary text-white p-2 rounded">25%</div>
+                        <div class="w-50 bg-success text-white p-2 rounded">50%</div>
+                        <div class="w-75 bg-info text-dark p-2 rounded">75%</div>
+                        <div class="w-100 bg-warning text-dark p-2 rounded">100%</div>
+                    </div>
+                    <div class="mt-2">
+                        <div class="border border-primary rounded p-2 d-inline-block m-1">.border .border-primary</div>
+                        <div class="border border-success rounded-pill p-2 d-inline-block m-1">.rounded-pill</div>
+                        <div class="border-0 bg-light p-2 d-inline-block m-1">.border-0</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <h5>👁️ Visibilidad y display</h5>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <span class="d-block bg-primary text-white p-2 rounded">.d-block</span>
+                        <span class="d-inline-block bg-success text-white p-2 rounded">.d-inline-block</span>
+                        <span class="d-none d-md-block bg-info text-dark p-2 rounded">.d-none .d-md-block</span>
+                        <span class="invisible bg-warning p-2 rounded">invisible</span>
+                        <span class="visible bg-danger text-white p-2 rounded">.visible</span>
+                    </div>
+                    <div class="code-block mt-2">.d-none / .d-block / .d-inline
+.d-sm-none / .d-md-block (responsive)
+.visible / .invisible</div>
+                </div>
+
+                <div class="col-12 mb-3">
+                    <h5>🎨 Texto y fondo</h5>
+                    <p class="text-primary">.text-primary</p>
+                    <p class="text-success bg-dark p-2 rounded">.text-success .bg-dark</p>
+                    <p class="fw-bold">.fw-bold (negrita)</p>
+                    <p class="fst-italic">.fst-italic (cursiva)</p>
+                    <p class="text-center">.text-center</p>
+                    <p class="text-uppercase">.text-uppercase (MAYÚSCULAS)</p>
+                    <p class="text-lowercase">.TEXT-LOWERCASE (minúsculas)</p>
+                    <p class="text-capitalize">.text-capitalize (Primera Letra Mayúscula)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- 15. TABLA RESUMEN DE CLASES MÁS USADAS      -->
+        <!-- ════════════════════════════════════════════ -->
+        <h2 id="resumen" class="section-title">📖 Resumen Rápido de Clases</h2>
+
+        <div class="demo-box">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Clases principales</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>🎨 Color</td><td><code>.bg-* / .text-*</code></td><td>primary, secondary, success, danger, warning, info, light, dark</td></tr>
+                        <tr><td>🔘 Botones</td><td><code>.btn .btn-*</code></td><td>btn-primary, btn-outline-*, btn-lg, btn-sm</td></tr>
+                        <tr><td>📐 Grid</td><td><code>.col / .col-* / .col-md-* / .col-lg-*</code></td><td>Sistema de 12 columnas responsive</td></tr>
+                        <tr><td>📝 Texto</td><td><code>.text-center / .fw-bold / .fst-italic / .text-muted</code></td><td>Alineación, peso, estilo</td></tr>
+                        <tr><td>📏 Espaciado</td><td><code>.m-* / .p-* / .mt-* / .mb-* / .mx-* / .my-*</code></td><td>Margin y padding (0 a 5)</td></tr>
+                        <tr><td>📐 Flex</td><td><code>.d-flex / .justify-content-* / .align-items-*</code></td><td>Flexbox container y alineación</td></tr>
+                        <tr><td>📊 Tablas</td><td><code>.table / .table-striped / .table-hover / .table-dark</code></td><td>Estilos para tablas</td></tr>
+                        <tr><td>🃏 Tarjetas</td><td><code>.card / .card-body / .card-title / .card-text</code></td><td>Componente card</td></tr>
+                        <tr><td>⚠️ Alertas</td><td><code>.alert .alert-*</code></td><td>alert-success, alert-danger, etc.</td></tr>
+                        <tr><td>📋 Formularios</td><td><code>.form-control / .form-select / .form-check / .form-label</code></td><td>inputs, selects, checks, radios</td></tr>
+                        <tr><td>🏷️ Badges</td><td><code>.badge .bg-* / .rounded-pill</code></td><td>Insignias y píldoras</td></tr>
+                        <tr><td>🔄 Componentes</td><td><code>.modal / .accordion / .carousel / .nav-tabs / .dropdown</code></td><td>Componentes interactivos</td></tr>
+                        <tr><td>⚡ Bordes</td><td><code>.border / .border-* / .rounded / .rounded-pill / .rounded-circle</code></td><td>Bordes y esquinas redondeadas</td></tr>
+                        <tr><td>📱 Display</td><td><code>.d-none / .d-block / .d-flex / .d-sm-none / .d-md-block</code></td><td>Ocultar/mostrar responsive</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════ -->
+        <!-- FOOTER                                      -->
+        <!-- ════════════════════════════════════════════ -->
+        <hr class="my-5">
+        <footer class="text-center text-muted py-4">
+            <p class="mb-1">🎯 <strong>Chuleta Bootstrap 5</strong> — Archivos locales desde <code>node_modules</code></p>
+            <p class="mb-0">Creada con ❤️ por DeepSeek · Todos los componentes son funcionales</p>
+            <p class="mt-2">
+                <span class="badge bg-primary me-1">CSS: bootstrap.min.css</span>
+                <span class="badge bg-success">JS: bootstrap.bundle.min.js</span>
+            </p>
+        </footer>
+
+    </div><!-- /container -->
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- BOOTSTRAP JS LOCAL                          -->
+    <!-- ════════════════════════════════════════════ -->
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Inicialización manual de Tooltips -->
+    <script>
+        // Inicializar todos los tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (el) {
+            return new bootstrap.Tooltip(el)
+        });
+
+        // Inicializar todos los popovers (por si los usas después)
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        var popoverList = popoverTriggerList.map(function (el) {
+            return new bootstrap.Popover(el)
+        });
+    </script>
+
+</body>
+</html>

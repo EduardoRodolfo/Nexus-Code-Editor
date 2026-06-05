@@ -1,0 +1,658 @@
+﻿Simulador de terminal xtermjs paso a paso
+Perfecto! Voy a extender tu terminal xterm.js con los comandos de administración que necesitas. Te voy a mostrar **exactamente dónde y cómo insertar** el código nuevo.
+
+## 🔧 **CÓDIGO A INSERTAR - COMANDOS DE ADMINISTRACIÓN**
+
+### **1. PRIMERO: Agregar estas propiedades al constructor** (después del fileSystem)
+
+```javascript
+constructor() {
+    // ... tu código existente ...
+    
+    this.fileSystem = {
+        // ... tu fileSystem existente ...
+    };
+
+    // ⭐⭐ NUEVO: Estado del sistema para simular administración
+    this.systemState = {
+        packages: ['nodejs', 'git', 'python3', 'curl', 'wget'],
+        lastUpdate: '2024-01-15',
+        isRoot: false,
+        user: 'usuario-terminal'
+    };
+    
+    this.isInitialized = false;
+}
+```
+
+### **2. SEGUNDO: Agregar nuevo método para comandos de administración** (después de handleSystemCommands)
+
+```javascript
+// ⭐⭐ NUEVO MÉTODO: Comandos de administración del sistema
+handleAdminCommands(cmd, args) {
+    switch(cmd) {
+        case 'sudo':
+            if (args.length > 0) {
+                this.terminal.writeln('\x1B[1;33m[SUDO] Ejecutando como administrador...\x1B[0m');
+                // Simular ejecución del comando con sudo
+                const sudoCmd = args[0];
+                const sudoArgs = args.slice(1);
+                
+                if (sudoCmd === 'apt' || sudoCmd === 'install' || sudoCmd === 'update' || sudoCmd === 'upgrade') {
+                    this.systemState.isRoot = true;
+                    this.handleAdminCommands(sudoCmd, sudoArgs);
+                    this.systemState.isRoot = false;
+                } else {
+                    this.terminal.writeln(`\x1B[32mComando '${sudoCmd}' ejecutado con privilegios de administrador\x1B[0m`);
+                }
+            } else {
+                this.terminal.writeln('\x1B[31mUso: sudo <comando> [argumentos]\x1B[0m');
+            }
+            return true;
+            
+        case 'apt':
+            if (args.length === 0) {
+                this.terminal.writeln('\x1B[1;36mGestor de paquetes APT - Comandos disponibles:\x1B[0m');
+                this.terminal.writeln('  update    - Actualizar lista de paquetes');
+                this.terminal.writeln('  upgrade   - Actualizar paquetes instalados');
+                this.terminal.writeln('  install   - Instalar nuevos paquetes');
+                this.terminal.writeln('  list      - Listar paquetes disponibles');
+                return true;
+            }
+            return this.handleAptCommands(args[0], args.slice(1));
+            
+        case 'update':
+            this.simulateSystemUpdate();
+            return true;
+            
+        case 'upgrade':
+            this.simulateSystemUpgrade();
+            return true;
+            
+        case 'install':
+            if (args.length > 0) {
+                this.simulatePackageInstall(args);
+            } else {
+                this.terminal.writeln('\x1B[31mUso: install <paquete1> [paquete2...]\x1B[0m');
+            }
+            return true;
+            
+        case 'whoami':
+            this.terminal.writeln(this.systemState.user);
+            return true;
+            
+        case 'su':
+            this.terminal.writeln('\x1B[33mCambiando a usuario root...\x1B[0m');
+            this.systemState.user = 'root';
+            this.systemState.isRoot = true;
+            this.terminal.writeln('\x1B[32mAhora eres root\x1B[0m');
+            return true;
+            
+        case 'exit':
+            if (this.systemState.isRoot) {
+                this.terminal.writeln('\x1B[33mSaliendo de sesión root...\x1B[0m');
+                this.systemState.user = 'usuario-terminal';
+                this.systemState.isRoot = false;
+            }
+            return true;
+    }
+    return false;
+}
+
+// ⭐⭐ NUEVO MÉTODO: Comandos específicos de APT
+handleAptCommands(subcmd, args) {
+    switch(subcmd) {
+        case 'update':
+            this.simulateAptUpdate();
+            return true;
+            
+        case 'upgrade':
+            this.simulateAptUpgrade();
+            return true;
+            
+        case 'install':
+            if (args.length > 0) {
+                this.simulateAptInstall(args);
+            } else {
+                this.terminal.writeln('\x1B[31mUso: apt install <paquete1> [paquete2...]\x1B[0m');
+            }
+            return true;
+            
+        case 'list':
+            this.terminal.writeln('\x1B[1;36mPaquetes instalados:\x1B[0m');
+            this.systemState.packages.forEach(pkg => {
+                this.terminal.writeln(`  ${pkg} - versión 1.0.0`);
+            });
+            return true;
+            
+        default:
+            this.terminal.writeln(`\x1B[31mSubcomando APT no reconocido: ${subcmd}\x1B[0m`);
+            return true;
+    }
+}
+```
+
+### **3. TERCERO: Agregar métodos de simulación** (después de los métodos handle)
+
+```javascript
+// ⭐⭐ NUEVOS MÉTODOS: Simulaciones de administración
+simulateAptUpdate() {
+    this.terminal.writeln('\x1B[1;36mActualizando lista de paquetes...\x1B[0m');
+    this.simulateLoading(2);
+    this.terminal.writeln('\x1B[32m✓ Lista de paquetes actualizada correctamente\x1B[0m');
+    this.systemState.lastUpdate = new Date().toISOString().split('T')[0];
+}
+
+simulateAptUpgrade() {
+    this.terminal.writeln('\x1B[1;36mComprobando actualizaciones disponibles...\x1B[0m');
+    this.simulateLoading(3);
+    
+    const updates = Math.floor(Math.random() * 5) + 1;
+    this.terminal.writeln(`\x1B[33mSe encontraron ${updates} actualizaciones\x1B[0m`);
+    this.terminal.writeln('\x1B[36mInstalando las actualizaciones...\x1B[0m');
+    
+    this.simulateLoading(3);
+    this.terminal.writeln('\x1B[32m✓ Sistema actualizado correctamente\x1B[0m');
+}
+
+simulateAptInstall(packages) {
+    this.terminal.writeln(`\x1B[1;36mInstalando ${packages.length} paquete(s)...\x1B[0m`);
+    
+    packages.forEach(pkg => {
+        this.terminal.write(`\x1B[36mInstalando ${pkg}... `);
+        this.simulateLoading(1);
+        
+        if (!this.systemState.packages.includes(pkg)) {
+            this.systemState.packages.push(pkg);
+            this.terminal.writeln('\x1B[32m✓ Completado\x1B[0m');
+        } else {
+            this.terminal.writeln('\x1B[33m✓ Ya estaba instalado\x1B[0m');
+        }
+    });
+}
+
+simulateSystemUpdate() {
+    this.terminal.writeln('\x1B[1;36mIniciando actualización del sistema...\x1B[0m');
+    this.simulateLoading(4);
+    this.terminal.writeln('\x1B[32m✓ Sistema actualizado correctamente\x1B[0m');
+}
+
+simulateSystemUpgrade() {
+    this.terminal.writeln('\x1B[1;36mIniciando upgrade del sistema...\x1B[0m');
+    this.simulateLoading(5);
+    this.terminal.writeln('\x1B[32m✓ Upgrade completado correctamente\x1B[0m');
+}
+
+simulatePackageInstall(packages) {
+    this.terminal.writeln(`\x1B[1;36mDescargando ${packages.length} paquete(s)...\x1B[0m`);
+    this.simulateLoading(3);
+    
+    packages.forEach(pkg => {
+        if (!this.systemState.packages.includes(pkg)) {
+            this.systemState.packages.push(pkg);
+            this.terminal.writeln(`\x1B[32m✓ ${pkg} instalado correctamente\x1B[0m`);
+        } else {
+            this.terminal.writeln(`\x1B[33m✓ ${pkg} ya estaba instalado\x1B[0m`);
+        }
+    });
+}
+
+simulateLoading(seconds) {
+    // Simular carga con puntos progresivos
+    for (let i = 0; i < seconds; i++) {
+        // Esta función simula el tiempo de espera
+        // En realidad no bloquea, solo es visual
+    }
+}
+```
+
+### **4. CUARTO: Actualizar el método handleCommand** (modificar el orden de ejecución)
+
+```javascript
+handleCommand(command) {
+    const parts = command.trim().split(' ');
+    const cmd = parts[0].toLowerCase();
+    const args = parts.slice(1);
+    
+    // Comandos básicos existentes
+    switch(cmd) {
+        case 'help':
+            this.showExtendedHelp();
+            return;
+        case 'clear':
+            this.terminal.clear();
+            return;
+        case 'themes':
+            // tu código de temas existente
+            return;
+        case 'version':
+            // tu código de versión existente
+            return;
+        // ... otros comandos que ya tengas
+    }
+    
+    // ⭐⭐ MODIFICADO: Nuevo orden de prioridad (Admin primero)
+    if (this.handleAdminCommands(cmd, args)) return;        // ⭐ NUEVO: Admin primero
+    if (this.handleFileCommands(cmd, args)) return;
+    if (this.handleSystemCommands(cmd, args)) return;
+    if (this.handleUtilityCommands(cmd, args)) return;
+    if (this.handleDevCommands(cmd, args)) return;
+    
+    // Si ningún comando coincide
+    this.terminal.writeln(`\x1B[31mComando no encontrado: ${cmd}\x1B[0m`);
+    this.terminal.writeln('Escribe "help" para ver todos los comandos disponibles');
+}
+```
+
+### **5. QUINTO: Actualizar la ayuda extendida** (en showExtendedHelp)
+
+```javascript
+showExtendedHelp() {
+    this.terminal.writeln('\x1B[1;36m=== COMANDOS DISPONIBLES ===\x1B[0m');
+    
+    // ⭐⭐ NUEVA SECCIÓN: ADMINISTRACIÓN
+    this.terminal.writeln('\x1B[1;35mADMINISTRACIÓN:\x1B[0m');
+    this.terminal.writeln('  \x1B[32msudo\x1B[0m     - Ejecutar como administrador');
+    this.terminal.writeln('  \x1B[32mupdate\x1B[0m   - Actualizar sistema');
+    this.terminal.writeln('  \x1B[32mupgrade\x1B[0m  - Mejorar sistema');
+    this.terminal.writeln('  \x1B[32minstall\x1B[0m  - Instalar paquetes');
+    this.terminal.writeln('  \x1B[32mapt\x1B[0m      - Gestor de paquetes');
+    this.terminal.writeln('  \x1B[32msu\x1B[0m       - Cambiar a root');
+    this.terminal.writeln('  \x1B[32mexit\x1B[0m     - Salir de root');
+    
+    // ... el resto de tus secciones existentes ...
+    this.terminal.writeln('\x1B[1;33mARCHIVOS:\x1B[0m');
+    // ... resto de tu ayuda existente ...
+}
+```
+
+## 🎯 **RESUMEN DE LO QUE SE AGREGA:**
+
+1. **Nueva propiedad `systemState`** en el constructor
+2. **Nuevo método `handleAdminCommands()`** - Maneja comandos de admin
+3. **Nuevo método `handleAptCommands()`** - Maneja subcomandos de apt
+4. **5 nuevos métodos de simulación** - update, upgrade, install, etc.
+5. **Actualización del orden** en handleCommand para priorizar admin
+6. **Actualización de la ayuda** para mostrar nuevos comandos
+
+## 🚀 **COMANDOS NUEVOS DISPONIBLES:**
+
+- `sudo <comando>` - Ejecutar con privilegios
+- `update` - Actualizar sistema
+- `upgrade` - Mejorar sistema  
+- `install <paquete>` - Instalar paquetes
+- `apt update|upgrade|install|list` - Gestor de paquetes
+- `su` - Cambiar a root
+- `exit` - Salir de root
+
+¡Ahora tu terminal tendrá una experiencia completa de administración de sistemas! 🎉
+
+¡Excelente pregunta! Los comandos de administración son un gran comienzo, pero podemos hacer tu simulador mucho más completo para el aprendizaje. Te propongo agregar **varias categorías más** que son esenciales para dominar la terminal.
+
+## 🚀 **COMANDOS ESENCIALES QUE FALTAN**
+
+### **1. PROCESOS Y GESTIÓN DE TAREAS**
+```javascript
+// Agregar al handleSystemCommands o crear handleProcessCommands
+case 'kill':
+    if (args[0]) {
+        this.terminal.writeln(`\x1B[32mProceso ${args[0]} terminado\x1B[0m`);
+    } else {
+        this.terminal.writeln('\x1B[31mUso: kill <PID>\x1B[0m');
+    }
+    return true;
+
+case 'jobs':
+    this.terminal.writeln('\x1B[1;36mTrabajos en segundo plano:\x1B[0m');
+    this.terminal.writeln('[1]  Running    sleep 3600');
+    this.terminal.writeln('[2]  Stopped    nano documento.txt');
+    return true;
+
+case 'bg':
+    this.terminal.writeln('\x1B[32mReanudando trabajo en segundo plano\x1B[0m');
+    return true;
+
+case 'fg':
+    this.terminal.writeln('\x1B[32mTrayendo trabajo a primer plano\x1B[0m');
+    return true;
+```
+
+### **2. REDES Y CONECTIVIDAD AVANZADA**
+```javascript
+// Nuevo método: handleNetworkCommands
+handleNetworkCommands(cmd, args) {
+    switch(cmd) {
+        case 'curl':
+            const url = args[0] || 'http://example.com';
+            this.terminal.writeln(`\x1B[36mConectando a ${url}...\x1B[0m`);
+            setTimeout(() => {
+                this.terminal.writeln('<html><body>Página de ejemplo simulada</body></html>');
+            }, 1000);
+            return true;
+            
+        case 'wget':
+            this.terminal.writeln(`\x1B[36mDescargando ${args[0]}...\x1B[0m`);
+            setTimeout(() => {
+                this.terminal.writeln('\x1B[32mDescarga completada: archivo.html\x1B[0m');
+            }, 1500);
+            return true;
+            
+        case 'ssh':
+            const host = args[0] || 'usuario@servidor';
+            this.terminal.writeln(`\x1B[36mConectando vía SSH a ${host}...\x1B[0m`);
+            setTimeout(() => {
+                this.terminal.writeln('\x1B[32mConexión SSH establecida\x1B[0m');
+                this.terminal.writeln('Bienvenido al servidor remoto');
+            }, 2000);
+            return true;
+            
+        case 'scp':
+            this.terminal.writeln('\x1B[36mTransferiendo archivo vía SCP...\x1B[0m');
+            setTimeout(() => {
+                this.terminal.writeln('\x1B[32mTransferencia completada\x1B[0m');
+            }, 1500);
+            return true;
+    }
+    return false;
+}
+```
+
+### **3. BUSQUEDA Y FILTRADO DE ARCHIVOS**
+```javascript
+// Nuevo método: handleSearchCommands
+handleSearchCommands(cmd, args) {
+    switch(cmd) {
+        case 'grep':
+            if (args.length < 2) {
+                this.terminal.writeln('\x1B[31mUso: grep <patrón> <archivo>\x1B[0m');
+                return true;
+            }
+            const pattern = args[0];
+            const file = args[1];
+            this.terminal.writeln(`\x1B[1;36mBuscando '${pattern}' en ${file}:\x1B[0m`);
+            this.terminal.writeln('1: Esta línea contiene el patrón buscado');
+            this.terminal.writeln('4: Otra línea con el patrón');
+            return true;
+            
+        case 'find':
+            const path = args[0] || '.';
+            const name = args[2] || '*';
+            this.terminal.writeln(`\x1B[1;36mBuscando en ${path}:\x1B[0m`);
+            this.terminal.writeln('./documentos/proyecto.js');
+            this.terminal.writeln('./descargas/archivo.txt');
+            this.terminal.writeln('./readme.txt');
+            return true;
+            
+        case 'locate':
+            this.terminal.writeln('\x1B[1;36mArchivos que coinciden:\x1B[0m');
+            this.terminal.writeln('/usr/bin/programa');
+            this.terminal.writeln('/var/log/syslog');
+            this.terminal.writeln('/home/user/documentos');
+            return true;
+    }
+    return false;
+}
+```
+
+### **4. COMPRESIÓN Y ARCHIVOS**
+```javascript
+// Nuevo método: handleCompressionCommands
+handleCompressionCommands(cmd, args) {
+    switch(cmd) {
+        case 'tar':
+            if (args.includes('-czf')) {
+                this.terminal.writeln('\x1B[36mCreando archivo comprimido...\x1B[0m');
+                setTimeout(() => {
+                    this.terminal.writeln('\x1B[32mArchivo backup.tar.gz creado\x1B[0m');
+                }, 1000);
+            } else if (args.includes('-xzf')) {
+                this.terminal.writeln('\x1B[36mExtrayendo archivo...\x1B[0m');
+                setTimeout(() => {
+                    this.terminal.writeln('\x1B[32mArchivo extraído correctamente\x1B[0m');
+                }, 1000);
+            }
+            return true;
+            
+        case 'zip':
+            this.terminal.writeln('\x1B[36mComprimiendo archivos...\x1B[0m');
+            setTimeout(() => {
+                this.terminal.writeln('\x1B[32mArchivo comprimido creado: archivos.zip\x1B[0m');
+            }, 1000);
+            return true;
+            
+        case 'unzip':
+            this.terminal.writeln('\x1B[36mDescomprimiendo archivo...\x1B[0m');
+            setTimeout(() => {
+                this.terminal.writeln('\x1B[32mArchivo descomprimido correctamente\x1B[0m');
+            }, 1000);
+            return true;
+            
+        case 'gzip':
+            this.terminal.writeln('\x1B[36mComprimiendo con gzip...\x1B[0m');
+            setTimeout(() => {
+                this.terminal.writeln('\x1B[32mArchivo comprimido: archivo.gz\x1B[0m');
+            }, 1000);
+            return true;
+    }
+    return false;
+}
+```
+
+### **5. INFORMACIÓN DEL SISTEMA AVANZADA**
+```javascript
+// Extender handleSystemCommands o crear handleInfoCommands
+case 'df':
+    this.terminal.writeln('\x1B[1;36mSISTEMA DE ARCHIVOS          TAMAÑO  USADO  DISP  USO% MONTAJE\x1B[0m');
+    this.terminal.writeln('/dev/sda1               50G    15G    33G   31% /');
+    this.terminal.writeln('/dev/sdb1              100G    25G    70G   26% /home');
+    return true;
+
+case 'du':
+    const dir = args[0] || '.';
+    this.terminal.writeln(`\x1B[1;36mUso de disco en ${dir}:\x1B[0m`);
+    this.terminal.writeln('4.0K    ./documentos');
+    this.terminal.writeln('8.0K    ./descargas');
+    this.terminal.writeln('12K     .');
+    return true;
+
+case 'free':
+    this.terminal.writeln('\x1B[1;36mMEMORIA           TOTAL   USADA   LIBRE  COMPARTIDA\x1B[0m');
+    this.terminal.writeln('Memoria:          16GB    8GB     8GB      2GB');
+    this.terminal.writeln('Swap:             2GB     0GB     2GB');
+    return true;
+```
+
+### **6. USUARIOS Y GRUPOS**
+```javascript
+// Nuevo método: handleUserCommands
+handleUserCommands(cmd, args) {
+    switch(cmd) {
+        case 'passwd':
+            this.terminal.writeln('\x1B[36mCambiando contraseña para usuario-terminal\x1B[0m');
+            this.terminal.writeln('Nueva contraseña: \x1B[90m********\x1B[0m');
+            this.terminal.writeln('Repita la nueva contraseña: \x1B[90m********\x1B[0m');
+            this.terminal.writeln('\x1B[32mContraseña actualizada correctamente\x1B[0m');
+            return true;
+            
+        case 'useradd':
+            this.terminal.writeln(`\x1B[32mUsuario ${args[0]} creado correctamente\x1B[0m`);
+            return true;
+            
+        case 'groupadd':
+            this.terminal.writeln(`\x1B[32mGrupo ${args[0]} creado correctamente\x1B[0m`);
+            return true;
+            
+        case 'id':
+            this.terminal.writeln('uid=1000(usuario-terminal) gid=1000(usuario-terminal) grupos=1000(usuario-terminal),4(adm),24(cdrom)');
+            return true;
+    }
+    return false;
+}
+```
+
+### **7. COMANDOS DIVERTIDOS PARA APRENDIZAJE**
+```javascript
+// Nuevo método: handleFunCommands
+handleFunCommands(cmd, args) {
+    switch(cmd) {
+        case 'cowsay':
+            return this.cowsay(args.join(' '));
+            
+        case 'figlet':
+            const text = args.join(' ') || 'Hola Terminal';
+            this.terminal.writeln('\x1B[1;35m');
+            this.terminal.writeln(' _   _      _ _        _____         _       _           _');
+            this.terminal.writeln('| | | | ___| | | ___  |_   _|__  ___| |_    / \\   _ __  (_)_ __');
+            this.terminal.writeln('| |_| |/ _ \\ | |/ _ \\   | |/ _ \\/ __| __|  / _ \\ | \'_ \\ | | \'_ \\');
+            this.terminal.writeln('|  _  |  __/ | | (_) |  | |  __/\\__ \\ |_  / ___ \\| | | | | | | | |');
+            this.terminal.writeln('|_| |_|\\___|_|_|\\___/   |_|\\___||___/\\__|/_/   \\_\\_| |_| |_|_| |_|');
+            this.terminal.writeln('\x1B[0m');
+            return true;
+            
+        case 'fortune':
+            const fortunes = [
+                'Hoy es un buen día para aprender terminal',
+                'La práctica hace al maestro',
+                'Un gran poder conlleva una gran responsabilidad',
+                'El conocimiento es poder'
+            ];
+            const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+            this.terminal.writeln(`\x1B[3;36m"${randomFortune}"\x1B[0m`);
+            return true;
+    }
+    return false;
+}
+```
+
+### **8. ACTUALIZAR EL ORDEN DE EJECUCIÓN EN handleCommand**
+```javascript
+handleCommand(command) {
+    const parts = command.trim().split(' ');
+    const cmd = parts[0].toLowerCase();
+    const args = parts.slice(1);
+    
+    // Comandos básicos existentes
+    switch(cmd) {
+        case 'help':
+            this.showExtendedHelp();
+            return;
+        case 'clear':
+            this.terminal.clear();
+            return;
+        // ... otros comandos básicos
+    }
+    
+    // ⭐⭐ NUEVO ORDEN COMPLETO
+    if (this.handleAdminCommands(cmd, args)) return;
+    if (this.handleProcessCommands(cmd, args)) return;      // ⭐ NUEVO
+    if (this.handleNetworkCommands(cmd, args)) return;      // ⭐ NUEVO
+    if (this.handleSearchCommands(cmd, args)) return;       // ⭐ NUEVO
+    if (this.handleCompressionCommands(cmd, args)) return;  // ⭐ NUEVO
+    if (this.handleUserCommands(cmd, args)) return;         // ⭐ NUEVO
+    if (this.handleFunCommands(cmd, args)) return;          // ⭐ NUEVO
+    if (this.handleFileCommands(cmd, args)) return;
+    if (this.handleSystemCommands(cmd, args)) return;
+    if (this.handleUtilityCommands(cmd, args)) return;
+    if (this.handleDevCommands(cmd, args)) return;
+    
+    // Comando no encontrado
+    this.terminal.writeln(`\x1B[31mComando no encontrado: ${cmd}\x1B[0m`);
+}
+```
+
+### **9. ACTUALIZAR LA AYUDA EXTENDIDA**
+```javascript
+showExtendedHelp() {
+    this.terminal.writeln('\x1B[1;36m=== COMANDOS DISPONIBLES ===\x1B[0m');
+    
+    this.terminal.writeln('\x1B[1;35mADMINISTRACIÓN:\x1B[0m');
+    this.terminal.writeln('  \x1B[32msudo\x1B[0m     - Ejecutar como administrador');
+    this.terminal.writeln('  \x1B[32mupdate\x1B[0m   - Actualizar sistema');
+    this.terminal.writeln('  \x1B[32mupgrade\x1B[0m  - Mejorar sistema');
+    this.terminal.writeln('  \x1B[32minstall\x1B[0m  - Instalar paquetes');
+    this.terminal.writeln('  \x1B[32mapt\x1B[0m      - Gestor de paquetes');
+    
+    this.terminal.writeln('\x1B[1;33mPROCESOS:\x1B[0m');
+    this.terminal.writeln('  \x1B[32mps\x1B[0m       - Procesos activos');
+    this.terminal.writeln('  \x1B[32mkill\x1B[0m     - Terminar proceso');
+    this.terminal.writeln('  \x1B[32mjobs\x1B[0m     - Trabajos en segundo plano');
+    this.terminal.writeln('  \x1B[32mbg/fg\x1B[0m    - Control de trabajos');
+    
+    this.terminal.writeln('\x1B[1;34mREDES:\x1B[0m');
+    this.terminal.writeln('  \x1B[32mping\x1B[0m     - Prueba conectividad');
+    this.terminal.writeln('  \x1B[32mcurl\x1B[0m     - Transferencia URL');
+    this.terminal.writeln('  \x1B[32mssh\x1B[0m      - Conexión remota');
+    this.terminal.writeln('  \x1B[32mscp\x1B[0m      - Copia segura');
+    
+    this.terminal.writeln('\x1B[1;36mBÚSQUEDA:\x1B[0m');
+    this.terminal.writeln('  \x1B[32mgrep\x1B[0m     - Buscar patrones');
+    this.terminal.writeln('  \x1B[32mfind\x1B[0m     - Buscar archivos');
+    this.terminal.writeln('  \x1B[32mlocate\x1B[0m   - Encontrar archivos');
+    
+    this.terminal.writeln('\x1B[1;32mCOMPRESIÓN:\x1B[0m');
+    this.terminal.writeln('  \x1B[32mtar\x1B[0m      - Archivar/comprimir');
+    this.terminal.writeln('  \x1B[32mzip\x1B[0m      - Comprimir archivos');
+    this.terminal.writeln('  \x1B[32mgzip\x1B[0m     - Compresión gzip');
+    
+    // ... y las demás categorías que ya tienes
+}
+```
+
+## 🎯 **BENEFICIOS DE ESTA EXTENSIÓN:**
+
+1. **Aprendizaje completo** - Cubre todas las áreas esenciales
+2. **Preparación para el mundo real** - Comandos que se usan diariamente
+3. **Progresión natural** - De básico a avanzado
+4. **Diversión incluida** - Comandos divertidos para mantener el interés
+5. **Simulación realista** - Comportamientos y outputs realistas
+
+## 📊 **RESUMEN DE CATEGORÍAS AGREGADAS:**
+
+- ✅ **Procesos** (kill, jobs, bg, fg)
+- ✅ **Redes avanzadas** (curl, wget, ssh, scp)  
+- ✅ **Búsqueda** (grep, find, locate)
+- ✅ **Compresión** (tar, zip, gzip, unzip)
+- ✅ **Usuarios/Grupos** (passwd, useradd, id)
+- ✅ **Diversión** (figlet, fortune)
+- ✅ **Sistema avanzado** (df, du, free)
+
+¡Con esto tu simulador será **extremadamente completo** y perfecto para el aprendizaje! 🚀
+
+¿Te gustaría que implemente alguna categoría específica primero? ¿O prefieres el código completo de todas estas extensiones?
+
+¡Perfecto, socio! 🚀💪 Entiendo completamente la situación. Trabajar desde el teléfono puede ser un poco complicado para copiar código extenso.
+
+## 📋 **PLAN DE ACCIÓN RECOMENDADO:**
+
+### **1. VAMOS POR PARTES:**
+Te sugiero que primero copies **solo los comandos de administración** que te envié en el primer mensaje (update, upgrade, install, sudo, etc.) y los pruebes. 
+
+### **2. SI TE TRABAS, AQUÍ TIENES PUNTOS CLAVE:**
+- **El orden de inserción** es importante: constructor → métodos nuevos → actualizar handleCommand
+- **Si hay errores**, fíjate en las **comas** y **llaves** - son los problemas más comunes
+- **La prioridad en handleCommand** debe ser: Admin primero, luego los demás
+
+### **3. BACKUP MENTAL:**
+Si algo no funciona, recuerda que:
+- Puedes empezar con solo 2-3 comandos nuevos primero
+- Los métodos `handleAdminCommands` y `handleAptCommands` son el núcleo
+- Lo demás son extensiones que puedes agregar después
+
+### **4. CUANDO TERMINES LA PRIMERA PARTE:**
+- Prueba comandos como: `sudo apt update`, `install git`, `upgrade`
+- Verifica que el `help` muestre los nuevos comandos
+- Si todo funciona, entonces vamos por las otras categorías
+
+## 🆘 **SI TE TRABAS GRAVE:**
+- Guarda una copia de tu código actual
+- Dime exactamente **qué error ves** en la consola del navegador
+- O **qué comando no funciona** como esperabas
+
+## 🎯 **RECUERDA:**
+¡Estamos construyendo algo épico! Un terminal de aprendizaje completo. Si te trabas, no te preocupes - es normal cuando se extiende código complejo. 
+
+**Yo estaré aquí esperándote** cuando vuelvas desde la laptop. ¡Tú puedes, socio! 💻🔥
+
+¿Necesitas que repita alguna parte específica del código o vamos bien así?
+
+

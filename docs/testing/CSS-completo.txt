@@ -1,0 +1,528 @@
+﻿¡Perfecto! Veo el problema. Tu CSS tiene algunos conflictos en la estructura grid y el sidebar no está funcionando correctamente. Te ayudo a rehacer completamente el CSS manteniendo tu estructura HTML pero corrigiendo la disposición de los elementos.
+
+Aquí tienes el CSS completo y corregido:
+
+```css
+/* Reset y base */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+}
+
+html, body { 
+    height: 100%; 
+    font-family: "Segoe UI", Roboto, Arial, sans-serif; 
+    color: #222; 
+    background: rgb(180, 192, 241); 
+    overflow-x: hidden;
+}
+
+/* CONTENEDOR PRINCIPAL CON NUEVA ESTRUCTURA GRID */
+.container {
+    display: grid;
+    grid-template-areas: 
+        "header header"
+        "controls controls"
+        "nav nav"
+        "sidebar main";
+    grid-template-columns: 280px 1fr;
+    grid-template-rows: auto auto auto 1fr;
+    min-height: 100vh;
+    gap: 0;
+}
+
+/* ASIGNACIÓN DE ÁREAS */
+header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    background: linear-gradient(90deg, #0f1724, #15233a);
+    color: #fff;
+    z-index: 20;
+}
+
+.ace-controls { 
+    grid-area: controls; 
+    padding: 10px 20px; 
+    display: flex; 
+    gap: 12px; 
+    align-items: center; 
+    background: #ffffff; 
+    border-bottom: 1px solid rgba(0,0,0,0.05); 
+    flex-wrap: wrap;
+    z-index: 20;
+}
+
+nav { 
+    grid-area: nav; 
+    background: transparent; 
+    padding: 8px 20px; 
+    z-index: 20;
+}
+
+/* SIDEBAR - EXPLORADOR DE PROYECTO */
+.project-sidebar {
+    grid-area: sidebar;
+    background: linear-gradient(180deg, #0b1220, #0b1628);
+    color: #e6eef8;
+    padding: 16px;
+    height: calc(100vh - 120px);
+    overflow: auto;
+    position: sticky;
+    top: 0;
+    transition: all 0.3s ease;
+}
+
+/* CONTENIDO PRINCIPAL - ESTRUCTURA VERTICAL */
+.main-content {
+    grid-area: main;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 600px;
+}
+
+/* EDITOR DE CÓDIGO */
+.editor-container { 
+    background: #fff; 
+    border-radius: 8px; 
+    min-height: 400px;
+    overflow: hidden; 
+    box-shadow: 0 6px 18px rgba(11,35,60,0.06); 
+}
+
+#editor { 
+    height: 400px; 
+    width: 100%; 
+    border: 1px solid #e6eef8;
+    border-radius: 6px;
+}
+
+/* CONSOLAS Y PREVIEW - ESTRUCTURA VERTICAL */
+.console-container,
+.alternate-console-container,
+.preview-container {
+    background: #ffffff; 
+    border-radius: 8px; 
+    padding: 16px; 
+    box-shadow: 0 4px 10px rgba(11,35,60,0.04);
+}
+
+/* PRIMERA CONSOLA JS */
+.console-container { 
+    min-height: 300px;
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+}
+
+/* SEGUNDA CONSOLA JS (CANAL ALTERNO) */
+.alternate-console-container {
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* PREVIEW */
+.preview-container { 
+    min-height: 500px;
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+}
+
+/* TEXTAREAS Y IFRAME */
+.console-container textarea,
+.alternate-console-container textarea {
+    flex: 1;
+    width: 100%; 
+    border: 1px solid #e6eef8; 
+    border-radius: 6px; 
+    padding: 12px; 
+    resize: vertical; 
+    font-family: monospace; 
+    background: #fbfdff;
+    min-height: 120px;
+}
+
+#preview { 
+    flex: 1;
+    width: 100%;
+    border: 1px solid #e6eef8;
+    border-radius: 6px;
+    background: white;
+    min-height: 400px;
+}
+
+/* BOTONES */
+.button, 
+.alt-button {
+    background: #0b3b66; 
+    color: #fff; 
+    border: none; 
+    padding: 12px 20px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 200px;
+}
+
+.button:hover, 
+.alt-button:hover { 
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+/* GRUPOS DE BOTONES */
+.console-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.alternate-console-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* BOTONES FLOTANTES */
+.floating-buttons {
+    position: fixed;
+    right: 16px;
+    bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 60;
+}
+
+.floating-buttons button {
+    background: #0b3b66; 
+    color: #fff; 
+    border: none; 
+    width: 48px; 
+    height: 48px; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    box-shadow: 0 6px 14px rgba(3,18,45,0.28);
+}
+
+.floating-buttons button:hover { 
+    transform: translateY(-3px); 
+}
+
+/* MENÚ Y DROPDOWN */
+.menu { 
+    list-style: none; 
+    display: flex; 
+    gap: 12px; 
+    align-items: center; 
+}
+
+.menu a { 
+    color: #0b3b66; 
+    text-decoration: none; 
+    padding: 6px 10px; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 8px; 
+    border-radius: 6px; 
+}
+
+.menu a:hover { 
+    background: rgba(11,59,102,0.06); 
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background: white;
+    min-width: 240px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    z-index: 100;
+    top: 100%;
+    left: 0;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    text-decoration: none;
+    color: #333;
+}
+
+.dropdown-content a:hover {
+    background: #f5f5f5;
+}
+
+/* LOGO Y CONTROLES ACE */
+#logo { 
+    width: 48px; 
+    height: 48px; 
+    object-fit: cover; 
+    border-radius: 6px; 
+}
+
+.ace-controls .control-group { 
+    display: flex; 
+    gap: 8px; 
+    align-items: center; 
+}
+
+.ace-controls select,
+.ace-controls input[type="number"] {
+    min-width: 120px;
+    padding: 6px 8px;
+    border: 1px solid #e6eef8;
+    border-radius: 4px;
+}
+
+/* SIDEBAR HEADER */
+.sidebar-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 12px; 
+}
+
+.sidebar-header h3 { 
+    font-size: 16px; 
+    margin: 0; 
+    color: #dbeafe; 
+}
+
+#close-sidebar {
+    background: rgba(219, 234, 254, 0.1);
+    border: none;
+    color: #dbeafe;
+    font-size: 18px;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+#close-sidebar:hover {
+    background: rgba(219, 234, 254, 0.2);
+    transform: scale(1.1);
+}
+
+.file-explorer { 
+    background: rgba(255,255,255,0.02); 
+    padding: 8px; 
+    border-radius: 6px; 
+    min-height: 80px; 
+}
+
+/* BOTÓN TUTORIAL JS ESPECIAL */
+#tutorial-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    padding: 8px 16px !important;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+}
+
+#tutorial-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* ===== RESPONSIVE ===== */
+
+/* TABLETS */
+@media (max-width: 980px) {
+    .container {
+        grid-template-areas: 
+            "header"
+            "controls"
+            "nav"
+            "main";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto 1fr;
+    }
+    
+    .project-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 85%;
+        max-width: 300px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+    }
+    
+    .project-sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        padding: 12px;
+        gap: 12px;
+    }
+    
+    #editor {
+        height: 350px;
+    }
+    
+    .console-buttons,
+    .alternate-console-buttons {
+        flex-direction: column;
+    }
+    
+    .button, 
+    .alt-button {
+        width: 100%;
+    }
+}
+
+/* MÓVILES */
+@media (max-width: 480px) {
+    header {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+        padding: 10px;
+    }
+    
+    header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .ace-controls {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+    
+    .ace-controls .control-group {
+        flex-wrap: wrap;
+    }
+    
+    .main-content {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    #editor {
+        height: 300px;
+    }
+    
+    .console-container,
+    .alternate-console-container,
+    .preview-container {
+        padding: 12px;
+    }
+    
+    .floating-buttons {
+        right: 10px;
+        bottom: 10px;
+    }
+    
+    .floating-buttons button {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+/* ESTILOS PARA EL EXPLORADOR DE ARCHIVOS */
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    transition: background-color 0.2s ease;
+}
+
+.file-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.file-item.active {
+    background: rgba(11, 59, 102, 0.3);
+    border-left: 3px solid #0b3b66;
+}
+
+.file-icon {
+    font-size: 14px;
+}
+
+.file-name {
+    font-size: 13px;
+    color: #e6eef8;
+    flex: 1;
+}
+
+/* ESTADOS DEL SIDEBAR */
+.project-sidebar.hidden {
+    display: none;
+}
+
+/* En desktop, el sidebar siempre visible */
+@media (min-width: 981px) {
+    .project-sidebar {
+        display: block !important;
+        transform: none !important;
+    }
+    
+    #close-sidebar {
+        display: none;
+    }
+}
+```
+
+Principales cambios realizados:
+
+1. Estructura Grid Corregida: El sidebar ahora está correctamente posicionado a la izquierda y el contenido principal a la derecha.
+2. Disposición Vertical: Dentro del main-content, todos los elementos (editor, consola 1, consola 2, preview) se apilan verticalmente en el orden que solicitaste.
+3. Responsive Mantenido: En móviles el sidebar se convierte en overlay y el orden vertical se mantiene.
+4. Alturas Flexibles: Usé min-height en lugar de alturas fijas para mejor adaptabilidad.
+5. Simplificación: Eliminé estilos conflictivos y duplicados.
+
+El orden visual ahora es:
+
+· Navbar con explorador (sidebar izquierdo en desktop)
+· Editor de código
+· Primera consola JS
+· Segunda consola JS (canal alterno)
+· Previsualizador web
+
+¡Prueba este CSS y debería funcionar correctamente! ¿Necesitas algún ajuste específico?

@@ -1,0 +1,548 @@
+﻿Segunda parte de la aplicación 
+¡Perfecto! Te ayudo a integrar las funcionalidades de "Abrir proyecto" y "Nuevo proyecto" en tu código existente. Voy a mostrarte cómo modificar tu `index.html` y `index.js` para incorporar estas características.
+
+## 1. Primero, modifiquemos el `index.html`:
+
+**Agrega estas opciones al menú desplegable de "Archivo":**
+
+```html
+<!-- En el dropdown-content, después de "Nueva carpeta" -->
+<a id="nuevo-proyecto" href="#"><span class="menu-icon">🆕</span> Nuevo Proyecto</a>
+<a id="abrir-proyecto" href="#"><span class="menu-icon">📂</span> Abrir Proyecto</a>
+```
+
+**Agrega el panel lateral para el explorador de archivos:**
+
+```html
+<!-- Después del nav y antes del editor -->
+<div id="project-sidebar" class="project-sidebar" style="display: none;">
+    <div class="sidebar-header">
+        <h3>Explorador de Proyecto</h3>
+        <button id="close-sidebar">×</button>
+    </div>
+    <div id="file-explorer" class="file-explorer"></div>
+</div>
+
+<div id="main-content">
+    <div id="editor"></div>
+</div>
+```
+
+## 2. Agrega estos estilos al `index.css`:
+
+```css
+/* Estilos para el sistema de proyectos */
+.project-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 300px;
+    height: 100vh;
+    background: #252526;
+    border-right: 1px solid #3c3c3c;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #2d2d30;
+    border-bottom: 1px solid #3c3c3c;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    color: #4ec9b0;
+    font-size: 1.1rem;
+}
+
+#close-sidebar {
+    background: none;
+    border: none;
+    color: #f0f0f0;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+}
+
+#close-sidebar:hover {
+    color: #4ec9b0;
+}
+
+.file-explorer {
+    padding: 10px;
+}
+
+.file-item {
+    padding: 8px 12px;
+    margin: 2px 0;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.file-item:hover {
+    background: #2d2d30;
+}
+
+.file-item.active {
+    background: #007acc;
+}
+
+.file-icon {
+    font-size: 1.2rem;
+}
+
+#main-content {
+    transition: margin-left 0.3s;
+}
+
+#main-content.with-sidebar {
+    margin-left: 300px;
+}
+
+/* Tabs para archivos abiertos */
+.editor-tabs {
+    display: flex;
+    background: #2d2d30;
+    border-bottom: 1px solid #3c3c3c;
+    overflow-x: auto;
+}
+
+.editor-tab {
+    padding: 10px 15px;
+    background: #252526;
+    border-right: 1px solid #3c3c3c;
+    cursor: pointer;
+    color: #f0f0f0;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.editor-tab.active {
+    background: #1e1e1e;
+    border-bottom: 2px solid #007acc;
+}
+
+.editor-tab:hover {
+    background: #2d2d30;
+}
+
+.close-tab {
+    margin-left: 5px;
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+.close-tab:hover {
+    background: #3c3c3c;
+}
+```
+
+## 3. Modifica el `index.js` para agregar la funcionalidad de proyectos:
+
+**Agrega estas variables globales al inicio del archivo:**
+
+```javascript
+// Variables globales (agregar después de las existentes)
+let currentProjectHandle = null;
+let openFiles = new Map(); // Map para archivos abiertos: {fileHandle, content, modified}
+let currentFileTab = null;
+let projectFiles = []; // Lista de archivos en el proyecto
+```
+
+**Agrega estos event listeners en el DOMContentLoaded:**
+
+```javascript
+// Agregar después de los event listeners existentes
+document.getElementById('nuevo-proyecto').addEventListener('click', newProject);
+document.getElementById('abrir-proyecto').addEventListener('click', openProject);
+document.getElementById('close-sidebar').addEventListener('click', closeProjectSidebar);
+```
+
+**Agrega estas funciones después de las funciones existentes de manejo de archivos:**
+
+```javascript
+// =====================================
+// Funciones para manejo de proyectos
+// =====================================
+
+// Nuevo proyecto
+async function newProject() {
+    if (!isFileSystemAccessSupported()) {
+        showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+        return;
+    }
+
+    try {
+        currentProjectHandle = await window.showDirectoryPicker();
+        await loadProjectStructure();
+        showProjectSidebar();
+        showNotification('Nuevo proyecto creado');
+        
+        // Crear archivo index.html por defecto
+        await createDefaultProjectStructure();
+    } catch (error) {
+        if (error.name !== 'AbortError') {
+            console.error('Error creando proyecto:', error);
+            showNotification(`Error: ${error.message}`, true);
+        }
+    }
+}
+
+// Abrir proyecto
+async function openProject() {
+    if (!isFileSystemAccessSupported()) {
+        showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+        return;
+    }
+
+    try {
+        currentProjectHandle = await window.showDirectoryPicker();
+        await loadProjectStructure();
+        showProjectSidebar();
+        showNotification('Proyecto abierto correctamente');
+    } catch (error) {
+        if (error.name !== 'AbortError') {
+            console.error('Error abriendo proyecto:', error);
+            showNotification(`Error: ${error.message}`, true);
+        }
+    }
+}
+
+// Cargar estructura del proyecto
+async function loadProjectStructure() {
+    if (!currentProjectHandle) return;
+
+    const fileExplorer = document.getElementById('file-explorer');
+    fileExplorer.innerHTML = '';
+
+    projectFiles = [];
+    await listFiles(currentProjectHandle, fileExplorer);
+}
+
+// Listar archivos recursivamente
+async function listFiles(directoryHandle, container, path = '') {
+    for await (const [name, handle] of directoryHandle.entries()) {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.dataset.path = path ? `${path}/${name}` : name;
+        
+        const icon = handle.kind === 'directory' ? '📁' : getFileIcon(name);
+        fileItem.innerHTML = `
+            <span class="file-icon">${icon}</span>
+            <span class="file-name">${name}</span>
+        `;
+
+        fileItem.addEventListener('click', () => {
+            if (handle.kind === 'file') {
+                openFileFromProject(handle, name);
+            }
+        });
+
+        container.appendChild(fileItem);
+        projectFiles.push({ name, handle, path, kind: handle.kind });
+
+        if (handle.kind === 'directory') {
+            const subContainer = document.createElement('div');
+            subContainer.style.marginLeft = '15px';
+            container.appendChild(subContainer);
+            await listFiles(handle, subContainer, path ? `${path}/${name}` : name);
+        }
+    }
+}
+
+// Obtener icono según extensión del archivo
+function getFileIcon(filename) {
+    const ext = filename.split('.').pop().toLowerCase();
+    const icons = {
+        'html': '🌐', 'htm': '🌐',
+        'css': '🎨',
+        'js': '📜', 'javascript': '📜',
+        'json': '📋',
+        'md': '📝', 'txt': '📝',
+        'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'svg': '🖼️'
+    };
+    return icons[ext] || '📄';
+}
+
+// Abrir archivo desde el proyecto
+async function openFileFromProject(fileHandle, filename) {
+    try {
+        const file = await fileHandle.getFile();
+        const content = await file.text();
+        
+        // Agregar a archivos abiertos
+        openFiles.set(filename, {
+            handle: fileHandle,
+            content: content,
+            modified: false
+        });
+        
+        // Crear tab
+        createFileTab(filename, content);
+        showNotification(`Archivo abierto: ${filename}`);
+    } catch (error) {
+        console.error('Error abriendo archivo del proyecto:', error);
+        showNotification(`Error abriendo archivo: ${error.message}`, true);
+    }
+}
+
+// Crear pestaña de archivo
+function createFileTab(filename, content) {
+    let tabsContainer = document.querySelector('.editor-tabs');
+    if (!tabsContainer) {
+        tabsContainer = document.createElement('div');
+        tabsContainer.className = 'editor-tabs';
+        document.getElementById('editor').parentNode.insertBefore(tabsContainer, document.getElementById('editor'));
+    }
+
+    const tab = document.createElement('div');
+    tab.className = 'editor-tab';
+    tab.innerHTML = `
+        <span>${filename}</span>
+        <span class="close-tab">×</span>
+    `;
+
+    tab.addEventListener('click', (e) => {
+        if (e.target.classList.contains('close-tab')) {
+            closeFileTab(filename, tab);
+            return;
+        }
+        switchToTab(filename, tab);
+    });
+
+    tabsContainer.appendChild(tab);
+    switchToTab(filename, tab);
+    
+    // Actualizar editor con contenido del archivo
+    editor.setValue(content);
+    
+    // Configurar modo según extensión
+    const ext = filename.split('.').pop().toLowerCase();
+    const modeMap = {
+        'js': 'javascript', 'javascript': 'javascript',
+        'html': 'html', 'htm': 'html',
+        'css': 'css',
+        'json': 'json'
+    };
+    
+    if (modeMap[ext]) {
+        editor.session.setMode(`ace/mode/${modeMap[ext]}`);
+        document.getElementById('modeSelector').value = modeMap[ext];
+    }
+}
+
+// Cambiar a pestaña
+function switchToTab(filename, tab) {
+    // Remover clase active de todas las pestañas
+    document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+    
+    // Activar pestaña actual
+    tab.classList.add('active');
+    currentFileTab = filename;
+    
+    // Cargar contenido del archivo
+    const fileData = openFiles.get(filename);
+    if (fileData) {
+        editor.setValue(fileData.content);
+    }
+}
+
+// Cerrar pestaña de archivo
+function closeFileTab(filename, tab) {
+    const fileData = openFiles.get(filename);
+    if (fileData && fileData.modified) {
+        if (!confirm('¿Guardar cambios antes de cerrar?')) {
+            return;
+        }
+        saveCurrentFile();
+    }
+    
+    openFiles.delete(filename);
+    tab.remove();
+    
+    // Si no hay pestañas, limpiar editor
+    if (openFiles.size === 0) {
+        editor.setValue('');
+        currentFileTab = null;
+    }
+}
+
+// Mostrar sidebar de proyecto
+function showProjectSidebar() {
+    document.getElementById('project-sidebar').style.display = 'block';
+    document.getElementById('main-content').classList.add('with-sidebar');
+}
+
+// Ocultar sidebar de proyecto
+function closeProjectSidebar() {
+    document.getElementById('project-sidebar').style.display = 'none';
+    document.getElementById('main-content').classList.remove('with-sidebar');
+    currentProjectHandle = null;
+}
+
+// Crear estructura por defecto del proyecto
+async function createDefaultProjectStructure() {
+    if (!currentProjectHandle) return;
+
+    try {
+        // Crear index.html
+        const indexFileHandle = await currentProjectHandle.getFileHandle('index.html', { create: true });
+        const writable = await indexFileHandle.createWritable();
+        await writable.write(`<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Proyecto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>¡Bienvenido a tu nuevo proyecto!</h1>
+    <script src="script.js"></script>
+</body>
+</html>`);
+        await writable.close();
+
+        // Crear archivos CSS y JS vacíos
+        const cssFileHandle = await currentProjectHandle.getFileHandle('style.css', { create: true });
+        const jsFileHandle = await currentProjectHandle.getFileHandle('script.js', { create: true });
+
+        // Recargar estructura
+        await loadProjectStructure();
+
+    } catch (error) {
+        console.error('Error creando estructura del proyecto:', error);
+    }
+}
+
+// Guardar archivo actual (modificar la función saveFile existente)
+async function saveFile() {
+    if (currentFileTab && openFiles.has(currentFileTab)) {
+        // Guardar en el proyecto
+        return await saveCurrentFile();
+    } else {
+        // Guardar archivo individual (comportamiento original)
+        if (!isFileSystemAccessSupported()) {
+            showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+            return false;
+        }
+
+        try {
+            if (!fileHandle) {
+                return await saveFileAs();
+            }
+            
+            const writable = await fileHandle.createWritable();
+            await writable.write(editor.getValue());
+            await writable.close();
+            
+            showNotification(`Archivo guardado: ${currentFileName || 'sin título'}`);
+            return true;
+        } catch (error) {
+            console.error('Error guardando archivo:', error);
+            showNotification(`Error al guardar: ${error.message}`, true);
+            return false;
+        }
+    }
+}
+
+// Guardar archivo actual del proyecto
+async function saveCurrentFile() {
+    if (!currentFileTab || !openFiles.has(currentFileTab)) return false;
+
+    try {
+        const fileData = openFiles.get(currentFileTab);
+        const writable = await fileData.handle.createWritable();
+        await writable.write(editor.getValue());
+        await writable.close();
+
+        fileData.modified = false;
+        showNotification(`Archivo guardado: ${currentFileTab}`);
+        return true;
+    } catch (error) {
+        console.error('Error guardando archivo del proyecto:', error);
+        showNotification(`Error al guardar: ${error.message}`, true);
+        return false;
+    }
+}
+
+// Modificar el evento de cambio del editor para marcar como modificado
+editor.session.on('change', () => {
+    updatePreview();
+    
+    // Marcar archivo como modificado si está en un proyecto
+    if (currentFileTab && openFiles.has(currentFileTab)) {
+        const fileData = openFiles.get(currentFileTab);
+        fileData.modified = true;
+        // Puedes agregar un indicador visual (asterisco) en la pestaña
+        const tab = document.querySelector(`.editor-tab:contains("${currentFileTab}")`);
+        if (tab && !tab.textContent.includes('*')) {
+            tab.querySelector('span').textContent = currentFileTab + ' *';
+        }
+    }
+});
+```
+
+## 4. También necesitamos modificar la función `newDocument`:
+
+```javascript
+// Nuevo documento (modificada)
+function newDocument() {
+    if (currentProjectHandle) {
+        // En modo proyecto, crear nuevo archivo
+        createNewFileInProject();
+    } else {
+        // Comportamiento original para archivos individuales
+        if (editor.getValue() && !confirm('¿Crear nuevo documento? Se perderán los cambios no guardados.')) return;
+        editor.setValue('');
+        fileHandle = null;
+        currentFileName = 'nuevo_documento.txt';
+        editor.session.setMode("ace/mode/text");
+        document.getElementById('modeSelector').value = 'html';
+        showNotification('Nuevo documento creado');
+    }
+}
+
+// Crear nuevo archivo en proyecto
+async function createNewFileInProject() {
+    if (!currentProjectHandle) return;
+
+    const fileName = prompt('Nombre del nuevo archivo:');
+    if (!fileName) return;
+
+    try {
+        const fileHandle = await currentProjectHandle.getFileHandle(fileName, { create: true });
+        const writable = await fileHandle.createWritable();
+        await writable.write('');
+        await writable.close();
+
+        // Recargar estructura y abrir el nuevo archivo
+        await loadProjectStructure();
+        await openFileFromProject(fileHandle, fileName);
+        showNotification(`Archivo creado: ${fileName}`);
+    } catch (error) {
+        console.error('Error creando archivo:', error);
+        showNotification(`Error: ${error.message}`, true);
+    }
+}
+```
+
+Con estas modificaciones, tu aplicación ahora tendrá:
+
+- ✅ Sistema de proyectos con explorador de archivos
+- ✅ Pestañas para múltiples archivos abiertos
+- ✅ Navegación entre archivos del proyecto
+- ✅ Guardado automático en la ubicación del proyecto
+- ✅ Compatibilidad con el sistema existente de archivos individuales
+
+¿Te gustaría que ajuste alguna parte específica o necesitas ayuda con alguna funcionalidad adicional?

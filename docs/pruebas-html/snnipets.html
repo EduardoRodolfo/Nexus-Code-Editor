@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Laboratorio de Snippets JS</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .snippetBox {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 30px;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      font-family: monospace;
+      margin-top: 10px;
+      background: #fff;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 10px;
+      padding: 5px 12px;
+    }
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
+      color: green;
+    }
+    #testBtn {
+      margin-top: 10px;
+      padding: 5px 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧩 Laboratorio de Snippets Interactivos</h1>
+
+  <!-- 🔠 STRING SNIPPET -->
+  <div class="snippetBox">
+    <h3>🔠 Convertir a Mayúsculas (String)</h3>
+    <textarea id="code1">// Convierte texto a mayúsculas
+const texto = "Hola, mundo";
+const resultado = texto.toUpperCase();
+document.getElementById("res1").textContent = resultado;</textarea>
+    <button onclick="ejecutarSnippet('code1', 'res1')">Ejecutar</button>
+    <div class="result" id="res1"></div>
+  </div>
+
+  <!-- 🧮 ARRAY SNIPPET -->
+  <div class="snippetBox">
+    <h3>🧮 Duplicar valores del array</h3>
+    <textarea id="code2">// Duplicar cada número
+const numeros = [2, 4, 6];
+const resultado = numeros.map(n => n * 2).join(", ");
+document.getElementById("res2").textContent = resultado;</textarea>
+    <button onclick="ejecutarSnippet('code2', 'res2')">Ejecutar</button>
+    <div class="result" id="res2"></div>
+  </div>
+
+  <!-- 🌐 DOM SNIPPET -->
+  <div class="snippetBox">
+    <h3>🌐 DOM: Activar alerta al hacer clic</h3>
+    <button id="testBtn">Haz clic aquí</button>
+    <textarea id="code3">// Asigna evento al botón sin duplicar listeners
+const btn = document.getElementById("testBtn");
+btn.onclick = () => {
+  alert("¡Botón activado!");
+};</textarea>
+    <button onclick="ejecutarSnippet('code3', 'res3')">Ejecutar</button>
+    <div class="result" id="res3">✅ Esperando evento...</div>
+  </div>
+
+  <script>
+    function ejecutarSnippet(codeId, resultId) {
+  const codigo = document.getElementById(codeId).value;
+  try {
+    const resultado = new Function(`
+      let resultadoFinal;
+      ${codigo}
+      return typeof resultado !== "undefined" ? resultado : resultadoFinal;
+    `)();
+    
+    const salida = typeof resultado !== "undefined" ? resultado : "✅ Código ejecutado correctamente.";
+    document.getElementById(resultId).textContent = salida;
+  } catch (error) {
+    document.getElementById(resultId).textContent = "❌ Error: " + error.message;
+  }
+}
+  </script>
+
+</body>
+</html>

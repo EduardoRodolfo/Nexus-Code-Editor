@@ -1,0 +1,90 @@
+﻿Analizando tu código, el método install que quieres agregar es una versión mejorada del que ya existe. 
+Debes reemplazar el método existente en lugar de agregarlo duplicado.
+
+Aquí te muestro exactamente dónde ubicarlo:
+
+```javascript
+class PackageManager {
+    constructor() {
+        this.installedPackages = new Map();
+        this.availablePackages = new Map();
+        this.dependencies = new Map();
+        
+        this.init();
+    }
+
+    init() {
+        this.loadDefaultPackages();
+        this.loadInstalledPackages();
+        this.setupEventListeners();
+    }
+
+    loadDefaultPackages() {
+        // ... código existente (no cambiar)
+    }
+
+    loadInstalledPackages() {
+        // ... código existente (no cambiar)
+    }
+
+    setupEventListeners() {
+        // ... código existente (no cambiar)
+    }
+
+    // ↓↓↓↓ REEMPLAZA EL MÉTODO EXISTENTE CON ESTE ↓↓↓↓
+    async install(packageNames) {
+        // VALIDACIÓN MEJORADA
+        if (!packageNames || packageNames.length === 0) {
+            throw new Error('No se especificaron paquetes para instalar');
+        }
+
+        const results = [];
+        
+        for (const packageName of packageNames) {
+            try {
+                const result = await this.installSinglePackage(packageName.trim());
+                results.push(result);
+            } catch (error) {
+                console.error(`Error instalando ${packageName}:`, error);
+                results.push({
+                    name: packageName,
+                    success: false,
+                    error: error.message
+                });
+            }
+        }
+        
+        this.saveInstalledPackages();
+        this.updatePackageJson();
+        
+        return results;
+    }
+    // ↑↑↑↑ REEMPLAZA EL MÉTODO EXISTENTE CON ESTE ↑↑↑↑
+
+    async installSinglePackage(packageName) {
+        // ... el resto del código permanece igual
+        const pkgInfo = this.availablePackages.get(packageName);
+        
+        if (!pkgInfo) {
+            throw new Error(`Paquete no encontrado: ${packageName}`);
+        }
+        // ... resto del método sin cambios
+    }
+
+    // ... los demás métodos permanecen igual (uninstall, search, etc.)
+}
+```
+
+Cambios principales que estás agregando:
+
+1. Validación mejorada: Verifica que se hayan especificado paquetes
+2. Trim de nombres: Limpia espacios en blanco con packageName.trim()
+3. Mejor logging: Agrega console.error para debugging
+4. Manejo de errores más robusto
+
+Ubicación exacta:
+
+· Línea después de: setupEventListeners() { ... }
+· Antes de: async installSinglePackage(packageName) { ... }
+
+Simplemente copia y pega el nuevo método install en esa ubicación, reemplazando la versión anterior. El resto del código puede permanecer igual.

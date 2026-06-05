@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>🎨 Tutorial CSS · Responsivo e interactivo</title>
+  <style>
+    /* ===== VARIABLES Y RESET ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2c3e50;
+      --accent: #3498db;
+      --accent-light: #e1f0fa;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --border-light: #e2e8f0;
+      --shadow-sm: 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+      --radius: 1rem;
+      --radius-sm: 0.75rem;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 1rem;
+    }
+
+    /* ===== LAYOUT PRINCIPAL (GRID RESPONSIVE) ===== */
+    .tutorial-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 1.75rem;
+      align-items: start;
+    }
+
+    /* ===== SIDEBAR (ÍNDICE) ===== */
+    .sidebar {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+      position: sticky;
+      top: 1rem;
+      transition: all 0.2s;
+    }
+
+    .sidebar h2 {
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary);
+      border-bottom: 2px solid var(--accent-light);
+      padding-bottom: 0.7rem;
+    }
+
+    .sidebar nav ul {
+      list-style: none;
+    }
+
+    .sidebar nav li {
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar nav a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      display: block;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      transition: background 0.15s, color 0.15s;
+      font-size: 0.95rem;
+    }
+
+    .sidebar nav a:hover {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    /* ===== CONTENIDO PRINCIPAL ===== */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* ===== HEADER ===== */
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #1a252f 100%);
+      color: white;
+      padding: 2.2rem 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 80%;
+    }
+
+    /* ===== TARJETAS DE SECCIÓN ===== */
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1.8rem 2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .section-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .section-card h2 {
+      font-size: 1.9rem;
+      color: var(--primary);
+      margin-bottom: 1.2rem;
+      border-left: 6px solid var(--accent);
+      padding-left: 1rem;
+    }
+
+    .section-card h3 {
+      margin: 1.5rem 0 1rem;
+      color: #2c3e50;
+      font-size: 1.4rem;
+    }
+
+    /* ===== CÓDIGO Y EJEMPLOS ===== */
+    .code-block {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.2rem 1.5rem;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.95rem;
+      margin: 1.2rem 0;
+      box-shadow: inset 0 0 0 1px #334155;
+      line-height: 1.5;
+    }
+
+    .code-block code {
+      font-family: inherit;
+    }
+
+    /* Demo visual */
+    .demo-box {
+      margin: 1.5rem 0;
+      padding: 1.5rem;
+      background: #f1f5f9;
+      border-radius: 1rem;
+      border: 1px dashed #94a3b8;
+    }
+
+    .flex-demo {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .flex-item {
+      background: var(--accent);
+      color: white;
+      padding: 0.8rem 1.2rem;
+      border-radius: 2rem;
+      font-weight: 500;
+      text-align: center;
+      flex: 1 0 80px;
+    }
+
+    .grid-demo {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .grid-item {
+      background: #2ecc71;
+      color: white;
+      padding: 1rem 0.5rem;
+      text-align: center;
+      border-radius: 0.75rem;
+      font-weight: 500;
+    }
+
+    .box-model-demo {
+      background: #fef9c3;
+      padding: 20px;
+      border: 5px solid #eab308;
+      margin: 20px;
+      width: fit-content;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .box-inner {
+      background: #fde047;
+      padding: 10px;
+      text-align: center;
+      border-radius: 8px;
+    }
+
+    /* ===== BOTÓN / EJEMPLO INTERACTIVO ===== */
+    .interactive-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 3rem;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 4px 6px -2px rgba(52,152,219,0.3);
+      margin: 0.5rem 0 1rem;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .interactive-btn:hover {
+      background: #1d6fa5;
+      transform: scale(1.02);
+      box-shadow: 0 10px 15px -3px rgba(52,152,219,0.4);
+    }
+
+    .hover-demo-text {
+      font-size: 1.1rem;
+      padding: 0.75rem 1.2rem;
+      background: #eef2ff;
+      border-radius: 2rem;
+      display: inline-block;
+      transition: all 0.3s ease;
+      cursor: default;
+      border: 1px solid #cbd5e1;
+    }
+
+    .hover-demo-text:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 12px -4px rgba(0,0,0,0.1);
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border-light);
+      padding-top: 2rem;
+    }
+
+    /* ===== RESPONSIVE (MÓVIL) ===== */
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 0.75rem;
+      }
+
+      .tutorial-wrapper {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+      }
+
+      .sidebar {
+        position: static;
+        padding: 1.2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .sidebar nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .sidebar nav li {
+        margin-bottom: 0;
+      }
+
+      .sidebar nav a {
+        background: #f1f5f9;
+        padding: 0.4rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.85rem;
+      }
+
+      .hero {
+        padding: 1.5rem;
+      }
+
+      .hero h1 {
+        font-size: 1.9rem;
+        flex-wrap: wrap;
+      }
+
+      .hero p {
+        max-width: 100%;
+        font-size: 1rem;
+      }
+
+      .section-card {
+        padding: 1.5rem;
+      }
+
+      .section-card h2 {
+        font-size: 1.6rem;
+      }
+
+      .grid-demo {
+        grid-template-columns: 1fr;
+      }
+
+      .code-block {
+        font-size: 0.8rem;
+        padding: 1rem;
+      }
+    }
+
+    /* Ajustes extra pequeños */
+    @media screen and (max-width: 480px) {
+      .hero h1 {
+        font-size: 1.7rem;
+      }
+
+      .flex-demo {
+        flex-direction: column;
+      }
+    }
+
+    /* utilidad visual */
+    .badge {
+      background: var(--accent-light);
+      color: var(--primary);
+      padding: 0.2rem 0.7rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 0.5rem;
+    }
+
+    .note {
+      background: #fef9c3;
+      padding: 0.8rem 1.2rem;
+      border-radius: 1rem;
+      border-left: 6px solid #eab308;
+      margin: 1.2rem 0;
+    }
+  </style>
+</head>
+<body>
+<div class="tutorial-wrapper">
+  <!-- BARRA LATERAL / ÍNDICE -->
+  <aside class="sidebar">
+    <h2>📘 Contenido</h2>
+    <nav>
+      <ul>
+        <li><a href="#que-es">🎯 ¿Qué es CSS?</a></li>
+        <li><a href="#sintaxis">✏️ Sintaxis básica</a></li>
+        <li><a href="#selectores">🔍 Selectores</a></li>
+        <li><a href="#box-model">📦 Box Model</a></li>
+        <li><a href="#flexbox">🧩 Flexbox</a></li>
+        <li><a href="#grid">📱 Grid</a></li>
+        <li><a href="#media-queries">📲 Media Queries</a></li>
+        <li><a href="#interactivo">✨ Interactivo</a></li>
+      </ul>
+    </nav>
+    <div style="margin-top: 2rem; font-size: 0.85rem; color: #64748b;">
+      <hr style="margin: 1rem 0; border: 0; height: 1px; background: var(--border-light);">
+      <p>⚡ Tutorial responsivo · CSS puro</p>
+      <p>🧑‍💻 DeepSeek · 2026</p>
+    </div>
+  </aside>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+    <!-- HERO -->
+    <header class="hero">
+      <h1>
+        <span>🎨</span> CSS desde cero
+        <span class="badge">v2.0</span>
+      </h1>
+      <p>Domina las hojas de estilo en cascada · Explicaciones claras, ejemplos vivos y diseño adaptable.</p>
+    </header>
+
+    <!-- SECCIÓN: ¿QUÉ ES CSS? -->
+    <section id="que-es" class="section-card">
+      <h2>¿Qué es CSS?</h2>
+      <p><strong>CSS (Cascading Style Sheets)</strong> es el lenguaje que da estilo y diseño a las páginas web. Controla colores, fuentes, márgenes, disposición y animaciones. Funciona junto con HTML.</p>
+      <div class="demo-box">
+        <p style="font-weight: 500;">🧪 Sin CSS → texto plano. <strong style="color: #3498db;">Con CSS → esto es azul y con estilo.</strong></p>
+        <div style="display: flex; gap: 10px; margin-top: 12px;">
+          <span style="background: #e2e8f0; padding: 4px 12px; border-radius: 20px;">HTML: estructura</span>
+          <span style="background: #3498db; color: white; padding: 4px 12px; border-radius: 20px;">CSS: presentación</span>
+        </div>
+      </div>
+      <p>Se escribe en reglas compuestas por <code>selector { propiedad: valor; }</code>.</p>
+    </section>
+
+    <!-- SECCIÓN: SINTAXIS -->
+    <section id="sintaxis" class="section-card">
+      <h2>Sintaxis básica</h2>
+      <p>Una regla CSS tiene tres partes: selector, propiedad y valor.</p>
+      <div class="code-block"><code>selector {
+  propiedad: valor;
+  otra-propiedad: otro-valor;
+}</code></div>
+      <p>Ejemplo real:</p>
+      <div class="code-block"><code>h1 {
+  color: #2c3e50;
+  font-size: 2rem;
+  text-align: center;
+}</code></div>
+      <div class="note">💡 Puedes escribir CSS dentro de una etiqueta &lt;style&gt; o en un archivo .css externo.</div>
+    </section>
+
+    <!-- SECCIÓN: SELECTORES -->
+    <section id="selectores" class="section-card">
+      <h2>Selectores</h2>
+      <p>Los selectores apuntan a los elementos HTML que queremos estilizar.</p>
+      <h3>🔹 Selector de elemento</h3>
+      <div class="code-block"><code>p { color: gray; }</code></div>
+      <h3>🔸 Selector de clase (.)</h3>
+      <div class="code-block"><code>.destacado {
+  background: yellow;
+  font-weight: bold;
+}</code></div>
+      <div class="demo-box">
+        <span class="hover-demo-text" style="background: #fef9c3;">Texto con clase "destacado" (simulado)</span>
+        <p style="margin-top: 0.8rem;"><code>&lt;p class="destacado"&gt;Hola&lt;/p&gt;</code></p>
+      </div>
+      <h3>🔹 Selector de ID (#)</h3>
+      <div class="code-block"><code>#header-principal {
+  background: navy;
+  color: white;
+}</code></div>
+    </section>
+
+    <!-- SECCIÓN: BOX MODEL -->
+    <section id="box-model" class="section-card">
+      <h2>📦 Box Model</h2>
+      <p>Todos los elementos son cajas rectangulares. Se componen de: contenido, padding, borde y margen.</p>
+      <div class="box-model-demo">
+        <div class="box-inner">
+          <strong>Contenido</strong><br>
+          <small>padding · border · margin</small>
+        </div>
+      </div>
+      <div class="code-block"><code>.caja {
+  width: 200px;
+  padding: 20px;
+  border: 5px solid #eab308;
+  margin: 20px;
+}</code></div>
+      <p>Usa <code>box-sizing: border-box;</code> para que width incluya padding y border (más intuitivo).</p>
+    </section>
+
+    <!-- SECCIÓN: FLEXBOX -->
+    <section id="flexbox" class="section-card">
+      <h2>🧩 Flexbox</h2>
+      <p>Flexbox es un sistema unidimensional para alinear y distribuir espacio entre elementos.</p>
+      <div class="demo-box">
+        <div class="flex-demo">
+          <div class="flex-item">Item 1</div>
+          <div class="flex-item">Item 2</div>
+          <div class="flex-item">Item 3</div>
+        </div>
+        <p style="margin-top: 0.8rem;"><code>display: flex; gap: 0.75rem;</code></p>
+      </div>
+      <div class="code-block"><code>.contenedor {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}</code></div>
+      <p>Propiedades clave: <code>justify-content</code>, <code>align-items</code>, <code>flex-direction</code>.</p>
+    </section>
+
+    <!-- SECCIÓN: GRID -->
+    <section id="grid" class="section-card">
+      <h2>📱 CSS Grid</h2>
+      <p>Grid permite crear diseños bidimensionales (filas y columnas).</p>
+      <div class="demo-box">
+        <div class="grid-demo">
+          <div class="grid-item">A</div>
+          <div class="grid-item">B</div>
+          <div class="grid-item">C</div>
+          <div class="grid-item">D</div>
+          <div class="grid-item">E</div>
+          <div class="grid-item">F</div>
+        </div>
+        <p style="margin-top: 0.8rem;"><code>display: grid; grid-template-columns: repeat(3, 1fr);</code></p>
+      </div>
+      <div class="code-block"><code>.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 10px;
+}</code></div>
+      <p>Ideal para layouts complejos. Combínalo con media queries.</p>
+    </section>
+
+    <!-- SECCIÓN: MEDIA QUERIES (RESPONSIVE) -->
+    <section id="media-queries" class="section-card">
+      <h2>📲 Media Queries · Responsive</h2>
+      <p>Las media queries aplican estilos según el tamaño de pantalla u otras características.</p>
+      <div class="code-block"><code>@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+  .contenido {
+    width: 100%;
+  }
+}</code></div>
+      <div class="note">
+        <strong>📱 Este tutorial es responsivo:</strong> redimensiona la ventana para ver cómo cambia el índice, las columnas y tamaños.
+      </div>
+      <p>Puntos de ruptura comunes: 480px, 768px, 1024px.</p>
+    </section>
+
+    <!-- SECCIÓN INTERACTIVA -->
+    <section id="interactivo" class="section-card">
+      <h2>✨ Prueba CSS en vivo</h2>
+      <p>Pasa el cursor sobre el botón y el texto. Estos efectos están hechos con <code>:hover</code> y transiciones.</p>
+      
+      <button class="interactive-btn" onclick="alert('🎉 ¡CSS en acción! Este botón tiene transiciones suaves.')">
+        🖱️ Haz clic / hover
+      </button>
+      
+      <div style="margin: 1.8rem 0;">
+        <span class="hover-demo-text">🎯 Pasa el ratón por aquí → cambia color y se eleva</span>
+      </div>
+
+      <p>También puedes probar el <strong>modo oscuro simulado</strong> (solo demostración):</p>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <div style="background: #0f172a; color: #e2e8f0; padding: 1rem; border-radius: 1rem; flex:1;">
+          <code style="color: #a5f3fc;">.dark-mode { background: #0f172a; }</code>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; padding: 1rem; border-radius: 1rem; flex:1;">
+          <code>.light-mode { background: white; }</code>
+        </div>
+      </div>
+      <p style="margin-top: 1.2rem;">📌 CSS moderno incluye variables, animaciones, filtros y mucho más. ¡Sigue explorando!</p>
+    </section>
+
+    <!-- FOOTER DENTRO DEL MAIN -->
+    <footer class="footer">
+      <p>🧑‍🏫 Tutorial creado con 💙 por DeepSeek · CSS responsivo · 2026</p>
+      <p style="margin-top: 0.5rem;">✨ Aprende, practica y construye interfaces increíbles.</p>
+    </footer>
+  </main>
+</div>
+<!-- pequeño script para mostrar un mensaje amigable (opcional) -->
+<script>
+  (function() {
+    // solo un detalle de bienvenida en consola
+    console.log('🎨 Tutorial CSS · ¡Explora el código y los estilos!');
+  })();
+</script>
+</body>
+</html>

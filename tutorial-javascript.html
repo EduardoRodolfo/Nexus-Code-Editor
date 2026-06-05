@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>📜 Tutorial JavaScript · fundamentos</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #0f172a;
+      --accent: #f7df1e;
+      --accent-dark: #eab308;
+      --accent-light: #fef9c3;
+      --bg: #fffbeb;
+      --card-bg: #ffffff;
+      --text: #1e1b2b;
+      --code-bg: #1e293b;
+      --code-text: #facc15;
+      --border-light: #fde68a;
+      --shadow-sm: 0 6px 12px -6px rgba(0,0,0,0.05);
+      --shadow-md: 0 15px 30px -12px rgba(0,0,0,0.1);
+      --radius: 1.2rem;
+    }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 1.2rem;
+    }
+    .tutorial-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 1.8rem;
+    }
+    .sidebar {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1.6rem 1.2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+      position: sticky;
+      top: 1.2rem;
+    }
+    .sidebar h2 {
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      border-bottom: 3px solid var(--accent-light);
+      padding-bottom: 0.8rem;
+    }
+    .sidebar nav ul { list-style: none; }
+    .sidebar nav li { margin-bottom: 0.5rem; }
+    .sidebar nav a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      display: block;
+      padding: 0.6rem 1rem;
+      border-radius: 2.5rem;
+      transition: 0.15s;
+    }
+    .sidebar nav a:hover { background: var(--accent-light); color: #854d0e; }
+    .main-content { display: flex; flex-direction: column; gap: 2rem; }
+    .hero {
+      background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+      color: white;
+      padding: 2.2rem 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+    }
+    .hero h1 { font-size: 2.7rem; font-weight: 800; display: flex; gap: 1rem; }
+    .hero p { font-size: 1.2rem; opacity: 0.9; }
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 2rem 2.2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+    }
+    .section-card h2 {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 1.3rem;
+      border-left: 8px solid var(--accent-dark);
+      padding-left: 1.2rem;
+    }
+    .code-block {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.3rem 1.6rem;
+      border-radius: 0.8rem;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      margin: 1.3rem 0;
+      white-space: pre-wrap;
+    }
+    .demo-box {
+      margin: 1.8rem 0;
+      padding: 1.6rem;
+      background: #fffbeb;
+      border-radius: 1.2rem;
+      border: 1px dashed #ca8a04;
+    }
+    .btn {
+      background: var(--accent-dark);
+      color: #0f172a;
+      border: none;
+      padding: 0.8rem 1.8rem;
+      border-radius: 3rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 6px 12px -6px rgba(234,179,8,0.5);
+      border: 1px solid #eab308;
+    }
+    .btn:hover { background: #ca8a04; color: white; transform: scale(1.02); }
+    .output-area {
+      background: white;
+      padding: 0.6rem 1.5rem;
+      border-radius: 3rem;
+      border: 1px solid #eab308;
+      font-family: monospace;
+      min-width: 120px;
+      text-align: center;
+    }
+    .note { background: #fef3c7; padding: 1rem 1.5rem; border-radius: 1rem; border-left: 8px solid #b45309; }
+    .footer { margin-top: 2rem; text-align: center; color: #6b7280; border-top: 1px solid var(--border-light); padding-top: 2rem; }
+    @media screen and (max-width: 768px) {
+      .tutorial-wrapper { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .sidebar nav ul { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      .sidebar nav a { background: var(--accent-light); padding: 0.4rem 1.2rem; }
+      .hero h1 { font-size: 2rem; }
+      .section-card { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="tutorial-wrapper">
+  <aside class="sidebar">
+    <h2>📜 JS esencial</h2>
+    <nav>
+      <ul>
+        <li><a href="#que-es-js">⚡ ¿Qué es JS?</a></li>
+        <li><a href="#variables-js">📦 Variables</a></li>
+        <li><a href="#tipos">🔢 Tipos de datos</a></li>
+        <li><a href="#funciones-js">🛠️ Funciones</a></li>
+        <li><a href="#condicionales-js">⚖️ Condicionales</a></li>
+        <li><a href="#bucles-js">🔄 Bucles</a></li>
+        <li><a href="#dom">🖱️ DOM y eventos</a></li>
+        <li><a href="#ejemplo-interactivo">🧪 Mini-proyecto</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="hero">
+      <h1>📜 JavaScript  <span style="font-size:1.5rem;">el lenguaje de la web</span></h1>
+      <p>Interactividad, dinamismo y lógica en el navegador. Aprende los fundamentos con ejemplos vivos.</p>
+    </header>
+
+    <section id="que-es-js" class="section-card">
+      <h2>⚡ ¿Qué es JavaScript?</h2>
+      <p>JavaScript (JS) es un lenguaje de programación interpretado que permite crear contenido interactivo. Se ejecuta en el navegador y también en servidores (Node.js).</p>
+      <div class="demo-box">
+        <button class="btn" onclick="alert('¡Hola desde JavaScript!')">Haz clic (alert)</button>
+      </div>
+    </section>
+
+    <section id="variables-js" class="section-card">
+      <h2>📦 Variables</h2>
+      <p>Se declaran con <code>let</code>, <code>const</code> o <code>var</code> (desaconsejado).</p>
+      <div class="code-block">let nombre = "Ana";
+const PI = 3.1416;
+var antigua = "evitar";</div>
+      <div class="demo-box">
+        <label>Tu nombre: <input id="nombreInput" placeholder="Escribe" style="padding:0.4rem;"></label>
+        <button class="btn" id="saludarBtn">Saludar</button>
+        <span class="output-area" id="saludoOutput"></span>
+      </div>
+    </section>
+
+    <section id="tipos" class="section-card">
+      <h2>🔢 Tipos de datos</h2>
+      <p>String, Number, Boolean, Array, Object, null, undefined.</p>
+      <div class="code-block">let texto = "Hola";
+let numero = 42;
+let activo = true;
+let lista = [1, 2, 3];
+let persona = { nombre: "Luis", edad: 30 };</div>
+    </section>
+
+    <section id="funciones-js" class="section-card">
+      <h2>🛠️ Funciones</h2>
+      <div class="code-block">function sumar(a, b) {
+  return a + b;
+}
+// función flecha
+const multiplicar = (x, y) => x * y;</div>
+      <div class="demo-box">
+        <input id="num1" value="5" style="width:70px;"> + 
+        <input id="num2" value="7" style="width:70px;"> 
+        <button class="btn" id="sumarDemo">Sumar</button>
+        <span class="output-area" id="resultadoSuma"></span>
+      </div>
+    </section>
+
+    <section id="condicionales-js" class="section-card">
+      <h2>⚖️ Condicionales</h2>
+      <div class="code-block">if (edad >= 18) {
+  console.log("Mayor");
+} else {
+  console.log("Menor");
+}</div>
+      <div class="demo-box">
+        <input id="edadJs" type="number" value="20" style="width:80px;">
+        <button class="btn" id="verificarEdad">Verificar</button>
+        <span class="output-area" id="mensajeEdad"></span>
+      </div>
+    </section>
+
+    <section id="bucles-js" class="section-card">
+      <h2>🔄 Bucles</h2>
+      <div class="code-block">for (let i = 0; i < 5; i++) {
+  console.log(i);
+}
+let j = 0;
+while (j < 3) { j++; }</div>
+      <button class="btn" id="mostrarFor">Mostrar 1-5 (for)</button>
+      <span class="output-area" id="forOutput"></span>
+    </section>
+
+    <section id="dom" class="section-card">
+      <h2>🖱️ DOM y eventos</h2>
+      <p>El DOM permite manipular HTML. Ejemplo: cambiar texto al hacer clic.</p>
+      <div class="demo-box">
+        <p id="textoDemo">Texto original</p>
+        <button class="btn" id="cambiarTexto">Cambiar texto</button>
+        <button class="btn" id="toggleColor">Alternar color</button>
+      </div>
+    </section>
+
+    <section id="ejemplo-interactivo" class="section-card">
+      <h2>🧪 Mini contador (práctica)</h2>
+      <div class="demo-box">
+        <p><strong>Contador:</strong> <span id="contadorValor">0</span></p>
+        <button class="btn" id="incrementar">➕ Incrementar</button>
+        <button class="btn" id="decrementar">➖ Decrementar</button>
+        <button class="btn" id="resetContador">🔄 Reset</button>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>🧑‍🏫 Tutorial JavaScript · DeepSeek 2026 · ¡Sigue practicando!</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  (function(){
+    // Variables y saludo
+    const nombreInput = document.getElementById('nombreInput');
+    const saludarBtn = document.getElementById('saludarBtn');
+    const saludoOutput = document.getElementById('saludoOutput');
+    if(saludarBtn) saludarBtn.addEventListener('click', ()=>{
+      const nombre = nombreInput.value.trim() || 'invitado';
+      saludoOutput.textContent = `¡Hola ${nombre}!`;
+    });
+
+    // Suma demo
+    document.getElementById('sumarDemo').addEventListener('click', ()=>{
+      const a = parseFloat(document.getElementById('num1').value) || 0;
+      const b = parseFloat(document.getElementById('num2').value) || 0;
+      document.getElementById('resultadoSuma').textContent = a + b;
+    });
+
+    // Condicional edad
+    document.getElementById('verificarEdad').addEventListener('click', ()=>{
+      const edad = parseInt(document.getElementById('edadJs').value, 10);
+      const msg = (edad >= 18) ? '✅ Mayor de edad' : '🔞 Menor de edad';
+      document.getElementById('mensajeEdad').textContent = msg;
+    });
+
+    // Bucle for
+    document.getElementById('mostrarFor').addEventListener('click', ()=>{
+      let res = '';
+      for(let i=1; i<=5; i++) res += i + (i<5?' · ':'');
+      document.getElementById('forOutput').textContent = res;
+    });
+
+    // DOM manipulación
+    const textoDemo = document.getElementById('textoDemo');
+    document.getElementById('cambiarTexto').addEventListener('click', ()=>{
+      textoDemo.textContent = '¡Texto cambiado con JS!';
+    });
+    let colorState = false;
+    document.getElementById('toggleColor').addEventListener('click', ()=>{
+      colorState = !colorState;
+      textoDemo.style.color = colorState ? '#e67e22' : '#1e1b2b';
+    });
+
+    // Contador
+    let contador = 0;
+    const contadorSpan = document.getElementById('contadorValor');
+    const actualizarContador = () => contadorSpan.textContent = contador;
+    document.getElementById('incrementar').addEventListener('click', ()=>{
+      contador++; actualizarContador();
+    });
+    document.getElementById('decrementar').addEventListener('click', ()=>{
+      contador--; actualizarContador();
+    });
+    document.getElementById('resetContador').addEventListener('click', ()=>{
+      contador = 0; actualizarContador();
+    });
+
+    console.log('📜 Tutorial JS listo. ¡Explora el código!');
+  })();
+</script>
+</body>
+</html>

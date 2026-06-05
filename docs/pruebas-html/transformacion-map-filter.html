@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Transformación de Productos</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .producto { margin: 10px 0; padding: 10px; border: 1px solid #ccc; background: #f9f9f9; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Transformar Productos con Descuento</h1>
+  <button onclick="mostrar()">Aplicar descuento</button>
+  <div id="lista"></div>
+
+  <script>
+    const productos = [
+      { nombre: "Mouse", precio: 20 },
+      { nombre: "Teclado", precio: 50 },
+      { nombre: "Monitor", precio: 200 }
+    ];
+
+    function mostrar() {
+      const conDescuento = productos.map(p => ({
+        ...p,
+        precioFinal: (p.precio * 0.9).toFixed(2)
+      }));
+
+      const lista = document.getElementById("lista");
+      lista.innerHTML = "";
+
+      conDescuento.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "producto";
+        div.innerHTML = `
+          <strong>${p.nombre}</strong><br>
+          Precio original: $${p.precio}<br>
+          Precio con descuento: $${p.precioFinal}
+        `;
+        lista.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>

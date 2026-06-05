@@ -1,0 +1,561 @@
+<!-- Correcto Contenedor específico para el sistema de marcadores -->
+<div id="mark-container">
+    <div class="mark-header">
+        <h1>Sistema de Marcadores</h1>
+        <p>Selecciona texto y guárdalo como marcador para consultarlo más tarde</p>
+    </div>
+    
+    <!-- Contenido de ejemplo donde se pueden crear marcaciones -->
+    <div class="content-mark">
+        <h2>Contenido de Ejemplo</h2>
+        <p>Este es un texto de ejemplo donde puedes probar el sistema de marcadores. Selecciona cualquier parte del texto y haz clic en el botón de resaltar para guardar un marcador.</p>
+        
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nunc eget nisl. Nullam euismod, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nunc eget nisl.</p>
+        
+        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nullam euismod, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nunc eget nisl.</p>
+        
+        <p>Phasellus ultrices, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nunc eget nisl. Nullam euismod, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nunc eget nisl.</p>
+    </div>
+    
+    <!-- Botón flotante para el sistema de marcadores -->
+    <div class="floating-bookmark-btn" id="bookmarkToggleBtn">
+        <span>🔖</span>
+    </div>
+
+    <!-- Panel de marcadores (inicialmente oculto) -->
+    <div class="bookmark-panel" id="bookmarkPanel">
+        <div class="panel-header">
+            <h3>Mis Marcadores</h3>
+            <button class="close-btn" id="closeBookmarkPanel">×</button>
+        </div>
+        
+        <div class="panel-controls">
+            <button class="panel-btn highlight-btn" id="highlightBtn">
+                <span>🖍️</span> Resaltar selección
+            </button>
+            <button class="panel-btn save-btn" id="saveBookmarksBtn">
+                <span>💾</span> Guardar
+            </button>
+            <button class="panel-btn load-btn" id="loadBookmarksBtn">
+                <span>📂</span> Cargar
+            </button>
+            <button class="panel-btn clear-btn" id="clearBookmarksBtn">
+                <span>🗑️</span> Limpiar
+            </button>
+        </div>
+        
+        <div class="bookmarks-list" id="bookmarksList">
+            <p class="no-bookmarks">No tienes marcadores guardados todavía.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos para el sistema de marcadores */
+    #mark-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 25px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .mark-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #eaeaea;
+    }
+    
+    .mark-header h1 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+    }
+    
+    .mark-header p {
+        color: #7f8c8d;
+        font-size: 1.1rem;
+    }
+    
+    /* Contenido de ejemplo */
+    .content-mark {
+        padding: 25px;
+        background: #f9f9f9;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        border-left: 4px solid #3498db;
+    }
+    
+    .content-mark h2 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed #ddd;
+    }
+    
+    .content-mark p {
+        margin-bottom: 15px;
+        text-align: justify;
+    }
+    
+    /* Sistema de marcadores */
+    .floating-bookmark-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        z-index: 999;
+        transition: all 0.3s ease;
+        font-size: 24px;
+    }
+    
+    .floating-bookmark-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .bookmark-panel {
+        position: fixed;
+        bottom: 100px;
+        right: 30px;
+        width: 320px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .bookmark-panel.active {
+        display: flex;
+        animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background: #2c3e50;
+        color: white;
+    }
+    
+    .panel-header h3 {
+        margin: 0;
+        font-size: 18px;
+    }
+    
+    .close-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+    
+    .close-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .panel-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .panel-btn {
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: all 0.2s;
+    }
+    
+    .panel-btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    .highlight-btn {
+        background: #2ecc71;
+        color: white;
+    }
+    
+    .save-btn {
+        background: #3498db;
+        color: white;
+    }
+    
+    .load-btn {
+        background: #9b59b6;
+        color: white;
+    }
+    
+    .clear-btn {
+        background: #e74c3c;
+        color: white;
+    }
+    
+    .bookmarks-list {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 15px;
+    }
+    
+    .bookmark-item {
+        background: #f8f9fa;
+        padding: 12px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        border-left: 4px solid #3498db;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .bookmark-text {
+        flex: 1;
+        margin-right: 10px;
+        font-size: 14px;
+        font-style: italic;
+    }
+    
+    .bookmark-actions {
+        display: flex;
+        gap: 5px;
+    }
+    
+    .bookmark-action-btn {
+        background: #ecf0f1;
+        border: none;
+        border-radius: 4px;
+        padding: 5px 8px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+    
+    .bookmark-action-btn.view {
+        color: #2980b9;
+    }
+    
+    .bookmark-action-btn.delete {
+        color: #e74c3c;
+    }
+    
+    .no-bookmarks {
+        text-align: center;
+        color: #7f8c8d;
+        font-style: italic;
+        margin: 20px 0;
+    }
+    
+    .highlighted {
+        background: rgba(255, 235, 59, 0.3);
+        padding: 0 2px;
+        border-radius: 3px;
+    }
+    
+    .bookmark-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        background: #2ecc71;
+        color: white;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 1001;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .bookmark-notification.show {
+        transform: translateX(0);
+    }
+    
+    @media (max-width: 768px) {
+        #mark-container {
+            padding: 15px;
+            margin: 15px auto;
+        }
+        
+        .content-mark {
+            padding: 15px;
+        }
+        
+        .floating-bookmark-btn {
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+        }
+        
+        .bookmark-panel {
+            bottom: 80px;
+            right: 20px;
+            left: 20px;
+            width: auto;
+        }
+        
+        .panel-controls {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    // Sistema de Marcadores de Texto
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elementos del DOM
+        const bookmarkToggleBtn = document.getElementById('bookmarkToggleBtn');
+        const bookmarkPanel = document.getElementById('bookmarkPanel');
+        const closeBookmarkPanel = document.getElementById('closeBookmarkPanel');
+        const highlightBtn = document.getElementById('highlightBtn');
+        const saveBookmarksBtn = document.getElementById('saveBookmarksBtn');
+        const loadBookmarksBtn = document.getElementById('loadBookmarksBtn');
+        const clearBookmarksBtn = document.getElementById('clearBookmarksBtn');
+        const bookmarksList = document.getElementById('bookmarksList');
+        
+        // Array para almacenar los marcadores
+        let bookmarks = [];
+        
+        // Mostrar/ocultar panel
+        bookmarkToggleBtn.addEventListener('click', function() {
+            bookmarkPanel.classList.toggle('active');
+        });
+        
+        closeBookmarkPanel.addEventListener('click', function() {
+            bookmarkPanel.classList.remove('active');
+        });
+        
+        // Cerrar panel al hacer clic fuera de él
+        document.addEventListener('click', function(event) {
+            if (bookmarkPanel.classList.contains('active') && 
+                !bookmarkPanel.contains(event.target) && 
+                !bookmarkToggleBtn.contains(event.target)) {
+                bookmarkPanel.classList.remove('active');
+            }
+        });
+        
+        // Función para mostrar notificación
+        function showNotification(message, duration = 3000) {
+            // Eliminar notificación existente si hay una
+            const existingNotification = document.querySelector('.bookmark-notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Crear elemento de notificación
+            const notification = document.createElement('div');
+            notification.className = 'bookmark-notification';
+            notification.textContent = message;
+            
+            // Añadir al documento
+            document.body.appendChild(notification);
+            
+            // Mostrar con animación
+            setTimeout(() => notification.classList.add('show'), 10);
+            
+            // Ocultar después de la duración especificada
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, duration);
+        }
+        
+        // Función para resaltar texto seleccionado
+        highlightBtn.addEventListener('click', function() {
+            const selection = window.getSelection();
+            
+            if (selection.toString().length > 0) {
+                // Crear un nuevo span para resaltar
+                const span = document.createElement('span');
+                span.className = 'highlighted';
+                
+                // Rango de selección
+                const range = selection.getRangeAt(0);
+                
+                // Rodeamos el texto seleccionado con el span
+                range.surroundContents(span);
+                
+                // Añadir a la lista de marcadores
+                bookmarks.push({
+                    text: selection.toString(),
+                    html: span.outerHTML,
+                    timestamp: new Date().toLocaleString()
+                });
+                
+                // Actualizar la lista de marcadores
+                renderBookmarks();
+                
+                // Mostrar notificación
+                showNotification('Texto resaltado correctamente');
+                
+                // Limpiar selección
+                selection.removeAllRanges();
+            } else {
+                showNotification('Por favor, selecciona primero algún texto', 3000);
+            }
+        });
+        
+        // Función para guardar marcadores
+        saveBookmarksBtn.addEventListener('click', function() {
+            if (bookmarks.length > 0) {
+                localStorage.setItem('textBookmarks', JSON.stringify(bookmarks));
+                showNotification('Marcadores guardados correctamente');
+            } else {
+                showNotification('No hay marcadores para guardar', 3000);
+            }
+        });
+        
+        // Función para cargar marcadores
+        loadBookmarksBtn.addEventListener('click', function() {
+            loadBookmarks();
+            showNotification('Marcadores cargados');
+        });
+        
+        // Función para cargar marcadores desde localStorage
+        function loadBookmarks() {
+            const savedBookmarks = localStorage.getItem('textBookmarks');
+            
+            if (savedBookmarks) {
+                bookmarks = JSON.parse(savedBookmarks);
+                renderBookmarks();
+            } else {
+                showNotification('No hay marcadores guardados', 3000);
+            }
+        }
+        
+        // Función para renderizar la lista de marcadores
+        function renderBookmarks() {
+            if (bookmarks.length > 0) {
+                bookmarksList.innerHTML = '';
+                
+                bookmarks.forEach((bookmark, index) => {
+                    const bookmarkItem = document.createElement('div');
+                    bookmarkItem.className = 'bookmark-item';
+                    
+                    bookmarkItem.innerHTML = `
+                        <div class="bookmark-text">${bookmark.text}</div>
+                        <div class="bookmark-actions">
+                            <button class="bookmark-action-btn view" data-index="${index}">Ver</button>
+                            <button class="bookmark-action-btn delete" data-index="${index}">Eliminar</button>
+                        </div>
+                    `;
+                    
+                    bookmarksList.appendChild(bookmarkItem);
+                });
+                
+                // Añadir event listeners a los botones
+                document.querySelectorAll('.bookmark-action-btn.view').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = this.getAttribute('data-index');
+                        scrollToBookmark(index);
+                    });
+                });
+                
+                document.querySelectorAll('.bookmark-action-btn.delete').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = this.getAttribute('data-index');
+                        deleteBookmark(index);
+                    });
+                });
+            } else {
+                bookmarksList.innerHTML = '<p class="no-bookmarks">No tienes marcadores guardados todavía.</p>';
+            }
+        }
+        
+        // Función para desplazarse a un marcador
+        function scrollToBookmark(index) {
+            const highlights = document.querySelectorAll('.highlighted');
+            
+            if (highlights.length > 0 && highlights[index]) {
+                // Resaltar brevemente el marcador
+                const originalBackground = highlights[index].style.backgroundColor;
+                highlights[index].style.backgroundColor = 'rgba(255, 200, 0, 0.6)';
+                
+                // Scroll hasta el elemento
+                highlights[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Restaurar color después de un tiempo
+                setTimeout(() => {
+                    highlights[index].style.backgroundColor = originalBackground;
+                }, 2000);
+                
+                showNotification('Desplazándose al marcador...');
+            } else {
+                showNotification('No se pudo encontrar el marcador en la página', 3000);
+            }
+        }
+        
+        // Función para eliminar un marcador
+        function deleteBookmark(index) {
+            if (confirm('¿Estás seguro de que quieres eliminar este marcador?')) {
+                bookmarks.splice(index, 1);
+                localStorage.setItem('textBookmarks', JSON.stringify(bookmarks));
+                renderBookmarks();
+                showNotification('Marcador eliminado');
+            }
+        }
+        
+        // Función para limpiar todos los marcadores
+        clearBookmarksBtn.addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que quieres eliminar todos los marcadores?')) {
+                bookmarks = [];
+                localStorage.removeItem('textBookmarks');
+                
+                // Eliminar también los resaltados visuales
+                const highlights = document.querySelectorAll('.highlighted');
+                highlights.forEach(highlight => {
+                    const parent = highlight.parentNode;
+                    parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+                    parent.normalize();
+                });
+                
+                renderBookmarks();
+                showNotification('Todos los marcadores han sido eliminados');
+            }
+        });
+        
+        // Cargar marcadores al iniciar si existen
+        loadBookmarks();
+    });
+</script>

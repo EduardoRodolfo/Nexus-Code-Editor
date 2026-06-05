@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, shrink-to-fit=no">
+  <title>📄 Tutorial HTML · ultra‑responsive 320px</title>
+  <style>
+    /* ===== RESET Y VARIABLES ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #0f172a;
+      --accent: #e67e22;
+      --accent-light: #fde8d7;
+      --bg: #fff9f2;
+      --card-bg: #ffffff;
+      --text: #1e1b2b;
+      --code-bg: #1e293b;
+      --code-text: #f1f5f9;
+      --border-light: #f0d9c0;
+      --shadow-sm: 0 6px 12px -6px rgba(0,0,0,0.05);
+      --shadow-md: 0 15px 30px -12px rgba(0,0,0,0.1);
+      --radius: 1.2rem;
+      --radius-sm: 0.8rem;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 0.75rem;
+      min-width: 320px;
+    }
+
+    /* ===== LAYOUT PRINCIPAL ===== */
+    .tutorial-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 1.2rem;
+      align-items: start;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1.2rem 1rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+      position: sticky;
+      top: 0.75rem;
+    }
+
+    .sidebar h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1.2rem;
+      color: var(--primary);
+      border-bottom: 3px solid var(--accent-light);
+      padding-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .sidebar nav ul {
+      list-style: none;
+    }
+
+    .sidebar nav li {
+      margin-bottom: 0.3rem;
+    }
+
+    .sidebar nav a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      display: block;
+      padding: 0.5rem 0.8rem;
+      border-radius: 2rem;
+      transition: 0.15s;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .sidebar nav a:hover {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    /* ===== CONTENIDO PRINCIPAL ===== */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      min-width: 0; /* evita desborde en grid */
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(145deg, #431407 0%, #7c2d12 100%);
+      color: white;
+      padding: 1.5rem 1.2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+    }
+
+    .hero h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      margin-top: 0.4rem;
+    }
+
+    /* ===== TARJETAS ===== */
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+      overflow-x: hidden;
+    }
+
+    .section-card h2 {
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      border-left: 6px solid var(--accent);
+      padding-left: 1rem;
+    }
+
+    .section-card h3 {
+      margin: 1.2rem 0 0.8rem;
+      font-size: 1.25rem;
+    }
+
+    /* ===== CÓDIGO ===== */
+    .code-block {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1rem 1rem;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Mono', monospace;
+      font-size: 0.8rem;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      box-shadow: inset 0 0 0 1px #334155;
+    }
+
+    /* ===== DEMOS ===== */
+    .demo-box {
+      margin: 1.2rem 0;
+      padding: 1.2rem 1rem;
+      background: #fef9f5;
+      border-radius: 1rem;
+      border: 1px dashed var(--accent);
+    }
+
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.4rem;
+      border-radius: 3rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 8px -4px rgba(230,126,34,0.4);
+      border: 1px solid rgba(255,255,255,0.2);
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: #b85e0a;
+    }
+
+    /* tabla responsive */
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 1rem 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 280px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: left;
+    }
+
+    .note {
+      background: #fef3c7;
+      padding: 0.8rem 1.2rem;
+      border-radius: 1rem;
+      border-left: 6px solid #b45309;
+      margin: 1.2rem 0;
+      font-size: 0.9rem;
+    }
+
+    .footer {
+      margin-top: 0.5rem;
+      text-align: center;
+      color: #6b7280;
+      border-top: 1px solid var(--border-light);
+      padding-top: 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    /* ===== RESPONSIVE MEJORADO (hasta 320px) ===== */
+    @media screen and (max-width: 640px) {
+      body {
+        padding: 0.5rem;
+      }
+
+      .tutorial-wrapper {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+      }
+
+      .sidebar {
+        position: static;
+        padding: 1rem 0.8rem;
+      }
+
+      .sidebar nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+
+      .sidebar nav li {
+        margin-bottom: 0;
+      }
+
+      .sidebar nav a {
+        background: var(--accent-light);
+        padding: 0.4rem 0.9rem;
+        font-size: 0.8rem;
+        white-space: nowrap;
+      }
+
+      .hero {
+        padding: 1.2rem 1rem;
+      }
+
+      .hero h1 {
+        font-size: 1.6rem;
+      }
+
+      .hero p {
+        font-size: 0.85rem;
+      }
+
+      .section-card {
+        padding: 1.2rem 1rem;
+      }
+
+      .section-card h2 {
+        font-size: 1.5rem;
+        border-left-width: 5px;
+        padding-left: 0.8rem;
+      }
+
+      .code-block {
+        font-size: 0.75rem;
+        padding: 0.8rem;
+      }
+
+      .demo-box {
+        padding: 1rem 0.8rem;
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+    }
+
+    /* Ajustes específicos para 320px - 400px */
+    @media screen and (max-width: 400px) {
+      .hero h1 {
+        font-size: 1.4rem;
+      }
+
+      .sidebar nav a {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.7rem;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+      }
+
+      .code-block {
+        font-size: 0.7rem;
+      }
+
+      .section-card h2 {
+        font-size: 1.35rem;
+      }
+
+      table {
+        min-width: 260px;
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Utilidad para evitar overflow en imágenes y contenedores */
+    img, svg, video, canvas, iframe {
+      max-width: 100%;
+      height: auto;
+    }
+
+    input, button, select, textarea {
+      max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+<div class="tutorial-wrapper">
+  <!-- SIDEBAR / ÍNDICE -->
+  <aside class="sidebar">
+    <h2>📑 Contenido HTML</h2>
+    <nav>
+      <ul>
+        <li><a href="#que-es-html">🧱 ¿Qué es HTML?</a></li>
+        <li><a href="#estructura">🏗️ Estructura</a></li>
+        <li><a href="#etiquetas">🏷️ Etiquetas</a></li>
+        <li><a href="#enlaces-imagenes">🔗 Enlaces/img</a></li>
+        <li><a href="#listas-tablas">📋 Listas/tablas</a></li>
+        <li><a href="#formularios">📝 Formularios</a></li>
+        <li><a href="#semantica">📌 Semántica</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+    <!-- HERO -->
+    <header class="hero">
+      <h1>
+        <span>📄</span> HTML 
+        <span style="font-size:0.9rem; font-weight:400; opacity:0.9;">HyperText Markup Language</span>
+      </h1>
+      <p>El esqueleto de toda página web. Aprende estructura, etiquetas y buenas prácticas — adaptable hasta 320px.</p>
+    </header>
+
+    <!-- ¿QUÉ ES HTML? -->
+    <section id="que-es-html" class="section-card">
+      <h2>🧱 ¿Qué es HTML?</h2>
+      <p>HTML (Lenguaje de Marcado de Hipertexto) define la estructura y el contenido de una página web mediante <strong>etiquetas</strong>. No es un lenguaje de programación, sino de marcado.</p>
+      <div class="demo-box">
+        <p>📌 Ejemplo: un párrafo se escribe con <code>&lt;p&gt;Hola mundo&lt;/p&gt;</code>.</p>
+        <p style="margin-top:0.5rem;"><code>&lt;h1&gt;...&lt;/h1&gt;</code> para títulos principales.</p>
+      </div>
+    </section>
+
+    <!-- ESTRUCTURA BÁSICA -->
+    <section id="estructura" class="section-card">
+      <h2>🏗️ Estructura básica</h2>
+      <p>Todo documento HTML comienza con una declaración y las etiquetas <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code> y <code>&lt;body&gt;</code>.</p>
+      <div class="code-block">&lt;!DOCTYPE html&gt;
+&lt;html lang="es"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Mi página&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Título principal&lt;/h1&gt;
+  &lt;p&gt;Contenido...&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</div>
+    </section>
+
+    <!-- ETIQUETAS DE TEXTO -->
+    <section id="etiquetas" class="section-card">
+      <h2>🏷️ Etiquetas de texto</h2>
+      <div class="demo-box">
+        <h1 style="font-size:1.6rem; margin-top:0;">h1 Título</h1>
+        <h2 style="font-size:1.3rem;">h2 Subtítulo</h2>
+        <p><strong>Negrita</strong>, <em>cursiva</em>, <u>subrayado</u>, <code>&lt;code&gt;</code>.</p>
+        <p>Salto de línea: <code>&lt;br&gt;</code> (ejemplo abajo).</p>
+      </div>
+      <div class="code-block">&lt;h1&gt;...&lt;/h1&gt;  &lt;h2&gt;...&lt;/h2&gt;  &lt;p&gt;...&lt;/p&gt;
+&lt;strong&gt;negrita&lt;/strong&gt; &lt;em&gt;énfasis&lt;/em&gt;
+&lt;br&gt; (salto de línea)</div>
+    </section>
+
+    <!-- ENLACES E IMÁGENES -->
+    <section id="enlaces-imagenes" class="section-card">
+      <h2>🔗 Enlaces e imágenes</h2>
+      <div class="demo-box">
+        <a href="#" style="color:var(--accent); text-decoration:underline;">Enlace de ejemplo (no navega)</a><br>
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='60' viewBox='0 0 100 60'%3E%3Crect width='100' height='60' fill='%23e67e22'/%3E%3Ctext x='10' y='38' fill='white' font-size='18'%3EIMG%3C/text%3E%3C/svg%3E" alt="demo imagen" style="margin-top:10px; border-radius:8px; max-width:100%; height:auto;">
+      </div>
+      <div class="code-block">&lt;a href="https://ejemplo.com"&gt;Texto del enlace&lt;/a&gt;
+&lt;img src="imagen.jpg" alt="descripción"&gt;</div>
+    </section>
+
+    <!-- LISTAS Y TABLAS -->
+    <section id="listas-tablas" class="section-card">
+      <h2>📋 Listas y tablas</h2>
+      <h3>Lista no ordenada</h3>
+      <ul style="margin-left:1.5rem; margin-bottom:1rem;">
+        <li>Elemento 1</li>
+        <li>Elemento 2</li>
+        <li>Elemento 3</li>
+      </ul>
+      <h3>Tabla simple (con scroll si es necesario)</h3>
+      <div class="table-responsive">
+        <table>
+          <tr><th>Nombre</th><th>Edad</th><th>Ciudad</th></tr>
+          <tr><td>Ana</td><td>28</td><td>Madrid</td></tr>
+          <tr><td>Luis</td><td>34</td><td>Barcelona</td></tr>
+        </table>
+      </div>
+      <div class="code-block">&lt;ul&gt;&lt;li&gt;item&lt;/li&gt;&lt;/ul&gt;   &lt;ol&gt; (ordenada)
+&lt;table&gt;&lt;tr&gt;&lt;th&gt;...&lt;/th&gt;&lt;/tr&gt;&lt;/table&gt;</div>
+    </section>
+
+    <!-- FORMULARIOS -->
+    <section id="formularios" class="section-card">
+      <h2>📝 Formularios</h2>
+      <div class="demo-box">
+        <label style="display:block; margin-bottom:0.8rem;">Nombre: 
+          <input type="text" placeholder="Escribe..." style="padding:0.5rem; border-radius:30px; border:1px solid #ccc; width:100%; max-width:220px;">
+        </label>
+        <label style="display:block; margin-bottom:1rem;">
+          <input type="checkbox"> Acepto los términos
+        </label>
+        <button class="btn" onclick="alert('Esto es solo una demostración del formulario')">Enviar (demo)</button>
+      </div>
+      <div class="code-block">&lt;form&gt;
+  &lt;input type="text" placeholder="Nombre"&gt;
+  &lt;input type="email" placeholder="Correo"&gt;
+  &lt;button type="submit"&gt;Enviar&lt;/button&gt;
+&lt;/form&gt;</div>
+    </section>
+
+    <!-- HTML SEMÁNTICO -->
+    <section id="semantica" class="section-card">
+      <h2>📌 HTML semántico</h2>
+      <p>Usa etiquetas con significado: <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;footer&gt;</code>.</p>
+      <div class="note">
+        ✅ Mejora la accesibilidad, el SEO y hace el código más mantenible.
+      </div>
+      <p>Ejemplo de estructura semántica:</p>
+      <div class="code-block">&lt;body&gt;
+  &lt;header&gt;...&lt;/header&gt;
+  &lt;nav&gt;...&lt;/nav&gt;
+  &lt;main&gt;
+    &lt;article&gt;...&lt;/article&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;...&lt;/footer&gt;
+&lt;/body&gt;</div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <p>🧑‍🏫 Tutorial HTML · Totalmente responsivo hasta 320px · DeepSeek 2026</p>
+      <p style="margin-top:0.5rem;">✨ Aprende las bases y construye sitios web sólidos.</p>
+    </footer>
+  </main>
+</div>
+
+<!-- pequeña interacción para el botón (evita error) -->
+<script>
+  (function(){
+    // solo para dar feedback en el botón de formulario (ya tiene onclick)
+    console.log('📄 Tutorial HTML – optimizado para móviles (mín. 320px)');
+  })();
+</script>
+</body>
+</html>

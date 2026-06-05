@@ -1,0 +1,5 @@
+body { font-family: Arial; padding: 20px; } table { border-collapse: collapse; width: 100%; margin-top: 20px; } th, td { border: 1px solid #ccc; padding: 8px; text-align: left; } 
+
+Calculadora de Promedios
+
+Agregar estudiante NombreNotasPromedio const estudiantes = []; function calcularPromedio(notas) { const suma = notas.reduce((acc, n) => acc + n, 0); return (suma / notas.length).toFixed(2); } document.getElementById("formulario").addEventListener("submit", e => { e.preventDefault(); const nombre = document.getElementById("nombre").value; const notas = document.getElementById("notas").value.split(",").map(n => parseFloat(n)); estudiantes.push({ nombre, notas }); actualizarTabla(); e.target.reset(); }); function actualizarTabla() { const tabla = document.getElementById("tabla"); tabla.innerHTML = ""; estudiantes.forEach(est => { const fila = document.createElement("tr"); fila.innerHTML = `<td>${est.nombre}</td><td>${est.notas.join(", ")}</td><td>${calcularPromedio(est.notas)}</td>`; tabla.appendChild(fila); }); } 

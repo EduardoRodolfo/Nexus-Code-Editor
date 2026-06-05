@@ -1,0 +1,298 @@
+﻿¡Excelente idea! Vamos a hacer que el explorador de archivos sea desplegable. Te ayudo a implementar esta funcionalidad:
+
+## 1. Primero, actualicemos los estilos en `index.css`:
+
+```css
+/* Estilos para el explorador de archivos desplegable */
+.file-explorer {
+    padding: 10px;
+}
+
+.file-item {
+    padding: 8px 12px;
+    margin: 2px 0;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+}
+
+.file-item:hover {
+    background: #2d2d30;
+}
+
+.file-item .folder-toggle {
+    width: 16px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.file-item .folder-toggle.collapsed {
+    transform: rotate(-90deg);
+}
+
+.file-item .folder-children {
+    margin-left: 16px;
+    display: none;
+}
+
+.file-item.expanded .folder-children {
+    display: block;
+}
+
+.file-icon {
+    font-size: 1.2rem;
+}
+
+.folder-item {
+    font-weight: 600;
+}
+
+.file-item.active {
+    background: #007acc;
+}
+```
+
+## 2. Ahora, modifiquemos la función `listFiles` en `index.js`:
+
+```javascript
+// Listar archivos recursivamente (versión desplegable)
+async function listFiles(directoryHandle, container, path = '') {
+    for await (const [name, handle] of directoryHandle.entries()) {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.dataset.path = path ? `${path}/${name}` : name;
+        
+        const isDirectory = handle.kind === 'directory';
+        const icon = isDirectory ? '📁' : getFileIcon(name);
+        
+        // Crear la estructura del elemento de archivo/carpeta
+        fileItem.innerHTML = `
+            <span class="folder-toggle">${isDirectory ? '▼' : ''}</span>
+            <span class="file-icon">${icon}</span>
+            <span class="file-name">${name}</span>
+        `;
+
+        if (isDirectory) {
+            fileItem.classList.add('folder-item');
+            
+            // Crear contenedor para hijos
+            const folderChildren = document.createElement('div');
+            folderChildren.className = 'folder-children';
+            fileItem.appendChild(folderChildren);
+            
+            // Agregar evento para expandir/colapsar
+            const toggle = fileItem.querySelector('.folder-toggle');
+            fileItem.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileItem.classList.toggle('expanded');
+                toggle.classList.toggle('collapsed');
+                
+                // Si se expande y no tiene hijos cargados, cargarlos
+                if (fileItem.classList.contains('expanded') && folderChildren.children.length === 0) {
+                    listFiles(handle, folderChildren, path ? `${path}/${name}` : name);
+                }
+            });
+        } else {
+            // Es un archivo, agregar evento para abrirlo
+            fileItem.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openFileFromProject(handle, name);
+                
+                // Remover active de todos y agregar al actual
+                document.querySelectorAll('.file-item').forEach(item => item.classList.remove('active'));
+                fileItem.classList.add('active');
+            });
+        }
+
+        container.appendChild(fileItem);
+        projectFiles.push({ name, handle, path, kind: handle.kind });
+    }
+}
+```
+
+## 3. También necesitamos una función para cargar la estructura completa si se desea:
+
+```javascript
+// Función para cargar toda la estructura de forma recursiva
+async function loadFullProjectStructure() {
+    if (!currentProjectHandle) return;
+
+    const fileExplorer = document.getElementById('file-explorer');
+    fileExplorer.innerHTML = '';
+
+    projectFiles = [];
+    await listFiles(currentProjectHandle, fileExplorer);
+}
+
+// Función para cargar estructura colapsada (solo primer nivel)
+async function loadCollapsedProjectStructure() {
+    if (!currentProjectHandle) return;
+
+    const fileExplorer = document.getElementById('file-explorer');
+    fileExplorer.innerHTML = '';
+
+    projectFiles = [];
+    
+    // Cargar solo el primer nivel
+    for await (const [name, handle] of currentProjectHandle.entries()) {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.dataset.path = name;
+        
+        const isDirectory = handle.kind === 'directory';
+        const icon = isDirectory ? '📁' : getFileIcon(name);
+        
+        fileItem.innerHTML = `
+            <span class="folder-toggle">${isDirectory ? '▶' : ''}</span>
+            <span class="file-icon">${icon}</span>
+            <span class="file-name">${name}</span>
+        `;
+
+        if (isDirectory) {
+            fileItem.classList.add('folder-item');
+            
+            const folderChildren = document.createElement('div');
+            folderChildren.className = 'folder-children';
+            fileItem.appendChild(folderChildren);
+            
+            const toggle = fileItem.querySelector('.folder-toggle');
+            fileItem.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                
+                if (!fileItem.classList.contains('expanded')) {
+                    // Expandir y cargar contenido
+                    fileItem.classList.add('expanded');
+                    toggle.textContent = '▼';
+                    await listFiles(handle, folderChildren, name);
+                } else {
+                    // Colapsar
+                    fileItem.classList.remove('expanded');
+                    toggle.textContent = '▶';
+                }
+            });
+        } else {
+            fileItem.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openFileFromProject(handle, name);
+                document.querySelectorAll('.file-item').forEach(item => item.classList.remove('active'));
+                fileItem.classList.add('active');
+            });
+        }
+
+        fileExplorer.appendChild(fileItem);
+        projectFiles.push({ name, handle, path: '', kind: handle.kind });
+    }
+}
+```
+
+## 4. Modifica la función `loadProjectStructure` para usar la versión colapsada:
+
+```javascript
+// Cargar estructura del proyecto (ahora colapsada por defecto)
+async function loadProjectStructure() {
+    if (!currentProjectHandle) return;
+
+    const fileExplorer = document.getElementById('file-explorer');
+    fileExplorer.innerHTML = '<div class="loading">Cargando proyecto...</div>';
+
+    projectFiles = [];
+    await loadCollapsedProjectStructure(); // Cambiar a esta función
+}
+```
+
+## 5. Agrega estilos adicionales para mejorar la experiencia:
+
+```css
+/* Estilos adicionales */
+.loading {
+    padding: 10px;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+
+.file-item .folder-toggle {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+/* Mejorar la indentación */
+.folder-children {
+    margin-left: 20px;
+    border-left: 1px solid #3c3c3c;
+    padding-left: 5px;
+}
+
+/* Efecto de transición suave */
+.file-item {
+    transition: background-color 0.2s ease;
+}
+
+/* Indicador visual para archivos modificados */
+.file-item.modified .file-name::after {
+    content: " •";
+    color: #ffa500;
+}
+```
+
+## 6. También puedes agregar controles para expandir/colapsar todo:
+
+```javascript
+// Agregar estos botones en el sidebar-header (opcional)
+function addExpandCollapseControls() {
+    const sidebarHeader = document.querySelector('.sidebar-header');
+    const controls = document.createElement('div');
+    controls.className = 'expand-controls';
+    controls.innerHTML = `
+        <button id="expand-all" title="Expandir todo">↡</button>
+        <button id="collapse-all" title="Colapsar todo">↟</button>
+    `;
+    sidebarHeader.appendChild(controls);
+
+    document.getElementById('expand-all').addEventListener('click', expandAll);
+    document.getElementById('collapse-all').addEventListener('click', collapseAll);
+}
+
+function expandAll() {
+    document.querySelectorAll('.file-item.folder-item').forEach(item => {
+        item.classList.add('expanded');
+        const toggle = item.querySelector('.folder-toggle');
+        if (toggle) toggle.textContent = '▼';
+    });
+}
+
+function collapseAll() {
+    document.querySelectorAll('.file-item.folder-item').forEach(item => {
+        item.classList.remove('expanded');
+        const toggle = item.querySelector('.folder-toggle');
+        if (toggle) toggle.textContent = '▶';
+    });
+}
+```
+
+Y llama a esta función en `loadProjectStructure`:
+
+```javascript
+async function loadProjectStructure() {
+    if (!currentProjectHandle) return;
+
+    const fileExplorer = document.getElementById('file-explorer');
+    fileExplorer.innerHTML = '<div class="loading">Cargando proyecto...</div>';
+
+    projectFiles = [];
+    await loadCollapsedProjectStructure();
+    
+    // Agregar controles de expandir/colapsar
+    addExpandCollapseControls();
+}
+```
+
+Con estos cambios, tu explorador de archivos ahora será desplegable, con carpetas que se expanden y colapsan, y una experiencia de usuario mucho más organizada y profesional. ¿Te gustaría que ajuste algún aspecto específico de la implementación?

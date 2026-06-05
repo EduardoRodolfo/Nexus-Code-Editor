@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>🧠 Lógica de Programación · Tutorial interactivo</title>
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1e293b;
+      --accent: #8b5cf6;
+      --accent-soft: #ede9fe;
+      --bg: #f5f3ff;
+      --card-bg: #ffffff;
+      --text: #1e1b2b;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --border-light: #e0ddf0;
+      --shadow-sm: 0 6px 12px -6px rgba(0, 0, 0, 0.05), 0 2px 5px -2px rgba(0, 0, 0, 0.03);
+      --shadow-md: 0 15px 30px -12px rgba(0, 0, 0, 0.1);
+      --radius: 1.2rem;
+      --radius-sm: 0.8rem;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 1.2rem;
+    }
+
+    /* ===== LAYOUT PRINCIPAL ===== */
+    .tutorial-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 1.8rem;
+      align-items: start;
+    }
+
+    /* ===== SIDEBAR (ÍNDICE) ===== */
+    .sidebar {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1.6rem 1.2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+      position: sticky;
+      top: 1.2rem;
+      transition: all 0.2s;
+    }
+
+    .sidebar h2 {
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--primary);
+      border-bottom: 3px solid var(--accent-soft);
+      padding-bottom: 0.8rem;
+      font-weight: 700;
+    }
+
+    .sidebar nav ul {
+      list-style: none;
+    }
+
+    .sidebar nav li {
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar nav a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      display: block;
+      padding: 0.6rem 1rem;
+      border-radius: 2.5rem;
+      transition: all 0.15s;
+      font-size: 0.98rem;
+    }
+
+    .sidebar nav a:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    /* ===== CONTENIDO PRINCIPAL ===== */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+      color: white;
+      padding: 2.2rem 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+    }
+
+    .hero h1 {
+      font-size: 2.7rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 80%;
+      font-weight: 400;
+    }
+
+    /* ===== TARJETAS DE SECCIÓN ===== */
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 2rem 2.2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+      transition: box-shadow 0.2s;
+    }
+
+    .section-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .section-card h2 {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 1.3rem;
+      border-left: 8px solid var(--accent);
+      padding-left: 1.2rem;
+      font-weight: 700;
+    }
+
+    .section-card h3 {
+      margin: 1.8rem 0 1rem;
+      color: #2e1065;
+      font-size: 1.5rem;
+      font-weight: 650;
+    }
+
+    /* ===== CÓDIGO ===== */
+    .code-block {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.3rem 1.6rem;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Mono', monospace;
+      font-size: 0.95rem;
+      margin: 1.3rem 0;
+      box-shadow: inset 0 0 0 1px #334155;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .code-block code {
+      font-family: inherit;
+    }
+
+    /* ===== DEMOS / CAJAS INTERACTIVAS ===== */
+    .demo-box {
+      margin: 1.8rem 0;
+      padding: 1.6rem;
+      background: #f8f7ff;
+      border-radius: 1.2rem;
+      border: 1px dashed #a78bfa;
+    }
+
+    .interactive-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      align-items: center;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.8rem;
+      border-radius: 3rem;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 12px -6px rgba(139, 92, 246, 0.4);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn:hover {
+      background: #6d28d9;
+      transform: scale(1.02);
+      box-shadow: 0 12px 16px -8px #8b5cf6;
+    }
+
+    .output-area {
+      background: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 3rem;
+      font-family: monospace;
+      border: 1px solid var(--border-light);
+      min-width: 120px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .flowchart-symbol {
+      display: inline-block;
+      background: #e9d5ff;
+      padding: 0.3rem 1.2rem;
+      border-radius: 2rem;
+      font-weight: 500;
+    }
+
+    .var-example {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .var-box {
+      background: #1e1b4b;
+      color: #c4b5fd;
+      padding: 0.6rem 1.4rem;
+      border-radius: 2.5rem;
+      font-family: monospace;
+      font-size: 1.2rem;
+    }
+
+    /* ===== NOTAS Y CONSEJOS ===== */
+    .note {
+      background: #fef9c3;
+      padding: 1rem 1.5rem;
+      border-radius: 1rem;
+      border-left: 8px solid #ca8a04;
+      margin: 1.4rem 0;
+      color: #422006;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border-light);
+      padding-top: 2rem;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 0.8rem;
+      }
+
+      .tutorial-wrapper {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+      }
+
+      .sidebar {
+        position: static;
+        padding: 1.2rem;
+        margin-bottom: 0.3rem;
+      }
+
+      .sidebar nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .sidebar nav li {
+        margin-bottom: 0;
+      }
+
+      .sidebar nav a {
+        background: #ede9fe;
+        padding: 0.4rem 1.2rem;
+        border-radius: 3rem;
+        font-size: 0.85rem;
+      }
+
+      .hero {
+        padding: 1.6rem;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .hero p {
+        max-width: 100%;
+        font-size: 1rem;
+      }
+
+      .section-card {
+        padding: 1.5rem;
+      }
+
+      .section-card h2 {
+        font-size: 1.7rem;
+      }
+
+      .code-block {
+        font-size: 0.8rem;
+        padding: 1rem;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* detalles */
+    .badge {
+      background: #c4b5fd;
+      color: #2e1065;
+      padding: 0.2rem 0.9rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-left: 0.7rem;
+    }
+
+    .keyword {
+      color: #a78bfa;
+      font-weight: 600;
+    }
+  </style>
+  <!-- pequeño polyfill para fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="tutorial-wrapper">
+  <!-- SIDEBAR ÍNDICE -->
+  <aside class="sidebar">
+    <h2>📋 Contenido</h2>
+    <nav>
+      <ul>
+        <li><a href="#que-es-logica">🤔 ¿Qué es lógica?</a></li>
+        <li><a href="#algoritmos">📐 Algoritmos</a></li>
+        <li><a href="#variables">📦 Variables & tipos</a></li>
+        <li><a href="#condicionales">⚖️ Condicionales</a></li>
+        <li><a href="#bucles">🔄 Bucles / ciclos</a></li>
+        <li><a href="#funciones">🛠️ Funciones</a></li>
+        <li><a href="#practica">🧪 Zona de práctica</a></li>
+      </ul>
+    </nav>
+    <div style="margin-top: 2.5rem; font-size: 0.85rem; color: #6b7280;">
+      <hr style="margin: 1rem 0; border: 0; height: 1px; background: var(--border-light);">
+      <p>✨ Lógica · desde cero</p>
+      <p>🧑‍💻 DeepSeek · 2026</p>
+    </div>
+  </aside>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+    <!-- HERO -->
+    <header class="hero">
+      <h1>
+        <span>🧠</span> Lógica de Programación
+        <span class="badge">esencial</span>
+      </h1>
+      <p>Pensamiento estructurado, algoritmos y fundamentos para programar en cualquier lenguaje.</p>
+    </header>
+
+    <!-- ¿QUÉ ES LÓGICA? -->
+    <section id="que-es-logica" class="section-card">
+      <h2>🤔 ¿Qué es la lógica de programación?</h2>
+      <p>Es la capacidad de <strong>estructurar instrucciones</strong> para resolver problemas de forma clara y ordenada. No depende de un lenguaje específico: es la base del pensamiento computacional.</p>
+      <div class="demo-box">
+        <p style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
+          <span class="flowchart-symbol">🔷 Entrada</span>
+          <span style="font-size: 1.8rem;">→</span>
+          <span class="flowchart-symbol">⚙️ Proceso</span>
+          <span style="font-size: 1.8rem;">→</span>
+          <span class="flowchart-symbol">🔶 Salida</span>
+        </p>
+        <p style="margin-top: 1rem;">Ejemplo: “Sumar dos números” → Entrada (5, 3) → Proceso (suma) → Salida (8).</p>
+      </div>
+      <p>Una buena lógica evita errores y hace que el código sea fácil de mantener.</p>
+    </section>
+
+    <!-- ALGORITMOS -->
+    <section id="algoritmos" class="section-card">
+      <h2>📐 Algoritmos</h2>
+      <p>Un algoritmo es una secuencia de pasos finitos para resolver un problema. Se puede representar con <strong>pseudocódigo</strong> o diagramas de flujo.</p>
+      <div class="code-block"><code>// Pseudocódigo: preparar un café
+INICIO
+  1. Calentar agua
+  2. Poner café en filtro
+  3. Verter agua caliente
+  4. Servir en taza
+FIN</code></div>
+      <div class="note">
+        💡 <strong>Características:</strong> preciso, definido, finito. La computadora ejecuta instrucciones paso a paso.
+      </div>
+    </section>
+
+    <!-- VARIABLES Y TIPOS -->
+    <section id="variables" class="section-card">
+      <h2>📦 Variables y tipos de datos</h2>
+      <p>Una variable es un espacio en memoria que guarda un valor. Tiene un nombre y un tipo.</p>
+      <h3>🔹 Tipos básicos</h3>
+      <div class="var-example">
+        <span class="var-box">numero = 42</span>
+        <span class="var-box">texto = "Hola"</span>
+        <span class="var-box">booleano = true</span>
+        <span class="var-box">lista = [1,2,3]</span>
+      </div>
+      <div class="code-block"><code>// JavaScript (ejemplo)
+let edad = 25;               // número
+let nombre = "Ana";          // string
+let esMayor = true;          // boolean
+let colores = ["rojo","azul"];</code></div>
+      <p>📌 En pseudocódigo: <code>EDAD ← 25</code> o <code>nombre = "Ana"</code>.</p>
+    </section>
+
+    <!-- CONDICIONALES -->
+    <section id="condicionales" class="section-card">
+      <h2>⚖️ Estructuras condicionales</h2>
+      <p>Permiten tomar decisiones según se cumpla o no una condición.</p>
+      <h3>🔸 Si (if) - sino (else)</h3>
+      <div class="code-block"><code>SI (edad >= 18) ENTONCES
+    ESCRIBIR "Eres mayor de edad"
+SINO
+    ESCRIBIR "Eres menor de edad"
+FIN SI</code></div>
+      <div class="demo-box">
+        <p><strong>🔎 Prueba interactiva:</strong> Ingresa una edad (0-100)</p>
+        <div class="interactive-panel">
+          <input type="number" id="edadInput" min="0" max="100" value="20" style="padding: 0.6rem 1rem; border-radius: 2rem; border:1px solid #cbd5e1; width: 100px; font-size:1rem;">
+          <button class="btn" id="checkEdadBtn">Verificar</button>
+          <span class="output-area" id="edadResultado">¿Mayor?</span>
+        </div>
+        <p style="margin-top: 1rem;">📌 <code>if</code>, <code>else if</code>, <code>else</code>. También existe <code>switch</code> para múltiples casos.</p>
+      </div>
+    </section>
+
+    <!-- BUCLES -->
+    <section id="bucles" class="section-card">
+      <h2>🔄 Bucles / ciclos</h2>
+      <p>Repiten un bloque de código mientras se cumpla una condición.</p>
+      <h3>🔁 Mientras (while)</h3>
+      <div class="code-block"><code>contador = 0
+MIENTRAS contador < 5 HACER
+    ESCRIBIR "Vuelta:", contador
+    contador = contador + 1
+FIN MIENTRAS</code></div>
+      <h3>🔂 Para (for)</h3>
+      <div class="code-block"><code>PARA i DESDE 1 HASTA 5 HACER
+    ESCRIBIR "Número:", i
+FIN PARA</code></div>
+      <div class="demo-box">
+        <p><strong>🔄 Generar conteo con for:</strong></p>
+        <button class="btn" id="runLoopBtn">Mostrar 1 al 5</button>
+        <span class="output-area" id="loopOutput" style="margin-left: 1rem;">👉</span>
+      </div>
+    </section>
+
+    <!-- FUNCIONES -->
+    <section id="funciones" class="section-card">
+      <h2>🛠️ Funciones</h2>
+      <p>Bloques de código reutilizables que realizan una tarea específica. Pueden recibir parámetros y devolver un valor.</p>
+      <div class="code-block"><code>FUNCIÓN sumar(a, b)
+    resultado = a + b
+    RETORNAR resultado
+FIN FUNCIÓN
+
+total = sumar(8, 2)   // total = 10</code></div>
+      <div class="demo-box">
+        <p><strong>🧮 Calculadora simple:</strong></p>
+        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+          <input type="number" id="numA" value="7" style="width:80px; padding:0.5rem; border-radius:2rem; border:1px solid #cbd5e1;">
+          <span style="font-size:1.8rem;">+</span>
+          <input type="number" id="numB" value="3" style="width:80px; padding:0.5rem; border-radius:2rem; border:1px solid #cbd5e1;">
+          <button class="btn" id="sumarBtn">Sumar</button>
+          <span class="output-area" id="sumaResultado">= ?</span>
+        </div>
+        <p style="margin-top: 1.2rem;">💬 Las funciones evitan repetir código y organizan mejor el programa.</p>
+      </div>
+    </section>
+
+    <!-- ZONA DE PRÁCTICA -->
+    <section id="practica" class="section-card">
+      <h2>🧪 Zona de práctica · Adivina el número</h2>
+      <p>Pon a prueba la lógica: hemos creado un pequeño juego donde debes adivinar un número entre 1 y 20. Usa condicionales y ciclos mentales 😄.</p>
+      <div class="demo-box" style="background: #ede9fe;">
+        <p><strong>🎲 Número secreto generado (1-20)</strong></p>
+        <div class="interactive-panel">
+          <input type="number" id="guessInput" min="1" max="20" placeholder="1-20" style="padding:0.6rem; border-radius:2rem; border:1px solid #cbd5e1; width:100px;">
+          <button class="btn" id="guessBtn">Probar</button>
+          <button class="btn" id="newGameBtn" style="background:#4c1d95;">Nuevo juego</button>
+        </div>
+        <p style="margin-top: 1rem;">💬 <span id="gameHint">Escribe un número y presiona Probar</span></p>
+        <p><span class="output-area" id="attemptDisplay">Intentos: 0</span></p>
+      </div>
+      <div class="note">
+        🧩 Este juego implementa: variables, condicionales, comparaciones y actualización de estado. ¡Toda lógica pura!
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <p>🧑‍🏫 Tutorial creado con 💡 por DeepSeek · Lógica de programación · 2026</p>
+      <p style="margin-top: 0.5rem;">✨ “Cualquier código tonto puede entenderlo una máquina. El buen código lo entienden los humanos.”</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  (function(){
+    "use strict";
+
+    // ---------- CONDICIONAL (edad) ----------
+    const edadInput = document.getElementById('edadInput');
+    const checkBtn = document.getElementById('checkEdadBtn');
+    const edadResultado = document.getElementById('edadResultado');
+
+    function verificarEdad() {
+      let edad = parseInt(edadInput.value, 10);
+      if (isNaN(edad)) edad = 0;
+      if (edad >= 18) {
+        edadResultado.textContent = '✅ Mayor de edad';
+      } else {
+        edadResultado.textContent = '🔞 Menor de edad';
+      }
+    }
+    if (checkBtn) {
+      checkBtn.addEventListener('click', verificarEdad);
+      verificarEdad(); // inicial
+    }
+
+    // ---------- BUCLE FOR (mostrar 1-5) ----------
+    const runLoopBtn = document.getElementById('runLoopBtn');
+    const loopOutput = document.getElementById('loopOutput');
+    if (runLoopBtn) {
+      runLoopBtn.addEventListener('click', function() {
+        let resultado = '';
+        for (let i = 1; i <= 5; i++) {
+          resultado += i + (i < 5 ? ' · ' : '');
+        }
+        loopOutput.textContent = `🔁 ${resultado}`;
+      });
+    }
+
+    // ---------- FUNCIÓN SUMAR ----------
+    const numA = document.getElementById('numA');
+    const numB = document.getElementById('numB');
+    const sumarBtn = document.getElementById('sumarBtn');
+    const sumaResultado = document.getElementById('sumaResultado');
+
+    function sumar(a, b) {
+      return a + b;
+    }
+
+    if (sumarBtn) {
+      sumarBtn.addEventListener('click', function() {
+        let a = parseFloat(numA.value) || 0;
+        let b = parseFloat(numB.value) || 0;
+        let res = sumar(a, b);
+        sumaResultado.textContent = `= ${res}`;
+      });
+    }
+
+    // ---------- JUEGO ADIVINA EL NÚMERO ----------
+    const guessInput = document.getElementById('guessInput');
+    const guessBtn = document.getElementById('guessBtn');
+    const newGameBtn = document.getElementById('newGameBtn');
+    const gameHint = document.getElementById('gameHint');
+    const attemptDisplay = document.getElementById('attemptDisplay');
+
+    let secretNumber = Math.floor(Math.random() * 20) + 1;
+    let attempts = 0;
+    let gameActive = true;
+
+    function updateAttemptDisplay() {
+      attemptDisplay.textContent = `Intentos: ${attempts}`;
+    }
+
+    function resetGame() {
+      secretNumber = Math.floor(Math.random() * 20) + 1;
+      attempts = 0;
+      gameActive = true;
+      gameHint.textContent = '🔄 Nuevo juego. Adivina entre 1 y 20.';
+      updateAttemptDisplay();
+      guessInput.value = '';
+      console.log('(pista) Número secreto:', secretNumber); // solo para depurar
+    }
+
+    function handleGuess() {
+      if (!gameActive) {
+        gameHint.textContent = '⏳ Juego terminado. Presiona "Nuevo juego".';
+        return;
+      }
+      let guess = parseInt(guessInput.value, 10);
+      if (isNaN(guess) || guess < 1 || guess > 20) {
+        gameHint.textContent = '⚠️ Ingresa un número válido entre 1 y 20.';
+        return;
+      }
+      attempts++;
+      updateAttemptDisplay();
+
+      if (guess === secretNumber) {
+        gameHint.textContent = `🎉 ¡Correcto! El número era ${secretNumber}. Lo lograste en ${attempts} intento(s).`;
+        gameActive = false;
+      } else if (guess < secretNumber) {
+        gameHint.textContent = '📈 El número es MAYOR. Intenta de nuevo.';
+      } else {
+        gameHint.textContent = '📉 El número es MENOR. Intenta de nuevo.';
+      }
+    }
+
+    if (guessBtn) {
+      guessBtn.addEventListener('click', handleGuess);
+    }
+    if (newGameBtn) {
+      newGameBtn.addEventListener('click', resetGame);
+    }
+
+    // Enter en input de juego
+    if (guessInput) {
+      guessInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleGuess();
+        }
+      });
+    }
+
+    // Inicializar juego
+    resetGame();
+
+    // pequeño easter egg en consola
+    console.log('🧠 Tutorial de lógica de programación · ¡A programar se aprende programando!');
+  })();
+</script>
+</body>
+</html>

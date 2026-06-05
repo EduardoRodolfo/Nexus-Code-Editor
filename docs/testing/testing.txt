@@ -1,0 +1,65 @@
+testing nexus-code-editor
+
+***funciona bien:1- todos los temas del menu funcionan bien.
+                 2- leguages 
+                 3- tamano de fuente 
+mantienen persistencia;cuando tu cierras la aplicacion y vuelves abrirla; segun la aplicacion que habia hecho el usuario 
+en la ultima sesion; mantiene el tema escogido, el lenguage y el tamno de fuente. ^^^No asi en el caso de numeros de lineas y
+ajustes de linea.(no mantiene persistencia)
+^^^boton del tutorial js necesito que tenga un css.
+
+Sistema de carpetas
+ 1- limpiar editor: funciona perfecto.*****
+
+ 2- abrir documento: abre bien un documento .txt .html .js .css con cambio automatico de lenguage; abres un css y automatico
+en el menu de leguage cambia a css y asi en el caso de un js o html. Funcionan perfecto*****
+
+ 3- guardar: cuando abres un documento y le das guardar tienes la opcion de aceptar o cancelar; si escoges cancelar te saca un texto 
+de error sobre fondo rojo y no deberia salir la notificacion de error; porque el usuario solamente esta cancelando la decision de
+guadar el documento. WRONG
+
+4- guardar como: te guarda con el titulo que tu escoges y la extension; pero te saca una notificacion que dice: archivo guardado:sin titulo y 
+uno habia escogido un titulo para el archivo.
+--Cuando guardas un js te dice: Este archivo de tipo (.js) puede ser peligroso. Guardar este archivo solo si confia en http://127.0.0.1:5500
+(parece que esta precausion) esta bien tomada; lo hace solo con archivos js.
+--Cuando guardas un archivo con nombre y extension json (en los archivos con extension json cuando das a guardar como y le das un titulo al
+documento, el primero de saca una notificacion que dice archivo guardado: sin titulo; el segundo guardado con extension json, aunque le pongas un 
+nombre te saca una notificacion que te dice archivo guardado pero con el nomre que le pusiste al archivo anterior. 
+--Los archivos guardados con extension .text me hacen lo mismo que los de extension.json El primero al que le pongo titulo y guardo me saca una 
+notificacion que dice: arcivo guardado sin_titulo y el segundo que guardo con nombre me saca una notificacion que dice archivo guardado; 
+pero con el nombre que le habia puesto al archivo anterior al actual.
+
+5- nuevo documento: das guardar a un nuevo documento y si escoges un nombre con extension por ejemplo .html te saca una notificacion de 
+archivo guardado: sin_titulo. Entonces el segundo archivo guardado con titulo te saca una notificacion con el nombre que habias escogido para el primero.
+
+nota: parece que en todos los casos el archivo se guarda con la extesion y el nombre que uno escoge; o sea el problema estaria en las notificaciones. 
+Hay un divorcio entre lo que uno guarda y la notificacion.
+
+6- nuevo proyecto: tiene problemas revisar bien; notifica error cuando salvas un documento. El mismo problema de los anteriores  el primer archivo que 
+tu guardas en nuevo proyecto; escoges un nombre; pero la aplicacion te notifica archivo guardado:sin_titulo. Entonces el segundo archivo guardado en nuevo 
+proyecto, con un nombre, me notifica el nombre del archivo guardado anterior.
+
+7- abrir proyecto: tienes abierto un proyecto y le das al explorador de carpetas del sidebar en la crucecita de cierre y el explorador del sidebar se mantiene 
+igual; mostrando los mismos documentos. 
+--Necesito que desde el explorador del sidebar se pueda abrir cualquier documento disponible en el explorador del sidebar; pero (ojo) que no se pueda abrir 
+dos instancias de un mismo documento. Una de las ventajas de tener un explorador en el sidebar; es la posibilidad de abrir documentos sin tener que usar 
+las funciones del menu del sistema de archivos. El objetivo del explorador del sidebar es que fuera otro camino alternativo para abrir y cerrar documentos y guardar 
+porque cuando un usuario cierra el explorador de archivos del sidebar, cierra un proyecto o una pagina despues de haber trabajado en el, sino guarda; 
+la aplicacion le debe preguntar si salva el documento o no; si solo quiere cerrar el explorador sin cerrar el documento; da cancelar al cuadro que le pregunta si desea 
+cerrar y salvar el documento y en este caso solo ciera el explorador del sidebar
+--Cuando tienes un proyecto abierto en el sidebar, no puedes abrir ningun documento desde el sidebar ni la funcion abrir documento te lleva al proyecto abierto
+en el explorador del sidebar por defecto y esto deberia coincidir; cuando tienes abierto un proyecto en el explorador del sidebar y usas la funcion abrir documento
+o abrir proyecto o nuevo documento a no ser que seleccione otra carpeta; por defecto debe remitir al proyecto abierto en el explorador del sidebar.
+
+8- normalizar proyecto: cuando abres un proyecto y tienes abierto en el editor de codigo el html y das en normalizar proyecto; aparece un cuardo que dice:
+127.0.0.1:5500 dice:
+¿Deseas guardar CSS y JS como archivos separados?\n\n✅ Mejor organización\n✅ Más fácil de mantener\n✅ Mejor rendimiento --->\n\n que sinifica???
+acertar   cancelar
+--Revisar bien el funcionamiento y las notificaciones de normalizar proyecto; si puede automatizar y el proceso de normalizacion puede copiar el css y el js en el html seria perfecto.
+
+9- El espacio donde se ejecuta la respuesta del codigo js en ambas consola javascript; me gustaria que fuera un poco mas alto(height) mayor.
+
+10- El area de previsualizacion en tiempo real tambien me gustaria fuera mas alto.
+Me gustaria que el css del proyecto tuviera un responsivo para telefonos de baja gama; es decir para moviles de pantalla estrecha.
+
+

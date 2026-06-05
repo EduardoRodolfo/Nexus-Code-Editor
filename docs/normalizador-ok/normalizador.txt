@@ -1,0 +1,638 @@
+﻿¡Perfecto! Te voy a crear un normalizador completamente independiente en un archivo separado. Aquí tienes el código:
+
+📁 normalizador.js (NUEVO ARCHIVO)
+
+```javascript
+// normalizador.js - Normalizador General de Descargas
+// Este archivo es completamente independiente de index.js
+
+class ProjectNormalizer {
+    constructor() {
+        this.originalHTML = '';
+        this.normalizedHTML = '';
+        this.combinedCSS = '';
+        this.combinedJS = '';
+        this.stats = {
+            originalLines: 0,
+            normalizedLines: 0,
+            cssLines: 0,
+            jsLines: 0,
+            externalCSS: 0,
+            externalJS: 0
+        };
+    }
+
+    /**
+     * Normaliza un proyecto descargado para uso comercial
+     * @param {string} html - Contenido HTML original
+     * @param {string} css - CSS adicional (opcional)
+     * @param {string} js - JavaScript adicional (opcional)
+     * @returns {Object} - Objeto con HTML normalizado, CSS y JS extraídos
+     */
+    normalizeDownloadedProject(html, css = '', js = '') {
+        this.originalHTML = html;
+        this.combinedCSS = css || '';
+        this.combinedJS = js || '';
+        
+        // Calcular estadísticas iniciales
+        this.stats.originalLines = html.split('\n').length;
+        
+        // Proceso de normalización
+        this.extractAllCSS();
+        this.extractAllJS();
+        
+        // Reconstruir HTML normalizado
+        const result = this.reconstructHTML();
+        
+        // Calcular estadísticas finales
+        this.stats.normalizedLines = result.html.split('\n').length;
+        this.stats.cssLines = this.combinedCSS.split('\n').length;
+        this.stats.jsLines = this.combinedJS.split('\n').length;
+        
+        return {
+            html: result.html,
+            css: this.combinedCSS,
+            js: this.combinedJS,
+            stats: this.stats
+        };
+    }
+
+    /**
+     * Extrae todo el CSS del HTML
+     */
+    extractAllCSS() {
+        const html = this.originalHTML;
+        
+        // Extraer CSS interno
+        const internalCSS = this.extractInternalCSS(html);
+        if (internalCSS) {
+            this.combinedCSS += '\n' + internalCSS;
+        }
+        
+        // Extraer y marcar CSS externo
+        this.extractExternalCSS(html);
+    }
+
+    /**
+     * Extrae CSS interno (etiquetas <style>)
+     */
+    extractInternalCSS(html) {
+        const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+        const matches = [];
+        let match;
+        
+        while ((match = styleRegex.exec(html)) !== null) {
+            matches.push(match[1].trim());
+        }
+        
+        return matches.join('\n');
+    }
+
+    /**
+     * Identifica y marca CSS externo
+     */
+    extractExternalCSS(html) {
+        const linkRegex = /<link[^>]*href=["']([^"']*\.css)["'][^>]*>/gi;
+        let match;
+        let externalCount = 0;
+        
+        while ((match = linkRegex.exec(html)) !== null) {
+            const cssPath = match[1];
+            this.combinedCSS += `\n/* ========================================== */\n`;
+            this.combinedCSS += `/* CSS EXTERNO: ${cssPath} */\n`;
+            this.combinedCSS += `/* Este archivo necesita ser incorporado manualmente */\n`;
+            this.combinedCSS += `/* Descarga el archivo y pega su contenido aquí */\n`;
+            this.combinedCSS += `/* ========================================== */\n\n`;
+            externalCount++;
+        }
+        
+        this.stats.externalCSS = externalCount;
+    }
+
+    /**
+     * Extrae todo el JavaScript del HTML
+     */
+    extractAllJS() {
+        const html = this.originalHTML;
+        
+        // Extraer JS interno
+        const internalJS = this.extractInternalJS(html);
+        if (internalJS) {
+            this.combinedJS += '\n' + internalJS;
+        }
+        
+        // Extraer y marcar JS externo
+        this.extractExternalJS(html);
+    }
+
+    /**
+     * Extrae JavaScript interno (etiquetas <script> sin src)
+     */
+    extractInternalJS(html) {
+        const scriptRegex = /<script(?!.*src)[^>]*>([\s\S]*?)<\/script>/gi;
+        const matches = [];
+        let match;
+        
+        while ((match = scriptRegex.exec(html)) !== null) {
+            matches.push(match[1].trim());
+        }
+        
+        return matches.join('\n');
+    }
+
+    /**
+     * Identifica y marca JavaScript externo
+     */
+    extractExternalJS(html) {
+        const scriptRegex = /<script[^>]*src=["']([^"']*\.js)["'][^>]*><\/script>/gi;
+        let match;
+        let externalCount = 0;
+        
+        while ((match = scriptRegex.exec(html)) !== null) {
+            const jsPath = match[1];
+            this.combinedJS += `\n// ==========================================\n`;
+            this.combinedJS += `// JAVASCRIPT EXTERNO: ${jsPath}\n`;
+            this.combinedJS += `// Este archivo necesita ser incorporado manualmente\n`;
+            this.combinedJS += `// Descarga el archivo y pega su contenido aquí\n`;
+            this.combinedJS += `// ==========================================\n\n`;
+            externalCount++;
+        }
+        
+        this.stats.externalJS = externalCount;
+    }
+
+    /**
+     * Reconstruye el HTML con estructura normalizada
+     */
+    reconstructHTML() {
+        let html = this.originalHTML;
+        
+        // 1. Extraer metadatos importantes
+        const title = this.extractTitle(html);
+        const metaTags = this.extractMetaTags(html);
+        const bodyContent = this.extractBodyContent(html);
+        
+        // 2. Crear nuevo HTML estructurado
+        let normalizedHTML = `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    ${metaTags}
+    <title>${title}</title>`;
+    
+        // 3. Agregar CSS si existe
+        if (this.combinedCSS.trim()) {
+            normalizedHTML += '\n    <style>\n' + this.combinedCSS.trim() + '\n    </style>';
+        }
+        
+        normalizedHTML += '\n</head>\n<body>\n';
+        
+        // 4. Agregar contenido del body
+        normalizedHTML += bodyContent;
+        
+        // 5. Agregar JS si existe (al final del body)
+        if (this.combinedJS.trim()) {
+            normalizedHTML += '\n    <script>\n' + this.combinedJS.trim() + '\n    </script>';
+        }
+        
+        normalizedHTML += '\n</body>\n</html>';
+        
+        return {
+            html: normalizedHTML,
+            css: this.combinedCSS,
+            js: this.combinedJS
+        };
+    }
+
+    /**
+     * Extrae el título del documento
+     */
+    extractTitle(html) {
+        const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+        return titleMatch ? titleMatch[1].trim() : 'Documento Normalizado';
+    }
+
+    /**
+     * Extrae metatags importantes
+     */
+    extractMetaTags(html) {
+        const metaTags = [];
+        const metaRegex = /<meta[^>]+>/gi;
+        let match;
+        
+        while ((match = metaRegex.exec(html)) !== null) {
+            const metaTag = match[0];
+            // Incluir solo metatags importantes
+            if (metaTag.includes('charset') || 
+                metaTag.includes('viewport') || 
+                metaTag.includes('description') ||
+                metaTag.includes('keywords') ||
+                metaTag.includes('author')) {
+                metaTags.push(metaTag);
+            }
+        }
+        
+        return metaTags.join('\n    ');
+    }
+
+    /**
+     * Extrae el contenido del body
+     */
+    extractBodyContent(html) {
+        const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+        return bodyMatch ? bodyMatch[1].trim() : html;
+    }
+
+    /**
+     * Genera un reporte de normalización
+     */
+    generateReport() {
+        return {
+            originalLines: this.stats.originalLines,
+            normalizedLines: this.stats.normalizedLines,
+            cssLines: this.stats.cssLines,
+            jsLines: this.stats.jsLines,
+            externalCSS: this.stats.externalCSS,
+            externalJS: this.stats.externalJS,
+            compressionRatio: ((this.stats.originalLines - this.stats.normalizedLines) / this.stats.originalLines * 100).toFixed(2)
+        };
+    }
+
+    /**
+     * Exporta el proyecto normalizado como archivos separados
+     */
+    exportAsFiles() {
+        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+        
+        return {
+            html: {
+                filename: `proyecto-normalizado-${timestamp}.html`,
+                content: this.normalizedHTML
+            },
+            css: {
+                filename: `styles-normalized-${timestamp}.css`,
+                content: this.combinedCSS
+            },
+            js: {
+                filename: `scripts-normalized-${timestamp}.js`,
+                content: this.combinedJS
+            },
+            report: {
+                filename: `reporte-normalizacion-${timestamp}.txt`,
+                content: this.generateReportText()
+            }
+        };
+    }
+
+    /**
+     * Genera texto del reporte
+     */
+    generateReportText() {
+        const report = this.generateReport();
+        return `REPORTE DE NORMALIZACIÓN
+========================
+Fecha: ${new Date().toLocaleString()}
+Archivo original: ${report.originalLines} líneas
+Archivo normalizado: ${report.normalizedLines} líneas
+CSS extraído: ${report.cssLines} líneas
+JavaScript extraído: ${report.jsLines} líneas
+Archivos CSS externos identificados: ${report.externalCSS}
+Archivos JS externos identificados: ${report.externalJS}
+Ratio de compresión: ${report.compressionRatio}%
+
+INSTRUCCIONES:
+=============
+1. El HTML ahora contiene todo el CSS y JS internos
+2. Para mejor rendimiento, guarda CSS y JS en archivos separados
+3. Los archivos externos identificados necesitan ser incorporados manualmente
+4. Optimiza el código para producción antes de publicar`;
+    }
+}
+
+// ===== FUNCIONES GLOBALES PARA USO EXTERNO =====
+
+/**
+ * Función global para normalizar proyectos
+ * @param {string} htmlContent - Contenido HTML a normalizar
+ * @returns {Object} - Proyecto normalizado
+ */
+window.normalizarProyecto = function(htmlContent) {
+    const normalizador = new ProjectNormalizer();
+    return normalizador.normalizeDownloadedProject(htmlContent);
+};
+
+/**
+ * Función global para exportar proyecto normalizado
+ * @param {string} htmlContent - Contenido HTML a normalizar
+ * @returns {Object} - Archivos listos para descargar
+ */
+window.exportarProyectoNormalizado = function(htmlContent) {
+    const normalizador = new ProjectNormalizer();
+    const resultado = normalizador.normalizeDownloadedProject(htmlContent);
+    return normalizador.exportAsFiles();
+};
+
+/**
+ * Función global para obtener reporte de normalización
+ * @param {string} htmlContent - Contenido HTML a analizar
+ * @returns {Object} - Reporte de análisis
+ */
+window.analizarProyecto = function(htmlContent) {
+    const normalizador = new ProjectNormalizer();
+    normalizador.normalizeDownloadedProject(htmlContent);
+    return normalizador.generateReport();
+};
+
+// ===== DETECCIÓN AUTOMÁTICA Y USO CON ACE EDITOR =====
+
+/**
+ * Inicializa el normalizador con Ace Editor si está disponible
+ */
+window.inicializarNormalizador = function() {
+    // Verificar si Ace Editor está disponible
+    if (typeof ace !== 'undefined' && ace.edit) {
+        console.log('✅ Normalizador inicializado con Ace Editor');
+        
+        // Exponer funciones para el editor
+        window.normalizador = {
+            normalizar: function() {
+                const editor = ace.edit("editor");
+                const contenido = editor.getValue();
+                return window.normalizarProyecto(contenido);
+            },
+            
+            exportar: function() {
+                const editor = ace.edit("editor");
+                const contenido = editor.getValue();
+                return window.exportarProyectoNormalizado(contenido);
+            },
+            
+            analizar: function() {
+                const editor = ace.edit("editor");
+                const contenido = editor.getValue();
+                return window.analizarProyecto(contenido);
+            }
+        };
+    } else {
+        console.log('⚠️ Ace Editor no detectado - Normalizador funciona de forma independiente');
+    }
+};
+
+// Auto-inicialización cuando el DOM está listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.inicializarNormalizador);
+} else {
+    window.inicializarNormalizador();
+}
+
+// Exportación para módulos (si se usa como módulo)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = ProjectNormalizer;
+}
+```
+
+📄 Cómo integrarlo en tu proyecto:
+
+1. Agrega el script en index.html:
+
+```html
+<!-- En el head, después de los otros scripts -->
+<script src="js/normalizador.js"></script>
+```
+
+2. Modifica el botón en index.html:
+
+```html
+<!-- Cambia el botón existente por este -->
+<a id="normalizar-proyecto" href="#">
+    <span class="menu-icon">🔄</span> Normalizar Proyecto
+</a>
+```
+
+3. En index.js - ELIMINA todo el código del normalizador:
+
+📍 DONDE COMIENZAS A ELIMINAR:
+Busca esta línea en index.js:
+
+```javascript
+// ===== PROJECT NORMALIZER ===== 
+class ProjectNormalizer {
+```
+
+📍 DONDE TERMINAS DE ELIMINAR:
+Busca esta línea y elimina TODO hasta antes de:
+
+```javascript
+// Instancia del normalizador
+const projectNormalizer = new ProjectNormalizer();
+```
+
+ELIMINA TODO desde class ProjectNormalizer hasta const projectNormalizer = new ProjectNormalizer();
+
+4. Reemplaza las funciones en index.js:
+
+En la parte de eventos, cambia esto:
+
+```javascript
+document.getElementById('normalizar-proyecto').addEventListener('click', normalizeDownloadedProject);
+```
+
+Por esto:
+
+```javascript
+document.getElementById('normalizar-proyecto').addEventListener('click', function() {
+    if (typeof window.normalizador !== 'undefined') {
+        const resultado = window.normalizador.normalizar();
+        
+        // Actualizar el editor con el HTML normalizado
+        editor.setValue(resultado.html);
+        
+        // Mostrar notificación
+        showNotification('✅ Proyecto normalizado correctamente');
+        
+        // Mostrar reporte en consola
+        console.log('📊 Reporte de normalización:', resultado.stats);
+    } else {
+        showNotification('❌ Normalizador no disponible', true);
+    }
+});
+```
+
+🎯 Ventajas de esta solución:
+
+· ✅ Completamente independiente de index.js
+· ✅ No rompe el código existente
+· ✅ Funciona por sí solo sin dependencias
+· ✅ Fácil de mantener y actualizar
+· ✅ API clara para usar desde otros archivos
+· ✅ Detección automática de Ace Editor
+· ✅ Múltiples funciones de exportación y análisis
+
+🔧 Uso desde la consola del navegador:
+
+```javascript
+// Normalizar HTML actual
+const resultado = normalizarProyecto(editor.getValue());
+
+// Exportar archivos
+const archivos = exportarProyectoNormalizado(editor.getValue());
+
+// Solo analizar
+const analisis = analizarProyecto(editor.getValue());
+```
+
+¡El normalizador ahora está completamente separado y listo para usar! 🚀
+
+______________________________
+
+¡Excelente pregunta! Voy a revisar tu index.html y verificar si el normalizador está correctamente enlazado.
+
+Después de revisar tu código, veo que NO está enlazado el archivo normalizador.js. Te muestro exactamente dónde y cómo agregarlo:
+
+📝 Modificaciones necesarias en index.html:
+
+1. AGREGAR el script del normalizador (después de index.js):
+
+```html
+<!-- En la sección head, DESPUÉS de index.js -->
+<script src="js/index.js"></script>
+<!-- AGREGAR ESTA LÍNEA -->
+<script src="js/normalizador.js"></script>
+```
+
+2. Tu head debería quedar así:
+
+```html
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Code Editor 1.0</title>
+
+  <link rel="stylesheet" href="css/index.css">
+
+  <!-- Ace Editor -->
+  <script src="ace/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="ace/src-noconflict/ext-language_tools.js"></script>
+  
+  <!-- Scripts de la aplicación -->
+  <script src="js/index.js"></script>
+  <script src="js/normalizador.js"></script> <!-- NUEVO ARCHIVO -->
+</head>
+```
+
+3. Verificar que el botón existe en tu HTML:
+
+Tu botón ya está correctamente definido en el menú:
+
+```html
+<a id="normalizar-proyecto" href="#">
+    <span class="menu-icon">🔄</span> Normalizar Proyecto
+</a>
+```
+
+🔧 Actualización necesaria en index.js:
+
+ELIMINAR todo el código del normalizador viejo:
+
+📍 COMIENZO DE ELIMINACIÓN:
+
+```javascript
+// ===== PROJECT NORMALIZER ===== 
+class ProjectNormalizer {
+```
+
+📍 FIN DE ELIMINACIÓN:
+Elimina TODO desde esa línea hasta:
+
+```javascript
+// Instancia del normalizador
+const projectNormalizer = new ProjectNormalizer();
+```
+
+REEMPLAZAR la función normalizeDownloadedProject:
+
+Cambia esto:
+
+```javascript
+document.getElementById('normalizar-proyecto').addEventListener('click', normalizeDownloadedProject);
+```
+
+Por esto:
+
+```javascript
+document.getElementById('normalizar-proyecto').addEventListener('click', function() {
+    // Usar el normalizador independiente
+    if (typeof window.normalizador !== 'undefined') {
+        const resultado = window.normalizador.normalizar();
+        
+        // Actualizar el editor con el HTML normalizado
+        editor.setValue(resultado.html);
+        
+        // Mostrar notificación
+        showNotification('✅ Proyecto normalizado correctamente');
+        
+        // Mostrar reporte en consola
+        console.log('📊 Reporte de normalización:', resultado.stats);
+        
+        // Opcional: Mostrar estadísticas al usuario
+        setTimeout(() => {
+            alert(`📊 Normalización completada:\n\n` +
+                  `• Líneas originales: ${resultado.stats.originalLines}\n` +
+                  `• Líneas normalizadas: ${resultado.stats.normalizedLines}\n` +
+                  `• CSS extraído: ${resultado.stats.cssLines} líneas\n` +
+                  `• JS extraído: ${resultado.stats.jsLines} líneas\n` +
+                  `• Archivos externos identificados: ${resultado.stats.externalCSS + resultado.stats.externalJS}`);
+        }, 1000);
+        
+    } else {
+        showNotification('❌ Normalizador no disponible. Verifica que normalizador.js esté cargado.', true);
+    }
+});
+```
+
+📁 Estructura de archivos final:
+
+```
+tu-proyecto/
+├── index.html
+├── css/
+│   └── index.css
+├── js/
+│   ├── index.js
+│   └── normalizador.js  ← NUEVO ARCHIVO
+├── ace/
+│   └── src-noconflict/
+│       ├── ace.js
+│       └── ext-language_tools.js
+└── imagenes/
+    └── nexus-code-editor.gif
+```
+
+✅ Para verificar que funciona:
+
+1. Crea el archivo js/normalizador.js con el código que te proporcioné
+2. Actualiza el index.html para incluir el script
+3. Elimina el código del normalizador viejo de index.js
+4. Actualiza el event listener del botón
+
+🎯 Prueba de funcionamiento:
+
+Después de hacer los cambios, abre la consola del navegador (F12) y escribe:
+
+```javascript
+typeof window.normalizador
+```
+
+Debería devolver: "object"
+
+Luego prueba:
+
+```javascript
+window.normalizador.analizar()
+```
+
+Debería devolver un objeto con las estadísticas del código actual.
+
+¡El normalizador estará completamente funcional y separado de index.js! 🚀
+

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Nexus Bridge - IA Local</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 900px; margin: 20px auto; padding: 0 15px; background: #0a0e1a; color: #e2e8f0; }
+        h1 { color: #00d4aa; }
+        hr { border-color: #2a3a5c; }
+        #status { padding: 12px; border-radius: 8px; margin: 10px 0; background: #111827; border: 1px solid #2a3a5c; }
+        #modelos div { border: 1px solid #2a3a5c; padding: 10px; margin: 5px 0; border-radius: 5px; cursor: pointer; background: #1a2235; transition: all 0.2s; }
+        #modelos div:hover { border-color: #00d4aa; transform: translateY(-1px); }
+        #modelos .recomendado { border-left: 4px solid #22c55e; }
+        #modelos .pesado { border-left: 4px solid #ef4444; }
+        #modelos .seleccionado { border-color: #22c55e; background: rgba(34,197,94,0.1); }
+        .badge-rec { background: #22c55e; color: #000; font-size: 0.7em; padding: 2px 8px; border-radius: 10px; font-weight: 600; margin-left: 8px; }
+        .badge-pesado { background: #ef4444; color: #fff; font-size: 0.7em; padding: 2px 8px; border-radius: 10px; font-weight: 600; margin-left: 8px; }
+        .badge-info { color: #8892b0; font-size: 0.75em; display: block; margin-top: 3px; }
+        #chat { border: 1px solid #2a3a5c; padding: 10px; min-height: 200px; max-height: 400px; overflow-y: auto; background: #111827; margin-bottom: 10px; border-radius: 8px; }
+        #chat div { margin: 5px 0; padding: 8px 12px; border-radius: 8px; }
+        .msg-user { background: rgba(0,212,170,0.1); text-align: right; border: 1px solid rgba(0,212,170,0.2); }
+        .msg-ia { background: rgba(139,92,246,0.1); text-align: left; border: 1px solid rgba(139,92,246,0.2); }
+        .msg-sys { background: rgba(245,158,11,0.08); text-align: center; font-size: 0.85em; border: 1px solid rgba(245,158,11,0.15); color: #f59e0b; }
+        #inputMsg { width: 80%; padding: 10px; border: 1px solid #2a3a5c; border-radius: 6px; background: #111827; color: #e2e8f0; font-size: 0.9em; }
+        #inputMsg:focus { outline: none; border-color: #00d4aa; }
+        button { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em; background: #00d4aa; color: #000; font-weight: 600; }
+        button:hover { filter: brightness(1.1); }
+        .btn-recarga { background: #0ea5e9; color: #fff; margin-top: 10px; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #0a0e1a; }
+        ::-webkit-scrollbar-thumb { background: #2a3a5c; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>⚡ Nexus Bridge</h1>
+    <p style="color:#8892b0; font-size:0.9em;">IA Local para Nexus Code Editor &mdash; <strong>12GB RAM | 512MB GPU</strong></p>
+    <hr>
+    
+    <div id="status"></div>
+    
+    <hr>
+    <h3>📦 Modelos disponibles:</h3>
+    <p style="font-size:0.8em; color:#8892b0;">
+        <span style="background:#22c55e; color:#000; padding:2px 8px; border-radius:10px; font-size:0.8em; font-weight:600;">✅ RECOMENDADO</span> = Funciona bien en 12GB RAM
+        &nbsp;&nbsp;
+        <span style="background:#ef4444; color:#fff; padding:2px 8px; border-radius:10px; font-size:0.8em; font-weight:600;">⚠️ PESADO</span> = Puede ser lento o no cargar
+    </p>
+    <div id="modelos"></div>
+    
+    <hr>
+    <h3>💬 Chat con IA Local</h3>
+    <div id="chat"></div>
+    
+    <div style="display:flex; gap:8px;">
+        <input type="text" id="inputMsg" placeholder="Selecciona un modelo primero..." disabled>
+        <button onclick="enviarMensaje()" id="btnEnviar" disabled>Enviar</button>
+    </div>
+    <p style="font-size:0.75em; color:#8892b0; margin-top:5px;">
+        💡 Los modelos pequeños como <strong>qwen-coder-extramini</strong> (428 MB) son ideales para tu equipo.
+    </p>
+    
+    <script>
+        // ============================================
+        // NEXUS BRIDGE v1.1 - RECOMENDACIONES PARA 12GB
+        // ============================================
+        const OLLAMA_URL = 'http://127.0.0.1:11434';
+        let modeloSeleccionado = null;
+        let modelos = [];
+        
+        window.onload = function() {
+            escanearOllama();
+            document.getElementById('inputMsg').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') enviarMensaje();
+            });
+        };
+        
+        async function escanearOllama() {
+            const status = document.getElementById('status');
+            status.innerHTML = '🔍 Conectando a Ollama...';
+            status.style.borderLeft = '4px solid #f59e0b';
+            
+            try {
+                const respuesta = await fetch(OLLAMA_URL + '/api/tags', { signal: AbortSignal.timeout(5000) });
+                const datos = await respuesta.json();
+                modelos = datos.models || [];
+                
+                if (modelos.length === 0) {
+                    status.innerHTML = '⚠️ Ollama conectado pero no hay modelos.<br>Usa: <code>ollama pull qwen-coder-extramini</code>';
+                    status.style.borderLeft = '4px solid #f59e0b';
+                    return;
+                }
+                
+                status.innerHTML = '✅ <strong>Ollama conectado</strong> — ' + modelos.length + ' modelos disponibles';
+                status.style.borderLeft = '4px solid #22c55e';
+                
+                // Mostrar modelos con recomendaciones
+                const divModelos = document.getElementById('modelos');
+                divModelos.innerHTML = '';
+                
+                // Separar recomendados y pesados
+                const recomendados = modelos.filter(m => (m.size || 0) < 2000000000);
+                const pesados = modelos.filter(m => (m.size || 0) >= 2000000000);
+                
+                // Mostrar recomendados primero
+                recomendados.forEach(function(m) {
+                    const div = crearTarjetaModelo(m, true);
+                    divModelos.appendChild(div);
+                });
+                
+                // Separador
+                if (pesados.length > 0) {
+                    const sep = document.createElement('div');
+                    sep.style.cssText = 'border-top:1px solid #2a3a5c; margin:15px 0 10px 0; padding-top:10px; font-size:0.8em; color:#ef4444;';
+                    sep.innerHTML = '⚠️ Modelos pesados (pueden no funcionar en 12GB RAM):';
+                    divModelos.appendChild(sep);
+                    
+                    pesados.forEach(function(m) {
+                        const div = crearTarjetaModelo(m, false);
+                        divModelos.appendChild(div);
+                    });
+                }
+                
+            } catch(e) {
+                status.innerHTML = '❌ <strong>Ollama no responde</strong><br><br>' +
+                    '<strong>Para iniciar:</strong><br>' +
+                    '1. Abre PowerShell<br>' +
+                    '2. Ejecuta: <code style="background:#1a2235; padding:2px 6px; border-radius:3px;">$env:OLLAMA_ORIGINS="*"; ollama serve</code><br>' +
+                    '3. Presiona "Reintentar"<br><br>' +
+                    '<button class="btn-recarga" onclick="escanearOllama()">🔄 Reintentar</button>';
+                status.style.borderLeft = '4px solid #ef4444';
+            }
+        }
+        
+        function crearTarjetaModelo(modelo, esRecomendado) {
+            const div = document.createElement('div');
+            const tamanoGB = (modelo.size / 1073741824).toFixed(1);
+            const claseRec = esRecomendado ? 'recomendado' : 'pesado';
+            div.className = claseRec;
+            div.dataset.nombre = modelo.name;
+            
+            const badgeRec = esRecomendado 
+                ? '<span class="badge-rec">✅ RECOMENDADO</span>' 
+                : '<span class="badge-pesado">⚠️ PESADO</span>';
+            
+            const infoExtra = esRecomendado 
+                ? '✅ Funciona bien en 12GB RAM' 
+                : '❌ Puede agotar la memoria en 12GB RAM';
+            
+            div.innerHTML = '<strong>' + modelo.name + '</strong> ' + badgeRec + 
+                '<span style="float:right; color:#8892b0;">' + formatearTamano(modelo.size) + '</span>' +
+                '<span class="badge-info">' + infoExtra + '</span>';
+            
+            div.onclick = function() { seleccionarModelo(modelo.name); };
+            return div;
+        }
+        
+        function seleccionarModelo(nombre) {
+            modeloSeleccionado = nombre;
+            document.getElementById('inputMsg').placeholder = '💬 Escribe para ' + nombre + '...';
+            document.getElementById('inputMsg').disabled = false;
+            document.getElementById('btnEnviar').disabled = false;
+            document.getElementById('inputMsg').focus();
+            
+            document.querySelectorAll('#modelos div').forEach(function(el) {
+                el.classList.remove('seleccionado');
+                if (el.dataset.nombre === nombre) {
+                    el.classList.add('seleccionado');
+                }
+            });
+            
+            agregarMensaje('sistema', '✅ Modelo <strong>"' + nombre + '"</strong> seleccionado');
+        }
+        
+        async function enviarMensaje() {
+            const input = document.getElementById('inputMsg');
+            const mensaje = input.value.trim();
+            
+            if (!mensaje) return;
+            if (!modeloSeleccionado) {
+                alert('Primero selecciona un modelo');
+                return;
+            }
+            
+            agregarMensaje('usuario', mensaje);
+            input.value = '';
+            input.disabled = true;
+            document.getElementById('btnEnviar').disabled = true;
+            
+            const idCarga = mostrarCarga();
+            
+            try {
+                const respuesta = await fetch(OLLAMA_URL + '/api/generate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        model: modeloSeleccionado,
+                        prompt: mensaje,
+                        stream: false,
+                        options: {temperature: 0.7, num_predict: 256}
+                    }),
+                    signal: AbortSignal.timeout(120000)
+                });
+                
+                const datos = await respuesta.json();
+                
+                const elCarga = document.getElementById(idCarga);
+                if (elCarga) elCarga.remove();
+                
+                agregarMensaje('ia', datos.response || '(Sin respuesta)');
+                
+            } catch(e) {
+                const elCarga = document.getElementById(idCarga);
+                if (elCarga) elCarga.remove();
+                
+                let error = '❌ Error';
+                if (e.name === 'TimeoutError') error = '⏱️ El modelo tardó demasiado.<br><br>Consejos:<br>• Usa un modelo más pequeño (ej: qwen-coder-extramini)<br>• Cierra otros programas<br>• Espera a que cargue en memoria';
+                else if (e.message.includes('Failed to fetch')) error = '❌ No se puede conectar a Ollama.<br><br>Asegúrate de que Ollama esté funcionando.';
+                else error = '❌ ' + e.message;
+                
+                agregarMensaje('ia', error);
+            }
+            
+            input.disabled = false;
+            document.getElementById('btnEnviar').disabled = false;
+            input.focus();
+        }
+        
+        function agregarMensaje(tipo, contenido) {
+            const chat = document.getElementById('chat');
+            const div = document.createElement('div');
+            
+            if (tipo === 'usuario') {
+                div.className = 'msg-user';
+                div.innerHTML = '<strong>Tú:</strong> ' + contenido.replace(/\n/g, '<br>');
+            } else if (tipo === 'ia') {
+                div.className = 'msg-ia';
+                div.innerHTML = '<strong>🤖 ' + (modeloSeleccionado || 'IA') + ':</strong><br>' + contenido.replace(/\n/g, '<br>');
+            } else {
+                div.className = 'msg-sys';
+                div.innerHTML = contenido;
+            }
+            
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function mostrarCarga() {
+            const id = 'carga-' + Date.now();
+            const chat = document.getElementById('chat');
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = 'msg-ia';
+            div.innerHTML = '<strong>🤖 ' + (modeloSeleccionado || 'IA') + ':</strong> <em>⏳ Procesando...</em>';
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+            return id;
+        }
+        
+        function formatearTamano(bytes) {
+            if (!bytes) return '?';
+            if (bytes > 1073741824) return (bytes / 1073741824).toFixed(1) + ' GB';
+            if (bytes > 1048576) return (bytes / 1048576).toFixed(0) + ' MB';
+            return (bytes / 1024).toFixed(0) + ' KB';
+        }
+        
+        console.log('⚡ Nexus Bridge v1.1 - Con recomendaciones para 12GB RAM');
+        console.log('🔗 Conectando a ' + OLLAMA_URL);
+    </script>
+</body>
+</html>

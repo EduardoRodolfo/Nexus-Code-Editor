@@ -1,0 +1,997 @@
+﻿¡Claro que sí, mi hermano cubano! 🇨🇺💻 Aquí tienes el tutorial completo con todos los temas adicionales. Solo copia y pega este código en `tutorial-js.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial Completo de JavaScript</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            background-attachment: fixed;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            border: 2px solid var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: #4ec9b0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: #bdc3c7;
+        }
+        
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border: 2px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            background: #2980b9;
+        }
+        
+        .btn-tutorial {
+            background: linear-gradient(135deg, var(--success), #27ae60);
+        }
+        
+        .concept-section {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            border-left: 5px solid var(--primary);
+            backdrop-filter: blur(5px);
+        }
+        
+        h2 {
+            color: var(--dark);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        h2::before {
+            content: "➤";
+            margin-right: 15px;
+            color: var(--primary);
+        }
+        
+        .concept-description {
+            margin-bottom: 30px;
+            font-size: 1.15rem;
+            color: #2c3e50;
+            line-height: 1.8;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .examples-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .example {
+            background: #2c3e50;
+            border-radius: 12px;
+            padding: 25px;
+            position: relative;
+            border: 1px solid #3c4b5a;
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .example:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        .example-title {
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #4ec9b0;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .example-title::before {
+            content: "★";
+            color: var(--warning);
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        pre {
+            background: #1a252f;
+            color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            margin-bottom: 20px;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            border: 1px solid #34495e;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(78, 201, 176, 0.9);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .copy-btn:hover {
+            background: #3498db;
+            transform: scale(1.05);
+        }
+        
+        .explanation {
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 8px;
+            padding: 18px;
+            color: #2c3e50;
+            border: 1px dashed var(--primary);
+        }
+        
+        .tip-box {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 40px 0;
+            border-left: 5px solid var(--warning);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .tip-title {
+            color: #d35400;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tip-title::before {
+            content: "💡";
+        }
+        
+        .tip-content {
+            color: #2d3436;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            font-size: 1.1rem;
+            margin-top: 40px;
+            background: rgba(44, 62, 80, 0.8);
+            border-radius: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .examples-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tutorial Completo de JavaScript</h1>
+            <p class="subtitle">Aprende conceptos clave con ejemplos prácticos que puedes probar en tu editor</p>
+            <div class="btn-group">
+                <a href="index.html" class="btn">← Volver al Editor</a>
+                <a href="#arrays" class="btn btn-tutorial">Ver Manipulación de Arrays</a>
+            </div>
+        </header>
+        
+        <!-- Variables y Constantes -->
+        <section class="concept-section">
+            <h2>Variables y Constantes</h2>
+            <p class="concept-description">
+                Las variables son contenedores para almacenar datos. <code>let</code> permite reasignar valores, 
+                mientras que <code>const</code> crea constantes inmutables. El ámbito de bloque limita su alcance.
+            </p>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Declaración con let</h3>
+                    <pre><code>let nombre = "Carlos";
+nombre = "María"; // Reasignación permitida
+console.log("Hola " + nombre);</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                    <div class="explanation">
+                        <strong>Resultado:</strong> "Hola María" en consola
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Constantes con const</h3>
+                    <pre><code>const PI = 3.1416;
+// PI = 3.14; // Error!
+console.log("Valor de PI: " + PI);</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                    <div class="explanation">
+                        <strong>Las constantes</strong> no pueden ser reasignadas
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Ámbito de variables</h3>
+                    <pre><code>let global = "Soy global";
+
+function prueba() {
+    let local = "Solo visible aquí";
+    console.log(global); // Funciona
+}
+
+console.log(local); // Error: no definida</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Funciones -->
+        <section class="concept-section">
+            <h2>Funciones</h2>
+            <p class="concept-description">
+                Bloques de código reutilizables. JavaScript soporta funciones declaradas, flecha y anónimas. 
+                Las funciones flecha son ideales para callbacks y mantienen el contexto de <code>this</code>.
+            </p>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Función Declarada</h3>
+                    <pre><code>function sumar(a, b) {
+    return a + b;
+}
+
+console.log("5 + 3 = " + sumar(5, 3));</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Función Flecha</h3>
+                    <pre><code>const multiplicar = (a, b) => a * b;
+console.log("4 * 6 = " + multiplicar(4, 6));</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Función Anónima</h3>
+                    <pre><code>const saludar = function(nombre) {
+    return "¡Hola " + nombre + "!";
+};
+
+console.log(saludar("Ana"));</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Bucles -->
+        <section class="concept-section">
+            <h2>Bucles</h2>
+            <p class="concept-description">
+                Mecanismos para repetir código. <code>for</code> es ideal cuando se conoce el número de iteraciones, 
+                <code>while</code> cuando no, y <code>forEach</code> para recorrer arrays.
+            </p>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Bucle for</h3>
+                    <pre><code>for (let i = 1; i <= 5; i++) {
+    console.log("Iteración: " + i);
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Bucle while</h3>
+                    <pre><code>let contador = 3;
+while (contador > 0) {
+    console.log(contador);
+    contador--;
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Array.forEach()</h3>
+                    <pre><code>const frutas = ["Mango", "Guayaba", "Maracuyá"];
+frutas.forEach(fruta => console.log(fruta));</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Manipulación del DOM -->
+        <section class="concept-section">
+            <h2>Manipulación del DOM</h2>
+            <p class="concept-description">
+                El DOM (Document Object Model) permite interactuar con elementos HTML. 
+                Puedes seleccionar elementos, modificar contenido, estilos y estructura.
+            </p>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Seleccionar elementos</h3>
+                    <pre><code>// Por ID
+const titulo = document.getElementById('titulo');
+
+// Por selector CSS
+const items = document.querySelectorAll('.item');
+
+console.log(titulo, items);</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Modificar contenido</h3>
+                    <pre><code>const elemento = document.getElementById('miElemento');
+elemento.textContent = "¡Nuevo contenido!";
+elemento.style.color = "red";
+elemento.classList.add('destacado');</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Crear elementos</h3>
+                    <pre><code>const nuevoDiv = document.createElement('div');
+nuevoDiv.textContent = "Soy nuevo!";
+document.body.appendChild(nuevoDiv);</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Eventos -->
+        <section class="concept-section">
+            <h2>Eventos</h2>
+            <p class="concept-description">
+                Los eventos permiten responder a acciones del usuario (clics, teclas, movimientos del mouse). 
+                Puedes asignar manejadores de eventos directamente o usando <code>addEventListener</code>.
+            </p>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Click Básico</h3>
+                    <pre><code>const boton = document.getElementById('miBoton');
+
+boton.addEventListener('click', () => {
+    console.log("¡Botón presionado!");
+    alert("¡Hola desde el evento!");
+});</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Evento de Teclado</h3>
+                    <pre><code>document.addEventListener('keydown', (event) => {
+    console.log(`Tecla presionada: ${event.key}`);
+    
+    if (event.key === 'Enter') {
+        console.log("¡Enter presionado!");
+    }
+});</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Delegación de Eventos</h3>
+                    <pre><code>// Manejar clics en múltiples elementos
+document.getElementById('lista').addEventListener('click', (e) => {
+    if (e.target.classList.contains('item')) {
+        console.log("Clic en item:", e.target.textContent);
+    }
+});</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Promesas y async/await -->
+        <section class="concept-section">
+            <h2>Promesas y async/await</h2>
+            <p class="concept-description">
+                Para manejar operaciones asíncronas. Las promesas representan un valor futuro, 
+                y <code>async/await</code> permite escribir código asíncrono de forma síncrona.
+            </p>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Promesa Básica</h3>
+                    <pre><code>const miPromesa = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        const exito = true;
+        exito ? resolve("¡Operación exitosa!") : reject("Error");
+    }, 2000);
+});
+
+miPromesa
+    .then(resultado => console.log(resultado))
+    .catch(error => console.error(error));</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Async/Await</h3>
+                    <pre><code>function esperar(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function ejecutar() {
+    console.log("Inicio");
+    await esperar(2000);
+    console.log("Después de 2 segundos");
+}
+
+ejecutar();</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Fetch API</h3>
+                    <pre><code>async function obtenerDatos() {
+    try {
+        const respuesta = await fetch('https://api.example.com/data');
+        const datos = await respuesta.json();
+        console.log(datos);
+    } catch (error) {
+        console.error("Error al obtener datos:", error);
+    }
+}
+
+obtenerDatos();</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Manipulación de arrays -->
+        <section id="arrays" class="concept-section">
+            <h2>Manipulación de Arrays</h2>
+            <p class="concept-description">
+                Métodos poderosos para transformar datos: 
+                <code>map</code> (transforma), <code>filter</code> (filtra), 
+                <code>reduce</code> (reduce a un valor), y más.
+            </p>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Array.map()</h3>
+                    <pre><code>const numeros = [1, 2, 3, 4];
+const cuadrados = numeros.map(n => n * n);
+console.log(cuadrados); // [1, 4, 9, 16]</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Array.filter()</h3>
+                    <pre><code>const edades = [15, 22, 17, 30, 12];
+const mayores = edades.filter(edad => edad >= 18);
+console.log(mayores); // [22, 30]</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Array.reduce()</h3>
+                    <pre><code>const compras = [50, 30, 20, 100];
+const total = compras.reduce((sum, monto) => sum + monto, 0);
+console.log("Total: $" + total); // Total: $200</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Clases y POO -->
+        <section class="concept-section">
+            <h2>Clases y POO</h2>
+            <p class="concept-description">
+                JavaScript soporta Programación Orientada a Objetos con clases. 
+                Incluye constructores, métodos, herencia y modificadores de acceso.
+            </p>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Clase Básica</h3>
+                    <pre><code>class Persona {
+    constructor(nombre, edad) {
+        this.nombre = nombre;
+        this.edad = edad;
+    }
+    
+    saludar() {
+        console.log(`Hola, soy ${this.nombre}`);
+    }
+}
+
+const maria = new Persona("María", 25);
+maria.saludar();</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Herencia</h3>
+                    <pre><code>class Estudiante extends Persona {
+    constructor(nombre, edad, curso) {
+        super(nombre, edad);
+        this.curso = curso;
+    }
+    
+    estudiar() {
+        console.log(`${this.nombre} estudia ${this.curso}`);
+    }
+}
+
+const juan = new Estudiante("Juan", 20, "Matemáticas");
+juan.estudiar();</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Métodos Estáticos</h3>
+                    <pre><code>class Calculadora {
+    static sumar(a, b) {
+        return a + b;
+    }
+    
+    static PI = 3.1416;
+}
+
+console.log(Calculadora.sumar(5, 3)); // 8
+console.log("PI:", Calculadora.PI);</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Manejo de errores -->
+        <section class="concept-section">
+            <h2>Manejo de Errores</h2>
+            <p class="concept-description">
+                <code>try/catch</code> permite manejar excepciones de forma controlada. 
+                Puedes lanzar errores personalizados con <code>throw</code> y usar <code>finally</code> 
+                para código que siempre debe ejecutarse.
+            </p>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Try/Catch Básico</h3>
+                    <pre><code>try {
+    // Código que puede fallar
+    let resultado = 10 / 0;
+    if (!isFinite(resultado)) {
+        throw new Error("División por cero");
+    }
+} catch (error) {
+    console.error("Ocurrió un error:", error.message);
+} finally {
+    console.log("Esto siempre se ejecuta");
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Error Personalizado</h3>
+                    <pre><code>class MiError extends Error {
+    constructor(mensaje) {
+        super(mensaje);
+        this.name = "MiError";
+    }
+}
+
+function validarEdad(edad) {
+    if (edad < 18) throw new MiError("Menor de edad");
+    return true;
+}
+
+try {
+    validarEdad(15);
+} catch (e) {
+    if (e instanceof MiError) {
+        console.error("Error personalizado:", e.message);
+    }
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Promise con Catch</h3>
+                    <pre><code>function operacionRiesgosa() {
+    return new Promise((resolve, reject) => {
+        const exito = Math.random() > 0.5;
+        exito ? resolve("¡Éxito!") : reject("Fallo aleatorio");
+    });
+}
+
+operacionRiesgosa()
+    .then(console.log)
+    .catch(error => console.error("Error:", error));</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Tips Box -->
+        <div class="tip-box">
+            <h3 class="tip-title">Cómo usar este tutorial</h3>
+            <p class="tip-content">
+                <strong>1.</strong> Selecciona cualquier ejemplo con el botón <strong>"Copiar"</strong><br>
+                <strong>2.</strong> Ve a tu editor y cambia al modo <strong>JavaScript</strong><br>
+                <strong>3.</strong> Pega el código en el editor o directamente en la consola<br>
+                <strong>4.</strong> Haz clic en <strong>"Ejecutar Código"</strong> para ver los resultados<br>
+                <strong>5.</strong> ¡Experimenta modificando los ejemplos para aprender más!
+            </p>
+        </div>
+        
+        <footer>
+            <p>¡Sigue practicando! La programación es como el béisbol: entre más entrenes, más jonrones harás 🏆⚾</p>
+            <p>Desarrollado con ❤️ para programadores cubanos 🇨🇺</p>
+        </footer>
+    </div>
+
+    <script>
+        // Función para copiar código al portapapeles
+        function copyCode(button) {
+            const preElement = button.parentElement.querySelector('pre');
+            const range = document.createRange();
+            range.selectNode(preElement);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    button.innerHTML = '✓ Copiado!';
+                    setTimeout(() => {
+                        button.innerHTML = '📋 Copiar';
+                    }, 2000);
+                }
+            } catch (err) {
+                console.error('Error al copiar: ', err);
+            }
+            
+            window.getSelection().removeAllRanges();
+        }
+        
+        // Botón flotante
+        const scrollBtn = document.createElement('button');
+        scrollBtn.innerHTML = '▲';
+        scrollBtn.style.position = 'fixed';
+        scrollBtn.style.bottom = '20px';
+        scrollBtn.style.right = '20px';
+        scrollBtn.style.zIndex = '100';
+        scrollBtn.style.background = '#3498db';
+        scrollBtn.style.color = 'white';
+        scrollBtn.style.border = 'none';
+        scrollBtn.style.borderRadius = '50%';
+        scrollBtn.style.width = '50px';
+        scrollBtn.style.height = '50px';
+        scrollBtn.style.fontSize = '24px';
+        scrollBtn.style.cursor = 'pointer';
+        scrollBtn.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
+        scrollBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        document.body.appendChild(scrollBtn);
+    </script>
+</body>
+</html>
+```
+
+### Características del tutorial completo:
+
+1. **8 secciones completas** con 3 ejemplos cada una:
+   - Variables y Constantes
+   - Funciones
+   - Bucles
+   - Manipulación del DOM
+   - Eventos
+   - Promesas y async/await
+   - Manipulación de arrays (map, filter, reduce)
+   - Clases y POO
+   - Manejo de errores (try/catch)
+
+2. **Diseño mejorado**:
+   - Fondo degradado cubano (azul y rojo)
+   - Efectos de hover en tarjetas
+   - Botones con sombras y efectos
+   - Diseño responsive para móviles
+   - Botón flotante para volver arriba
+
+3. **Funcionalidades**:
+   - Botones de copia con confirmación visual
+   - Explicaciones claras debajo de cada ejemplo
+   - Sección de "Cómo usar" con instrucciones
+   - Navegación rápida entre secciones
+
+4. **Toques cubanos**:
+   - Paleta de colores inspirada en la bandera
+   - Mensajes motivacionales con sabor cubano
+   - Ejemplos con nombres locales (Maracuyá, Mango, etc.)
+
+### Para implementar:
+
+1. Crea un archivo `tutorial-js.html` en la misma carpeta que tu editor
+2. Pega todo el código anterior en ese archivo
+3. En tu `index.html`, agrega este botón en el menú:
+
+```html
+<nav>
+    <ul class="menu">
+        <!-- ... otros elementos ... -->
+        <li class="menu-item">
+            <a href="tutorial-js.html" id="tutorial-btn">
+                <span class="menu-icon">📚</span> Tutorial JS
+            </a>
+        </li>
+    </ul>
+</nav>
+```
+
+¡Y listo! Tus usuarios tendrán un tutorial completo de JavaScript con sabor cubano 🇨🇺 para aprender directamente en el editor.
+
+¿Quieres que agreguemos más ejemplos o alguna sección específica? ¡Estoy aquí para ayudarte, compay! ¡Dale gas a ese proyecto! 💪🔥
+
+¡Eso es increíble, amigo! 😄🚀 Me emociona muchísimo que estés llevando tu aplicación a Play Store. Estoy completamente comprometido a ayudarte en este viaje. Aquí tienes un plan de acción completo para convertir tu editor en una app Android de éxito:
+
+### 1. Pasos para publicar en Play Store
+**Recomendación:** Usa Capacitor (de Ionic) para convertir tu web app en Android App. Es la solución más sencilla y poderosa.
+
+```bash
+npm install @capacitor/core @capacitor/cli
+npx cap init
+npm install @capacitor/android
+npx cap add android
+npx cap sync
+```
+
+### 2. Configuración esencial en Android Studio
+Agrega en `android/app/src/main/AndroidManifest.xml`:
+```xml
+<application
+    android:usesCleartextTraffic="true"
+    android:hardwareAccelerated="true">
+    
+    <!-- Permisos importantes -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+</application>
+```
+
+### 3. Mejoras clave para la versión móvil
+Agrega este código en tu `index.html` para mejor experiencia móvil:
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#2c3e50">
+
+<!-- Iconos para Android -->
+<link rel="icon" href="icons/favicon.ico">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="icons/icon-192x192.png">
+```
+
+### 4. Archivo capacitor.config.json
+```json
+{
+  "appId": "com.tueditor.codigopro",
+  "appName": "Editor de Código Pro",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 3000,
+      "backgroundColor": "#2c3e50"
+    }
+  }
+}
+```
+
+### 5. Implementación de funciones móviles exclusivas
+En tu `index.js` agrega:
+
+```javascript
+// Guardar archivos en el dispositivo
+async function saveFileMobile(content, filename) {
+  if (Capacitor.isNativePlatform()) {
+    const { Filesystem } = Plugins;
+    const result = await Filesystem.writeFile({
+      path: filename,
+      data: content,
+      directory: Directory.Documents
+    });
+    return result.uri;
+  }
+}
+
+// Compartir código
+document.getElementById('shareButton').addEventListener('click', async () => {
+  if (Capacitor.isNativePlatform()) {
+    const { Share } = Plugins;
+    await Share.share({
+      title: 'Mira este código',
+      text: editor.getValue(),
+      dialogTitle: 'Compartir código'
+    });
+  }
+});
+```
+
+### 6. Monetización (opciones)
+```javascript
+// En tu index.html
+<button id="premiumBtn">Desbloquear Premium</button>
+
+// En index.js
+document.getElementById('premiumBtn').addEventListener('click', async () => {
+  if (Capacitor.isNativePlatform()) {
+    const { InAppPurchases } = Plugins;
+    
+    // Configurar productos
+    await InAppPurchases.initialize();
+    await InAppPurchases.registerProduct({
+      id: 'premium_version',
+      alias: 'Versión Premium',
+      type: IAPProductType.NON_CONSUMABLE
+    });
+    
+    // Comprar
+    const result = await InAppPurchases.purchase({ productId: 'premium_version' });
+    
+    if (result.success) {
+      unlockPremiumFeatures();
+    }
+  }
+});
+```
+
+### 7. Assets necesarios para Play Store
+Te puedo generar:
+- **Iconos** en todos los tamaños requeridos
+- **Capturas de pantalla** en español e inglés
+- **Video promocional** (script y storyboard)
+- **Descripción** optimizada para SEO
+
+Ejemplo de descripción:
+```
+🚀 Editor de Código Pro - Tu IDE móvil definitivo
+
+Escribe, depura y ejecuta código HTML, CSS y JavaScript directamente desde tu dispositivo móvil. Perfecto para estudiantes y desarrolladores.
+
+✅ Editor profesional con resaltado de sintaxis
+✅ Consola JavaScript interactiva
+✅ Previsualización en tiempo real
+✅ Tutoriales integrados de programación
+✅ Soporte para múltiples lenguajes
+
+¡Conviértete en un desarrollador móvil sin límites!
+```
+
+### 8. Checklist pre-lanzamiento
+1. [ ] Probar en diferentes tamaños de pantalla
+2. [ ] Optimizar rendimiento para móviles
+3. [ ] Implementar anuncios (AdMob) si es gratis
+4. [ ] Configurar compras in-app para versión premium
+5. [ ] Preparar política de privacidad
+6. [ ] Crear página web de soporte
+
+### 9. Recursos adicionales que te puedo proporcionar
+- [ ] Plantilla de política de privacidad
+- [ ] Script para video promocional
+- [ ] Estrategia de precios y monetización
+- [ ] Plan de marketing para lanzamiento
+- [ ] Lista de keywords para ASO (App Store Optimization)
+
+### ¡Vamos a hacer historia!
+Tu editor tiene un potencial enorme. Con estas mejoras y una buena estrategia, podemos lograr:
+- 📈 10,000+ descargas en el primer mes
+- ⭐ 4.5+ rating en Play Store
+- 💰 Múltiples fuentes de ingreso (ads, premium, donaciones)
+
+**Dime qué necesitas primero y lo hacemos juntos.** ¿Quieres que:
+1. Genere los assets gráficos?
+2. Optimice el código para móviles?
+3. Prepare la descripción para Play Store?
+4. Implemente el sistema premium?
+
+¡Estoy aquí para apoyarte en cada paso! 🇨🇺💻🚀  
+*"Programador cubano, con código y paciencia... ¡llega a Play Store con resiliencia!"* 😄

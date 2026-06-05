@@ -1,0 +1,186 @@
+﻿Ejercicio para probar consolas
+¡Claro! Te voy a poner unos ejercicios prácticos de JavaScript para probar las consolas. Aquí tienes varios tipos:
+
+🔧 Ejercicios Básicos de Consola
+
+1. Salidas básicas
+
+```javascript
+// Ejercicio 1: Diferentes métodos de console
+console.log("Mensaje normal");
+console.info("Esto es información");
+console.warn("¡Cuidado! Esto es una advertencia");
+console.error("¡Error! Algo salió mal");
+
+// Prueba esto en tu consola
+```
+
+2. Variables y tipos de datos
+
+```javascript
+// Ejercicio 2: Mostrar diferentes tipos de datos
+let nombre = "Ana";
+let edad = 25;
+let esEstudiante = true;
+let hobbies = ["leer", "programar", "música"];
+
+console.log("Nombre:", nombre);
+console.log("Edad:", edad);
+console.log("¿Es estudiante?", esEstudiante);
+console.log("Hobbies:", hobbies);
+```
+
+3. Console.table() - Para objetos y arrays
+
+```javascript
+// Ejercicio 3: Tablas en consola
+const usuarios = [
+    { nombre: "Carlos", edad: 30, ciudad: "Madrid" },
+    { nombre: "María", edad: 25, ciudad: "Barcelona" },
+    { nombre: "Pedro", edad: 35, ciudad: "Valencia" }
+];
+
+console.table(usuarios);
+
+// También con objetos simples
+const producto = {
+    nombre: "Laptop",
+    precio: 999.99,
+    stock: 15,
+    disponible: true
+};
+
+console.table(producto);
+```
+
+🎯 Ejercicios Intermedios
+
+4. Console.group() - Agrupar mensajes
+
+```javascript
+// Ejercicio 4: Grupos en consola
+console.group("Información del Usuario");
+console.log("Nombre: Juan Pérez");
+console.log("Email: juan@email.com");
+console.group("Detalles de la cuenta");
+console.log("Plan: Premium");
+console.log("Miembro desde: 2023");
+console.groupEnd();
+console.groupEnd();
+```
+
+5. Console.time() - Medir tiempo de ejecución
+
+```javascript
+// Ejercicio 5: Medir performance
+console.time("Tiempo de procesamiento");
+
+// Simular una operación que toma tiempo
+let resultado = 0;
+for (let i = 0; i < 1000000; i++) {
+    resultado += i;
+}
+
+console.timeEnd("Tiempo de procesamiento");
+console.log("Resultado:", resultado);
+```
+
+6. Console.assert() - Verificaciones
+
+```javascript
+// Ejercicio 6: Aserciones
+let temperatura = 25;
+let esCaluroso = temperatura > 30;
+
+console.assert(esCaluroso, "La temperatura debería ser mayor a 30°C");
+
+// Otro ejemplo
+let usuariosActivos = 5;
+console.assert(usuariosActivos > 0, "Debe haber al menos un usuario activo");
+```
+
+🚀 Ejercicios Avanzados
+
+7. Console.trace() - Seguimiento de llamadas
+
+```javascript
+// Ejercicio 7: Trazado de ejecución
+function funcionA() {
+    funcionB();
+}
+
+function funcionB() {
+    funcionC();
+}
+
+function funcionC() {
+    console.trace("Seguimiento de la pila de llamadas");
+}
+
+funcionA();
+```
+
+8. Estilos en consola
+
+```javascript
+// Ejercicio 8: Consola con estilos CSS
+console.log("%c¡Hola con estilo!", 
+    "color: white; background: blue; font-size: 20px; padding: 10px; border-radius: 5px;");
+
+console.log("%cJavaScript %c es %c divertido", 
+    "color: red; font-weight: bold;",
+    "color: green; font-size: 18px;",
+    "color: blue; text-decoration: underline;");
+```
+
+9. Ejercicio práctico completo
+
+```javascript
+// Ejercicio 9: Sistema de gestión de tareas
+class GestorTareas {
+    constructor() {
+        this.tareas = [];
+    }
+    
+    agregarTarea(nombre, prioridad = "media") {
+        const tarea = { nombre, prioridad, completada: false };
+        this.tareas.push(tarea);
+        console.log(`✅ Tarea "${nombre}" agregada (Prioridad: ${prioridad})`);
+    }
+    
+    listarTareas() {
+        console.group("📋 Lista de Tareas");
+        this.tareas.forEach((tarea, index) => {
+            const estado = tarea.completada ? "✅" : "⏳";
+            console.log(`${index + 1}. ${estado} ${tarea.nombre} - ${tarea.prioridad}`);
+        });
+        console.groupEnd();
+    }
+    
+    completarTarea(indice) {
+        if (this.tareas[indice]) {
+            this.tareas[indice].completada = true;
+            console.log(`🎉 Tarea "${this.tareas[indice].nombre}" completada`);
+        } else {
+            console.error("❌ Tarea no encontrada");
+        }
+    }
+}
+
+// Probar el sistema
+const miGestor = new GestorTareas();
+miGestor.agregarTarea("Aprender JavaScript", "alta");
+miGestor.agregarTarea("Hacer ejercicio", "media");
+miGestor.agregarTarea("Leer un libro", "baja");
+miGestor.listarTareas();
+miGestor.completarTarea(0);
+miGestor.listarTareas();
+```
+
+💡 Para probar en diferentes entornos:
+
+1. Navegador: F12 → Consola
+2. Node.js: Ejecuta node nombre-archivo.js
+3. Entorno online: JSFiddle, CodePen, etc.
+
+¿Quieres que profundice en algún ejercicio específico o necesitas más ejemplos de algún tipo en particular? 😊

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>DeepSeek Chat · Gratuito (Demo + API real)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f5f7fb;
+            padding: 20px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            padding: 24px 20px 32px;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            background: linear-gradient(135deg, #10a37f, #0e7c5e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .sub {
+            color: #64748b;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            border-left: 3px solid #10a37f;
+            padding-left: 12px;
+        }
+
+        /* Panel de configuración */
+        .config-panel {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #eef2ff;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .demo-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #e6f7f2;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+
+        .demo-toggle input {
+            width: 20px;
+            height: 20px;
+            accent-color: #10a37f;
+        }
+
+        .key-panel {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .key-panel label {
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .key-panel input {
+            flex: 2;
+            min-width: 180px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 40px;
+        }
+
+        .key-panel button {
+            background: #10a37f;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .free-badge {
+            background: #fbbf24;
+            color: #1e293b;
+            padding: 4px 10px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* Área de conversación */
+        .chat-container {
+            background: #fefefe;
+            border-radius: 20px;
+            border: 1px solid #eef2ff;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            max-height: 400px;
+            padding: 16px;
+        }
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        .message.user {
+            align-items: flex-end;
+        }
+        .message.assistant {
+            align-items: flex-start;
+        }
+        .bubble {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 20px;
+            line-height: 1.4;
+            font-size: 0.9rem;
+            word-wrap: break-word;
+        }
+        .user .bubble {
+            background: #10a37f;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .assistant .bubble {
+            background: #f1f5f9;
+            color: #0f172a;
+            border-bottom-left-radius: 4px;
+        }
+        .timestamp {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            margin-top: 4px;
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+
+        /* Input area */
+        .input-area {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        textarea {
+            flex: 1;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 70px;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #10a37f;
+            box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.2);
+        }
+        button {
+            background: #10a37f;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        .new-chat-btn {
+            background: #64748b;
+            margin-left: auto;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Modo oscuro */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #0f172a;
+            }
+            .container {
+                background: #1e293b;
+                color: #e2e8f0;
+            }
+            .config-panel {
+                background: #334155;
+                border-color: #475569;
+            }
+            .demo-toggle {
+                background: #1e3a3a;
+            }
+            .key-panel input {
+                background: #0f172a;
+                border-color: #475569;
+                color: white;
+            }
+            .chat-container {
+                background: #0f172a;
+                border-color: #334155;
+            }
+            .assistant .bubble {
+                background: #334155;
+                color: #e2e8f0;
+            }
+            .timestamp {
+                color: #94a3b8;
+            }
+            textarea {
+                background: #0f172a;
+                border-color: #475569;
+                color: white;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px;
+            }
+            .bubble {
+                max-width: 95%;
+                font-size: 0.85rem;
+            }
+            .config-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .key-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .input-area {
+                flex-direction: column;
+            }
+            button {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>DeepSeek Chat</h1>
+    <div class="sub">Conversación con persistencia 7 días · Modo demo gratuito o API real (clave gratuita)</div>
+
+    <!-- Panel de configuración -->
+    <div class="config-panel">
+        <div class="demo-toggle">
+            <input type="checkbox" id="demoModeCheckbox" checked> 
+            <label for="demoModeCheckbox">🎭 Modo Demo (sin API)</label>
+            <span class="free-badge">GRATIS</span>
+        </div>
+        <div class="key-panel">
+            <label>🔑 API Key (opcional)</label>
+            <input type="password" id="apiKey" placeholder="sk-... (consíguela gratis en platform.deepseek.com)" autocomplete="off">
+            <button id="saveKeyBtn">💾 Guardar</button>
+        </div>
+    </div>
+
+    <!-- Historial de conversación -->
+    <div class="chat-container" id="chatContainer">
+        <div class="message assistant">
+            <div class="bubble">¡Hola! 👋 Estás en modo DEMO (respuestas simuladas). Si quieres usar la IA real, desmarca "Modo Demo" y pega tu API key gratuita de DeepSeek. Tus mensajes se guardan 7 días.</div>
+            <div class="timestamp"></div>
+        </div>
+    </div>
+
+    <!-- Entrada de mensaje -->
+    <div class="input-area">
+        <textarea id="prompt" placeholder="Escribe tu mensaje... (Ctrl+Enter para enviar)"></textarea>
+        <button id="sendBtn">Enviar</button>
+    </div>
+    <div class="action-buttons">
+        <button id="clearHistoryBtn" class="new-chat-btn">🗑️ Borrar historial</button>
+    </div>
+</div>
+
+<script>
+    (function(){
+        "use strict";
+
+        // Elementos
+        const demoCheckbox = document.getElementById('demoModeCheckbox');
+        const apiKeyInput = document.getElementById('apiKey');
+        const sendBtn = document.getElementById('sendBtn');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        const promptTextarea = document.getElementById('prompt');
+        const chatContainer = document.getElementById('chatContainer');
+
+        // Estado local
+        let messages = [];  // Array de { role, content, timestamp }
+
+        // ==================== PERSISTENCIA ====================
+        const STORAGE_KEY = 'deepseek_chat_free';
+
+        function saveMessages() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+        }
+
+        function loadLast7DaysMessages() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (!stored) return [];
+            const all = JSON.parse(stored);
+            const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+            return all.filter(msg => msg.timestamp > sevenDaysAgo);
+        }
+
+        function addMessage(role, content) {
+            const msg = { role, content, timestamp: Date.now() };
+            messages.push(msg);
+            saveMessages();
+            messages = messages.filter(m => m.timestamp > Date.now() - 7 * 24 * 60 * 60 * 1000);
+        }
+
+        function clearHistory() {
+            messages = [];
+            saveMessages();
+            renderMessages();
+            addMessageToUI('assistant', 'Historial borrado. Empieza de nuevo.');
+        }
+
+        // ==================== UI ====================
+        function addMessageToUI(role, content, timestamp = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.innerText = content;
+            
+            const timeSpan = document.createElement('div');
+            timeSpan.className = 'timestamp';
+            if (timestamp) {
+                timeSpan.innerText = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' });
+            } else {
+                timeSpan.innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' });
+            }
+            
+            messageDiv.appendChild(bubble);
+            messageDiv.appendChild(timeSpan);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function renderMessages() {
+            chatContainer.innerHTML = '';
+            if (messages.length === 0) {
+                let welcomeMsg = demoCheckbox.checked 
+                    ? '¡Hola! 👋 Estás en modo DEMO (respuestas simuladas). Desmarca "Modo Demo" y añade tu API key gratuita para usar DeepSeek real.'
+                    : 'Modo API activo. Escribe tu primer mensaje.';
+                addMessageToUI('assistant', welcomeMsg);
+            } else {
+                messages.forEach(msg => {
+                    addMessageToUI(msg.role, msg.content, msg.timestamp);
+                });
+            }
+        }
+
+        // ==================== RESPUESTAS DEMO ====================
+        function generateDemoResponse(userMessage) {
+            const msg = userMessage.toLowerCase();
+            if (msg.includes('hola') || msg.includes('buenos días') || msg.includes('buenas tardes')) {
+                return '¡Hola! Soy un asistente virtual en modo demostración. Pregúntame lo que quieras.';
+            } else if (msg.includes('quién eres') || msg.includes('quien eres')) {
+                return 'Soy DeepSeek, un modelo de lenguaje creado por 深度求索. Estás viendo una versión demo gratuita de este chat. Para usar la IA real, solo necesitas una API key gratuita de platform.deepseek.com.';
+            } else if (msg.includes('gracias')) {
+                return '¡De nada! 😊 Si quieres probar la IA de verdad, desactiva el modo demo y usa tu clave.';
+            } else if (msg.includes('clima') || msg.includes('tiempo')) {
+                return '🌤️ No tengo acceso a datos en tiempo real en modo demo, pero te recomendaría buscar en un servicio meteorológico.';
+            } else if (msg.includes('capital') && msg.includes('francia')) {
+                return 'La capital de Francia es París.';
+            } else {
+                return `🤖 [Modo Demo] Has preguntado: "${userMessage}".\n\nPara obtener respuestas reales de DeepSeek, desmarca "Modo Demo" y usa tu API key gratuita. Es muy fácil registrarse en platform.deepseek.com.`;
+            }
+        }
+
+        // ==================== API DEEPSEEK ====================
+        async function callDeepSeekAPI(userMessage) {
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                throw new Error('Falta la API Key. Desmarca "Modo Demo" y pega tu clave gratuita.');
+            }
+            const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'deepseek-chat',
+                    messages: [{ role: 'user', content: userMessage }],
+                    stream: false
+                })
+            });
+            
+            if (!response.ok) {
+                let errorMsg = `Error HTTP ${response.status}`;
+                try {
+                    const errData = await response.json();
+                    errorMsg = errData.error?.message || errorMsg;
+                } catch(e) {}
+                throw new Error(errorMsg);
+            }
+            
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+
+        // ==================== ENVIAR MENSAJE ====================
+        async function sendMessage() {
+            const userMessage = promptTextarea.value.trim();
+            if (!userMessage) return;
+            
+            const isDemo = demoCheckbox.checked;
+            const apiKey = apiKeyInput.value.trim();
+            
+            if (!isDemo && !apiKey) {
+                alert('❌ Para usar la API real necesitas una clave. Regístrate gratis en platform.deepseek.com o activa el Modo Demo.');
+                return;
+            }
+            
+            // Mostrar mensaje del usuario
+            addMessage('user', userMessage);
+            renderMessages();
+            promptTextarea.value = '';
+            
+            sendBtn.disabled = true;
+            sendBtn.innerText = '⏳ Enviando...';
+            
+            const thinkingId = addThinkingMessage();
+            
+            try {
+                let reply;
+                if (isDemo) {
+                    // Simular pequeño delay para naturalidad
+                    await new Promise(resolve => setTimeout(resolve, 600 + Math.random() * 400));
+                    reply = generateDemoResponse(userMessage);
+                } else {
+                    reply = await callDeepSeekAPI(userMessage);
+                }
+                
+                removeThinkingMessage(thinkingId);
+                addMessage('assistant', reply);
+                renderMessages();
+            } catch (error) {
+                removeThinkingMessage(thinkingId);
+                addMessage('assistant', `❌ Error: ${error.message}`);
+                renderMessages();
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerText = 'Enviar';
+                promptTextarea.focus();
+            }
+        }
+        
+        function addThinkingMessage() {
+            const id = 'thinking-' + Date.now();
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = 'message assistant';
+            div.innerHTML = `<div class="bubble">⏳ Pensando...</div><div class="timestamp"></div>`;
+            chatContainer.appendChild(div);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return id;
+        }
+        
+        function removeThinkingMessage(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        // ==================== INICIALIZACIÓN ====================
+        function init() {
+            // Cargar API Key guardada
+            const savedKey = localStorage.getItem('deepseek_api_key');
+            if (savedKey) apiKeyInput.value = savedKey;
+            
+            // Cargar mensajes
+            messages = loadLast7DaysMessages();
+            renderMessages();
+            
+            // Eventos
+            sendBtn.addEventListener('click', sendMessage);
+            clearHistoryBtn.addEventListener('click', clearHistory);
+            
+            document.getElementById('saveKeyBtn').addEventListener('click', () => {
+                const key = apiKeyInput.value.trim();
+                if (key) {
+                    localStorage.setItem('deepseek_api_key', key);
+                    alert('✅ Clave guardada localmente');
+                } else {
+                    alert('Introduce una clave válida');
+                }
+            });
+            
+            // Atajo Ctrl+Enter
+            promptTextarea.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Al cambiar modo demo, actualizar mensaje de bienvenida si el chat está vacío
+            demoCheckbox.addEventListener('change', () => {
+                if (messages.length === 0) {
+                    renderMessages();
+                }
+            });
+        }
+        
+        init();
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Laboratorio de Métodos en JS</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1, h2 { color: #333; }
+    .section { margin-bottom: 40px; }
+    .challenge {
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      background-color: #f9f9f9;
+    }
+    .output { font-weight: bold; margin-top: 10px; color: #006400; }
+    .hint { font-size: 13px; color: gray; margin-top: 5px; }
+    input, button { margin-top: 5px; display: block; }
+    .activo { color: crimson; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h1>🧪 Laboratorio de Métodos en JavaScript</h1>
+
+  <!-- 🔠 STRINGS -->
+  <div class="section">
+    <h2>🔠 Métodos de Strings</h2>
+
+    <h3>🟢 Nivel Básico: Convertir a mayúsculas</h3>
+    <div class="challenge">
+      <input type="text" id="stringInput" value="Hola, Eduardo">
+      <button onclick="convertirMayusculas()">Aplicar .toUpperCase()</button>
+      <div class="output" id="output1"></div>
+      <div class="hint">💡 Usa <code>.toUpperCase()</code></div>
+    </div>
+
+    <h3>🔵 Nivel Intermedio: Verificar palabra</h3>
+    <div class="challenge">
+      <input type="text" id="verificarInput" value="Bienvenido a JavaScript">
+      <input type="text" id="keywordInput" value="JavaScript">
+      <button onclick="verificarPalabra()">Aplicar .includes()</button>
+      <div class="output" id="output2"></div>
+      <div class="hint">💡 Usa <code>.includes("palabra")</code></div>
+    </div>
+
+    <h3>🔴 Nivel Avanzado: Reemplazar y dividir</h3>
+    <div class="challenge">
+      <input type="text" id="replaceInput" value="Aprender JavaScript es divertido">
+      <button onclick="reemplazarYDividir()">Aplicar .replace() + .split()</button>
+      <div class="output" id="output3"></div>
+      <div class="hint">💡 Reemplaza "divertido" por "asombroso" y divide en palabras</div>
+    </div>
+  </div>
+
+  <!-- 🧮 ARRAYS -->
+  <div class="section">
+    <h2>🧮 Métodos de Arrays</h2>
+
+    <h3>🟢 Nivel Básico: Agregar número</h3>
+    <div class="challenge">
+      <input type="number" id="numInput" placeholder="Agregar número a [1,2,3]">
+      <button onclick="agregarNumero()">Aplicar .push()</button>
+      <div class="output" id="arrayOutput1"></div>
+      <div class="hint">💡 Usa <code>.push(número)</code></div>
+    </div>
+
+    <h3>🔵 Nivel Intermedio: Duplicar valores</h3>
+    <div class="challenge">
+      <button onclick="duplicarArray()">Aplicar .map()</button>
+      <div class="output" id="arrayOutput2"></div>
+      <div class="hint">💡 Usa <code>.map(n => n * 2)</code></div>
+    </div>
+
+    <h3>🔴 Nivel Avanzado: Filtrar y sumar</h3>
+    <div class="challenge">
+      <button onclick="filtrarYSumar()">Aplicar .filter() + .reduce()</button>
+      <div class="output" id="arrayOutput3"></div>
+      <div class="hint">💡 Filtra mayores a 10 y suma</div>
+    </div>
+  </div>
+
+  <!-- 🌐 DOM -->
+  <div class="section">
+    <h2>🌐 Métodos del DOM</h2>
+
+    <h3>🟢 Nivel Básico: Activar alerta</h3>
+    <div class="challenge">
+      <button id="botonAlerta">Haz clic aquí</button>
+      <div class="hint">💡 Usa <code>addEventListener("click")</code></div>
+    </div>
+
+    <h3>🔵 Nivel Intermedio: Cambiar estilo</h3>
+    <div class="challenge">
+      <p id="textoCambiante">Texto que cambiará de color</p>
+      <button onclick="activarEstilo()">Activar estilo</button>
+      <div class="hint">💡 Usa <code>classList.toggle("activo")</code></div>
+    </div>
+
+    <h3>🔴 Nivel Avanzado: Validar campo vacío</h3>
+    <div class="challenge">
+      <input type="text" id="campoNombre" placeholder="Nombre">
+      <button onclick="validarCampo()">Validar</button>
+      <div class="output" id="domOutput3"></div>
+      <div class="hint">💡 Verifica <code>.value</code> y muestra un mensaje</div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script>
+    // STRING MÉTODOS
+    function convertirMayusculas() {
+      let texto = document.getElementById("stringInput").value;
+      document.getElementById("output1").textContent = `Resultado: ${texto.toUpperCase()}`;
+    }
+
+    function verificarPalabra() {
+      let texto = document.getElementById("verificarInput").value;
+      let palabra = document.getElementById("keywordInput").value;
+      let contiene = texto.includes(palabra);
+      document.getElementById("output2").textContent = `¿Contiene "${palabra}"? ${contiene}`;
+    }
+
+    function reemplazarYDividir() {
+      let frase = document.getElementById("replaceInput").value;
+      let modificada = frase.replace("divertido", "asombroso");
+      let palabras = modificada.split(" ");
+      document.getElementById("output3").textContent = `Resultado: ${palabras.join(" | ")}`;
+    }
+
+    // ARRAY MÉTODOS
+    function agregarNumero() {
+      let num = parseInt(document.getElementById("numInput").value);
+      let arr = [1, 2, 3];
+      arr.push(num);
+      document.getElementById("arrayOutput1").textContent = `Resultado: [${arr.join(", ")}]`;
+    }
+
+    function duplicarArray() {
+      let base = [4, 5, 6];
+      let nuevo = base.map(n => n * 2);
+      document.getElementById("arrayOutput2").textContent = `Resultado: [${nuevo.join(", ")}]`;
+    }
+
+    function filtrarYSumar() {
+      let datos = [5, 12, 8, 20];
+      let filtrados = datos.filter(n => n > 10);
+      let suma = filtrados.reduce((acc, val) => acc + val, 0);
+      document.getElementById("arrayOutput3").textContent = `Filtrados: [${filtrados.join(", ")}] → Suma: ${suma}`;
+    }
+
+    // DOM MÉTODOS
+    document.querySelector("#botonAlerta").addEventListener("click", () => {
+      alert("¡Alerta activada desde el DOM!");
+    });
+
+    function activarEstilo() {
+      document.getElementById("textoCambiante").classList.toggle("activo");
+    }
+
+    function validarCampo() {
+      let nombre = document.getElementById("campoNombre").value.trim();
+      let salida = nombre ? `✔️ Hola, ${nombre}!` : "⚠️ El campo está vacío";
+      document.getElementById("domOutput3").textContent = salida;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial JavaScript</title>
+    <style>
+        /* Estilos generales */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            min-height: 200vh; /* Para permitir scroll */
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            height: 300px; /* Ejemplo de altura para header */
+        }
+        
+        /* Botones flotantes */
+        .floating-btn {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .floating-btn:hover {
+            transform: scale(1.1);
+            background: #2980b9;
+        }
+        
+        .to-top {
+            bottom: 90px;
+            right: 20px;
+        }
+        
+        .to-home {
+            bottom: 160px;
+            right: 20px;
+        }
+        
+        /* Menú flotante */
+        .floating-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+        }
+        
+        .menu-btn {
+            width: 50px;
+            height: 50px;
+            background: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        
+        .menu-content a {
+            display: block;
+            padding: 8px;
+            color: #2c3e50;
+            text-decoration: none;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .menu-content a:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-content a:hover {
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <h1>Tutorial JavaScript</h1>
+        <!-- Tu contenido del header aquí -->
+    </header>
+    
+    <main>
+        <!-- Contenido principal de tu tutorial -->
+        <section id="section1">
+            <h2>Sección 1</h2>
+            <!-- Contenido -->
+        </section>
+        
+        <section id="section2">
+            <h2>Sección 2</h2>
+            <!-- Contenido -->
+        </section>
+        
+        <!-- Más secciones... -->
+    </main>
+    
+    <!-- Botón para subir al header -->
+    <div class="floating-btn to-top" onclick="scrollToHeader()">
+        ↑
+    </div>
+    
+    <!-- Botón para volver al home -->
+    <a href="index.html" class="floating-btn to-home">
+        ⌂
+    </a>
+    
+    <!-- Menú flotante para índice -->
+    <div class="floating-menu">
+        <div class="menu-btn" onclick="toggleMenu()">≡</div>
+        <div class="menu-content" id="menuContent">
+            <a href="#header">Inicio</a>
+            <a href="#section1">Sección 1: Introducción</a>
+            <a href="#section2">Sección 2: Fundamentos</a>
+            <a href="#section3">Sección 3: Funciones</a>
+            <a href="#section4">Sección 4: DOM</a>
+            <!-- Agrega más enlaces según tus secciones -->
+        </div>
+    </div>
+    
+    <script>
+        // Función para subir al header
+        function scrollToHeader() {
+            const header = document.getElementById('header');
+            header.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Función para mostrar/ocultar menú
+        function toggleMenu() {
+            const menu = document.getElementById('menuContent');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('menuContent');
+            const menuBtn = document.querySelector('.menu-btn');
+            
+            if (!menu.contains(e.target) && e.target !== menuBtn) {
+                menu.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

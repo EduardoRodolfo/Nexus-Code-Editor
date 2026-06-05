@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 Nexus Code Editor - Planes</title>
+    <link rel="stylesheet" href="fontawesome-free-7.2.0-web/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #0a0e1a;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #0a1628, #0d2137);
+            border-bottom: 1px solid #2a3a5c;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2em; color: #00d4aa; }
+        .header p { color: #8892b0; margin-top: 10px; }
+        .planes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .plan {
+            background: #111827;
+            border: 1px solid #2a3a5c;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .plan:hover { transform: translateY(-5px); border-color: #00d4aa; }
+        .plan.recomendado { border-color: #22c55e; box-shadow: 0 0 30px rgba(34,197,94,0.15); }
+        .plan.recomendado::before {
+            content: '⭐ RECOMENDADO';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #22c55e;
+            color: #000;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 700;
+        }
+        .plan .icono { font-size: 2.5em; margin-bottom: 15px; }
+        .plan h2 { font-size: 1.3em; margin-bottom: 10px; }
+        .plan .precio { font-size: 2.2em; font-weight: 800; color: #00d4aa; margin: 15px 0; }
+        .plan .precio span { font-size: 0.4em; color: #8892b0; }
+        .plan .precio .eur { font-size: 0.7em; color: #8892b0; display: block; margin-top: 2px; }
+        .plan ul { list-style: none; text-align: left; margin: 20px 0; }
+        .plan ul li { padding: 8px 0; border-bottom: 1px solid #1a2235; font-size: 0.9em; }
+        .plan ul li i { color: #22c55e; margin-right: 8px; width: 18px; }
+        .plan ul li .no { color: #ef4444; }
+        .btn-pagar {
+            background: linear-gradient(135deg, #00d4aa, #00b894);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 15px;
+            width: 100%;
+        }
+        .btn-pagar:hover { filter: brightness(1.1); transform: scale(1.02); }
+        .btn-pagar.gratis { background: #2a3a5c; color: #e2e8f0; }
+        
+        .metodos-pago {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #111827;
+            border: 1px solid #2a3a5c;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .metodos-pago h3 { margin-bottom: 15px; color: #00d4aa; }
+        .metodos-pago .logos { display: flex; justify-content: center; gap: 20px; font-size: 2em; }
+        .metodos-pago .logos i { opacity: 0.6; transition: 0.2s; }
+        .metodos-pago .logos i:hover { opacity: 1; }
+        .metodos-pago .precio-eur { font-size: 1.3em; color: #00d4aa; font-weight: 700; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.mostrar { display: flex; }
+        .modal-contenido {
+            background: #111827;
+            border: 1px solid #2a3a5c;
+            border-radius: 16px;
+            padding: 25px;
+            max-width: 450px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            text-align: center;
+        }
+        .modal-contenido h2 { color: #00d4aa; margin-bottom: 15px; }
+        .modal-contenido p { color: #8892b0; margin-bottom: 15px; line-height: 1.5; }
+        .modal-contenido .qr-placeholder {
+            width: 100%;
+            min-height: 180px;
+            background: #1a2235;
+            border: 2px dashed #2a3a5c;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            font-size: 1em;
+            color: #e2e8f0;
+            padding: 15px;
+        }
+        .modal-contenido .btn-cerrar {
+            background: #2a3a5c;
+            color: #e2e8f0;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .modal-contenido .btn-cerrar:hover { background: #3a4a6c; }
+        
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .toast {
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0,0,0,.4);
+            animation: si .3s ease;
+            font-size: .82rem;
+            max-width: 350px;
+        }
+        .toast.ok { background: #22c55e; }
+        .toast.err { background: #ef4444; color: #fff; }
+        .toast.info { background: #00d4aa; }
+        @keyframes si { from { transform: translateX(80px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #4a5568;
+            font-size: 0.85em;
+        }
+        .footer a { color: #00d4aa; text-decoration: none; }
+        
+        @media (max-width: 600px) {
+            .planes { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.5em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💰 Nexus Code Editor</h1>
+        <p>Elige el plan ideal para ti. Pago único, licencia de por vida.</p>
+        <p style="font-size:0.85em; color:#f59e0b; margin-top:8px;">
+            🌎 Aceptamos: USDT (TRC-20) · BTC · Tarjeta
+        </p>
+    </div>
+    
+    <div class="planes">
+        <!-- PLAN GRATIS -->
+        <div class="plan">
+            <div class="icono">🎁</div>
+            <h2>Nexus Free</h2>
+            <div class="precio">$0 <span>/ siempre</span></div>
+            <ul>
+                <li><i class="fas fa-check"></i> Editor 150+ lenguajes</li>
+                <li><i class="fas fa-check"></i> Terminal Linux básica</li>
+                <li><i class="fas fa-check"></i> Consola JavaScript</li>
+                <li><i class="fas fa-check"></i> Preview en tiempo real</li>
+                <li><i class="fas fa-check"></i> 3 idiomas (ES, EN, ZH)</li>
+                <li><i class="fas fa-check"></i> Máximo 5 proyectos</li>
+                <li><i class="fas fa-times no"></i> 9 idiomas completos</li>
+                <li><i class="fas fa-times no"></i> Proyectos ilimitados</li>
+                <li><i class="fas fa-times no"></i> Exportar a ZIP</li>
+                <li><i class="fas fa-times no"></i> API Key personalizada</li>
+                <li><i class="fas fa-times no"></i> Soporte prioritario</li>
+                <li><i class="fas fa-times no"></i> Actualizaciones de por vida</li>
+            </ul>
+            <button class="btn-pagar gratis" onclick="window.location.href='index.html'">
+                <i class="fas fa-download"></i> Usar Gratis
+            </button>
+        </div>
+        
+        <!-- PLAN ÚNICO DE PAGO -->
+        <div class="plan recomendado">
+            <div class="icono">🚀</div>
+            <h2>Nexus Full</h2>
+            <div class="precio">18€ <span>/ única vez</span></div>
+            <ul>
+                <li><i class="fas fa-check"></i> Todo lo de Free</li>
+                <li><i class="fas fa-check"></i> 9 idiomas completos</li>
+                <li><i class="fas fa-check"></i> Proyectos ilimitados</li>
+                <li><i class="fas fa-check"></i> Exportar a ZIP</li>
+                <li><i class="fas fa-check"></i> API Key personalizada</li>
+                <li><i class="fas fa-check"></i> Soporte por email</li>
+                <li><i class="fas fa-check"></i> Actualizaciones de por vida</li>
+                <li><i class="fas fa-check"></i> Licencia comercial</li>
+                <li><i class="fas fa-check"></i> Componentes UI adicionales</li>
+                <li><i class="fas fa-check"></i> Prioridad en nuevas funciones</li>
+            </ul>
+            <button class="btn-pagar" onclick="abrirModal()">
+                <i class="fas fa-shopping-cart"></i> Comprar Full - 18€
+            </button>
+        </div>
+    </div>
+    
+    <!-- MÉTODOS DE PAGO -->
+    <div class="metodos-pago">
+        <h3>🔒 Métodos de pago aceptados</h3>
+        <div class="logos">
+            <span title="USDT (TRC-20)" style="font-weight:800; color:#22c55e; font-size:1.2em;">₮ USDT</span>
+            <i class="fab fa-bitcoin" title="Bitcoin"></i>
+            <i class="fas fa-credit-card" title="Tarjeta de crédito/débito"></i>
+        </div>
+        <p style="margin-top:10px; color:#8892b0; font-size:0.85em;">
+            💳 Paga con USDT (TRC-20), Bitcoin o tarjeta internacional.
+        </p>
+        <p style="margin-top:5px; color:#f59e0b; font-size:0.9em; font-weight:700;">
+            💰 Precio único: <span class="precio-eur">18€</span> (≈ 20 USDT · ≈ $19 USD)
+        </p>
+    </div>
+    
+    <!-- MODAL DE PAGO -->
+    <div class="modal" id="modalPago">
+        <div class="modal-contenido">
+            <h2>🚀 Nexus Full</h2>
+            <p>Completa tu pago para obtener Nexus Full. Recibirás tu API Key por email.</p>
+            <p style="font-size:1.3em; font-weight:700; color:#00d4aa;">18€ (≈ 20 USDT · ≈ $19 USD)</p>
+            
+            <div class="qr-placeholder" id="qrPlaceholder">
+                <p style="color:#8892b0;">Selecciona un método de pago</p>
+            </div>
+            
+            <p style="font-size:0.85em; color:#8892b0; margin-bottom:15px;">
+                🔗 Elige tu método de pago:
+            </p>
+            
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:15px;">
+                <button class="btn-pagar" style="padding:10px 20px; font-size:0.85em; width:auto;" onclick="pagarUSDT()">
+                    ₮ USDT (TRC-20)
+                </button>
+                <button class="btn-pagar" style="padding:10px 20px; font-size:0.85em; width:auto; background:#f7931a; color:#000;" onclick="pagarBTC()">
+                    <i class="fab fa-bitcoin"></i> BTC
+                </button>
+                <button class="btn-pagar" style="padding:10px 20px; font-size:0.85em; width:auto; background:#6366f1;" onclick="pagarTarjeta()">
+                    <i class="fas fa-credit-card"></i> Tarjeta
+                </button>
+            </div>
+            
+            <button class="btn-cerrar" onclick="cerrarModal()">Cancelar</button>
+        </div>
+    </div>
+    
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <div class="footer">
+        <p>Nexus Code Editor &copy; 2026 — Pago único, licencia de por vida</p>
+        <p style="margin-top:5px;">🔒 Pagos seguros vía QvaPay · USDT (TRC-20) · Bitcoin</p>
+        <p style="margin-top:5px; font-size:0.8em;">💶 18€ · ₮ 20 USDT · ₿ ~0.00027 BTC</p>
+    </div>
+    
+    <script>
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        const PLAN = { nombre: 'Nexus Full', precio: 18, moneda: 'EUR' };
+        const PRECIO_USDT = 20;
+        const TASA_BTC = 67000;
+        const PRECIO_USD = 19;
+        
+        // ============================================
+        // ACTIVAR NEXUS - Guarda API Key y redirige
+        // ============================================
+        function activarNexus(apiKey) {
+            localStorage.setItem('nexus_api_key', apiKey);
+            localStorage.setItem('nexus_plan', 'full');
+            mostrarToast('🔑 API Key guardada. Redirigiendo a Nexus...', 'ok');
+            setTimeout(() => {
+                window.location.href = 'index.html?apikey=' + apiKey;
+            }, 1000);
+        }
+        
+        // ============================================
+        // MODAL
+        // ============================================
+        function abrirModal() {
+            document.getElementById('qrPlaceholder').innerHTML = '<p style="color:#8892b0;">Selecciona un método de pago</p>';
+            document.getElementById('modalPago').classList.add('mostrar');
+        }
+        
+        function cerrarModal() {
+            document.getElementById('modalPago').classList.remove('mostrar');
+        }
+        
+        // ============================================
+        // USDT (TRC-20)
+        // ============================================
+        function pagarUSDT() {
+            const qrDiv = document.getElementById('qrPlaceholder');
+            
+            qrDiv.innerHTML = `
+                <div style="text-align:center; width:100%;">
+                    <p style="color:#22c55e; font-size:1em; font-weight:700; margin-bottom:12px;">₮ Paga con USDT (TRC-20)</p>
+                    <div style="background:#111827; border:1px solid #2a3a5c; border-radius:8px; padding:12px; margin:8px 0; text-align:left;">
+                        <p style="color:#e2e8f0; margin:4px 0;"><strong style="color:#22c55e;">Monto:</strong> ${PRECIO_USDT} USDT</p>
+                        <hr style="border-color:#2a3a5c; margin:8px 0;">
+                        <p style="color:#e2e8f0; margin:4px 0;"><strong style="color:#22c55e;">Dirección (TRC-20):</strong></p>
+                        <code style="background:#0a0a1a; padding:10px; border-radius:4px; display:block; word-break:break-all; font-size:0.8em; margin-top:5px; color:#22c55e;">
+                            TU_DIRECCION_USDT_AQUI
+                        </code>
+                    </div>
+                    <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:10px; margin:8px 0;">
+                        <p style="color:#f59e0b; font-size:0.8em;">
+                            ⚡ Envía exactamente <strong>${PRECIO_USDT} USDT</strong> a la dirección de arriba<br>
+                            📩 Envía comprobante a: <strong style="color:#22c55e;">eduardo@nexus-coder.com</strong>
+                        </p>
+                    </div>
+                    <div style="background:rgba(34,197,94,0.1); border:1px solid #22c55e; border-radius:8px; padding:12px; margin:15px 0;">
+                        <p style="color:#22c55e; font-weight:600;">✅ Después del pago:</p>
+                        <button onclick="simularPago()" style="background:#22c55e; color:#000; border:none; padding:12px 20px; border-radius:6px; font-weight:700; cursor:pointer; width:100%; margin-top:8px;">
+                            🚀 Ya pagué - Activar mi licencia
+                        </button>
+                    </div>
+                </div>
+            `;
+            mostrarToast('₮ Datos de USDT mostrados', 'info');
+        }
+        
+        // ============================================
+        // BTC
+        // ============================================
+        function pagarBTC() {
+            const montoBTC = (PRECIO_USD / TASA_BTC).toFixed(6);
+            const qrDiv = document.getElementById('qrPlaceholder');
+            
+            qrDiv.innerHTML = `
+                <div style="text-align:center; width:100%;">
+                    <p style="color:#f7931a; font-size:1em; font-weight:700; margin-bottom:12px;">₿ Paga con Bitcoin</p>
+                    <div style="background:#111827; border:1px solid #2a3a5c; border-radius:8px; padding:12px; margin:8px 0; text-align:left;">
+                        <p style="color:#e2e8f0; margin:4px 0;"><strong style="color:#f7931a;">Monto:</strong> ≈ ${montoBTC} BTC (≈ $${PRECIO_USD} USD)</p>
+                        <hr style="border-color:#2a3a5c; margin:8px 0;">
+                        <p style="color:#e2e8f0; margin:4px 0;"><strong style="color:#f7931a;">Dirección BTC:</strong></p>
+                        <code style="background:#0a0a1a; padding:10px; border-radius:4px; display:block; word-break:break-all; font-size:0.8em; margin-top:5px; color:#f7931a;">
+                            TU_DIRECCION_BTC_AQUI
+                        </code>
+                    </div>
+                    <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:10px; margin:8px 0;">
+                        <p style="color:#f59e0b; font-size:0.8em;">
+                            ⚡ Envía exactamente <strong>${montoBTC} BTC</strong> a la dirección de arriba<br>
+                            📩 Envía comprobante a: <strong style="color:#f7931a;">eduardo@nexus-coder.com</strong>
+                        </p>
+                    </div>
+                    <div style="background:rgba(34,197,94,0.1); border:1px solid #22c55e; border-radius:8px; padding:12px; margin:15px 0;">
+                        <p style="color:#22c55e; font-weight:600;">✅ Después del pago:</p>
+                        <button onclick="simularPago()" style="background:#22c55e; color:#000; border:none; padding:12px 20px; border-radius:6px; font-weight:700; cursor:pointer; width:100%; margin-top:8px;">
+                            🚀 Ya pagué - Activar mi licencia
+                        </button>
+                    </div>
+                </div>
+            `;
+            mostrarToast('₿ Datos de BTC mostrados', 'info');
+        }
+        
+        // ============================================
+        // TARJETA (vía QvaPay)
+        // ============================================
+        function pagarTarjeta() {
+            const qrDiv = document.getElementById('qrPlaceholder');
+            
+            qrDiv.innerHTML = `
+                <div style="text-align:center; width:100%;">
+                    <p style="color:#6366f1; font-size:1em; font-weight:700; margin-bottom:12px;">💳 Paga con Tarjeta</p>
+                    <div style="background:#111827; border:1px solid #2a3a5c; border-radius:8px; padding:12px; margin:8px 0; text-align:left;">
+                        <p style="color:#e2e8f0; margin:4px 0;"><strong style="color:#6366f1;">Producto:</strong> Nexus Full</p>
+                        <p style="color:#e2e8f0; margin:4px 0;"><strong style="color:#6366f1;">Monto:</strong> 18€ (≈ $19 USD)</p>
+                    </div>
+                    <div style="background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.3); border-radius:8px; padding:12px; margin:15px 0;">
+                        <p style="color:#6366f1; font-weight:600;">🔒 Pago seguro vía QvaPay</p>
+                        <p style="color:#8892b0; font-size:0.85em;">Serás redirigido a QvaPay para completar el pago.</p>
+                    </div>
+                    <div style="margin:15px 0;">
+                        <label style="color:#8892b0; font-size:0.85em; display:block; margin-bottom:5px;">Tu email (para recibir la API Key):</label>
+                        <input type="email" id="emailInput" placeholder="tu@email.com" style="width:100%; padding:10px; background:#1a2235; border:1px solid #2a3a5c; border-radius:6px; color:#e2e8f0; font-size:1em;">
+                    </div>
+                    <button onclick="pagarConQvaPay()" style="background:#6366f1; color:#fff; border:none; padding:12px 20px; border-radius:6px; font-weight:700; cursor:pointer; width:100%;">
+                        💳 Pagar 18€ con QvaPay
+                    </button>
+                </div>
+            `;
+            mostrarToast('💳 Datos de tarjeta mostrados', 'info');
+        }
+        
+        // ============================================
+        // PAGAR CON QVAPAY
+        // ============================================
+        function pagarConQvaPay() {
+            const email = document.getElementById('emailInput')?.value.trim();
+            if (!email || !email.includes('@')) {
+                mostrarToast('⚠️ Ingresa un email válido', 'err');
+                return;
+            }
+            
+            fetch('api-qvapay.php?action=crear_factura', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `plan=full&email=${encodeURIComponent(email)}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.api_key) {
+                    mostrarToast('✅ Licencia generada: ' + data.api_key, 'ok');
+                    mostrarResultadoPago(data.api_key, email);
+                } else {
+                    mostrarToast('❌ Error: ' + (data.error || 'Desconocido'), 'err');
+                }
+            })
+            .catch(error => {
+                mostrarToast('❌ Error de conexión: ' + error.message, 'err');
+            });
+        }
+        
+        // ============================================
+        // SIMULAR PAGO
+        // ============================================
+        function simularPago() {
+            const email = prompt('📧 Ingresa tu email para recibir la API Key:');
+            if (!email || !email.includes('@')) {
+                mostrarToast('⚠️ Email no válido', 'err');
+                return;
+            }
+            
+            fetch('api-qvapay.php?action=crear_factura', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `plan=full&email=${encodeURIComponent(email)}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.api_key) {
+                    mostrarToast('✅ ¡Pago exitoso! API Key: ' + data.api_key, 'ok');
+                    mostrarResultadoPago(data.api_key, email);
+                }
+            })
+            .catch(error => {
+                mostrarToast('❌ Error: ' + error.message, 'err');
+            });
+        }
+        
+        // ============================================
+        // MOSTRAR RESULTADO DEL PAGO
+        // ============================================
+        function mostrarResultadoPago(apiKey, email) {
+            const qrDiv = document.getElementById('qrPlaceholder');
+            
+            qrDiv.innerHTML = `
+                <div style="text-align:center; width:100%;">
+                    <p style="color:#22c55e; font-size:1.5em; font-weight:700;">🎉 ¡Pago EXITOSO!</p>
+                    <p style="color:#e2e8f0; margin:10px 0;">Tu licencia <strong style="color:#00d4aa;">Nexus Full</strong> está activa.</p>
+                    
+                    <div style="background:#0a0a1a; border:1px dashed #22c55e; border-radius:8px; padding:15px; margin:15px 0;">
+                        <p style="color:#22c55e; font-weight:600; margin-bottom:8px;">🔑 Tu API Key única:</p>
+                        <code style="font-size:1.1em; letter-spacing:2px; color:#22c55e; word-break:break-all;">${apiKey}</code>
+                    </div>
+                    
+                    <p style="color:#8892b0; font-size:0.85em;">📧 También la recibiste por email: <strong style="color:#e2e8f0;">${email}</strong></p>
+                    
+                    <hr style="border-color:#2a3a5c; margin:15px 0;">
+                    
+                    <button onclick="activarNexus('${apiKey}')" style="background:#00d4aa; color:#000; border:none; padding:14px 24px; border-radius:8px; font-weight:700; cursor:pointer; font-size:1.1em; width:100%;">
+                        🚀 Ir a Nexus y activar
+                    </button>
+                    
+                    <p style="color:#8892b0; font-size:0.8em; margin-top:8px;">
+                        ⚡ Al hacer clic, tu API Key se guardará automáticamente.
+                    </p>
+                </div>
+            `;
+        }
+        
+        // ============================================
+        // TOAST
+        // ============================================
+        function mostrarToast(mensaje, tipo) {
+            const contenedor = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + (tipo || 'info');
+            toast.textContent = mensaje;
+            contenedor.appendChild(toast);
+            setTimeout(() => { if (toast.parentNode) toast.remove(); }, 4000);
+        }
+        
+        // ============================================
+        // CERRAR MODAL CON ESC
+        // ============================================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') cerrarModal();
+        });
+        
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('status') === 'success') {
+                mostrarToast('✅ ¡Pago exitoso! Revisa tu email.', 'ok');
+            }
+            console.log('💰 Nexus Payment System v3.0 - Pago único 18€');
+        };
+    </script>
+</body>
+</html>

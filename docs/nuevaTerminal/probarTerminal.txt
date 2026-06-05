@@ -1,0 +1,102 @@
+﻿¡Excelente descripción! 👏 Ahora entiendo perfectamente el entorno de CodeStudio. Te explico cómo funciona:
+
+## 🏗️ **Estructura del Entorno CodeStudio**
+
+### **Parte Superior (Editor de Código)**
+- **`index.js`** - Tu archivo principal de JavaScript
+- **`package.json`** - Configuración del proyecto y dependencias
+- **`styles.css`** - Estilos (si es una aplicación web)
+
+### **Parte Inferior (Terminal/Consola)**
+- **Pestañas:**
+  - **`Terminal`** - línea de comandos
+  - **`Logs`** - salida de la aplicación
+  - **`Paquetes`** - gestión de dependencias
+
+### **Botones Principales**
+- **⚡ Ejecutar** - Corre tu aplicación
+- **💾 Guardar** - Guarda los cambios
+- **📦 Instalar** - Instala dependencias del package.json
+- **🧹 Limpiar** - Limpia la terminal
+- **🔄 Terminal** - Alterna entre terminal y otras vistas
+
+## 🚀 **Flujo de Trabajo Recomendado**
+
+### **1. Configuración Inicial**
+```javascript
+// En index.js - Prueba este código simple:
+console.log("¡CodeStudio funcionando! 🎉");
+
+// Agrega algo interactivo
+setInterval(() => {
+    console.log(`Hora actual: ${new Date().toLocaleTimeString()}`);
+}, 3000);
+```
+
+### **2. Ejecuta tu código:**
+- Haz clic en **"Ejecutar"** (botón superior derecho o inferior derecho)
+- Ve a la pestaña **"Logs"** para ver la salida
+
+### **3. Para proyectos con dependencias:**
+```json
+// En package.json - Agrega esto:
+{
+  "name": "mi-proyecto",
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.0.0"
+  }
+}
+```
+- Luego haz clic en **"Instalar"**
+
+### **4. Usando la Terminal:**
+- Haz clic en **"Terminal"**
+- Puedes ejecutar comandos como:
+```bash
+node index.js
+npm start
+ls -la
+```
+
+## 🎯 **Ejemplo Práctico Paso a Paso**
+
+**Paso 1:** En `index.js` escribe:
+```javascript
+import axios from 'axios';
+
+async function testAPI() {
+    try {
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts/1');
+        console.log('✅ Datos recibidos:', response.data);
+    } catch (error) {
+        console.log('❌ Error:', error.message);
+    }
+}
+
+testAPI();
+```
+
+**Paso 2:** En `package.json`:
+```json
+{
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.0.0"
+  }
+}
+```
+
+**Paso 3:** Haz clic en **"Instalar"** (espera a que diga "Paquetes: 1")
+
+**Paso 4:** Haz clic en **"Ejecutar"**
+
+**Paso 5:** Ve a **"Logs"** para ver el resultado
+
+## 💡 **Consejos Importantes**
+- **La barra azul inferior** te indica el estado: "Listo" = puede ejecutar
+- **"Paquetes: 0"** significa que no hay dependencias instaladas
+- **Siempre guarda** antes de ejecutar
+- **Usa "Limpiar"** para mantener la terminal ordenada
+
+¿Quieres que probemos un proyecto específico? ¡Estoy listo para ayudarte! 😊

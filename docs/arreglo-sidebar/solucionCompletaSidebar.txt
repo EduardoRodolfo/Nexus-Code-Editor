@@ -1,0 +1,311 @@
+﻿¡Claro! Con la solución que te propuse el usuario puede abrir y cerrar el sidebar cuando quiera. Te explico cómo funciona:
+
+Funcionalidad de Abrir/Cerrar:
+
+Para ABRIR el sidebar:
+
+· El usuario hace clic en el botón "📁 Explorador" del menú
+· El sidebar se expande desde la izquierda
+· Todo el contenido se desplaza hacia la derecha
+
+Para CERRAR el sidebar:
+
+· El usuario puede hacer clic en la "×" (equis) del sidebar
+· O puede hacer clic nuevamente en el botón "📁 Explorador" del menú
+· El sidebar se contrae y el contenido vuelve a su posición original
+
+JavaScript completo para el toggle:
+
+```javascript
+// Toggle del sidebar
+document.getElementById('toggle-sidebar').addEventListener('click', function(e) {
+  e.preventDefault();
+  const sidebar = document.getElementById('project-sidebar');
+  const container = document.querySelector('.container');
+  
+  // Alternar estado abierto/cerrado
+  const isOpening = !sidebar.classList.contains('open');
+  
+  sidebar.classList.toggle('open');
+  container.classList.toggle('sidebar-open');
+  
+  // Actualizar el estado visual del botón
+  this.classList.toggle('active', isOpening);
+});
+
+// Cerrar sidebar con el botón ×
+document.getElementById('close-sidebar').addEventListener('click', function() {
+  const sidebar = document.getElementById('project-sidebar');
+  const container = document.querySelector('.container');
+  const toggleBtn = document.getElementById('toggle-sidebar');
+  
+  sidebar.classList.remove('open');
+  container.classList.remove('sidebar-open');
+  toggleBtn.classList.remove('active');
+});
+
+// Cerrar sidebar al hacer clic fuera (opcional)
+document.addEventListener('click', function(e) {
+  const sidebar = document.getElementById('project-sidebar');
+  const toggleBtn = document.getElementById('toggle-sidebar');
+  
+  if (sidebar.classList.contains('open') && 
+      !sidebar.contains(e.target) && 
+      e.target !== toggleBtn && 
+      !toggleBtn.contains(e.target)) {
+    sidebar.classList.remove('open');
+    document.querySelector('.container').classList.remove('sidebar-open');
+    toggleBtn.classList.remove('active');
+  }
+});
+```
+
+CSS para el estado visual del botón:
+
+```css
+/* Estilo para el botón cuando el sidebar está activo */
+#toggle-sidebar.active {
+  background: #4ec9b0 !important;
+  color: white;
+}
+
+#toggle-sidebar.active:hover {
+  background: #3db8a0 !important;
+}
+```
+
+Comportamiento esperado:
+
+1. Estado inicial: Sidebar cerrado, botón normal
+2. Click en "📁 Explorador": Sidebar se abre, botón se vuelve azul/activo
+3. Click en "×" del sidebar: Sidebar se cierra, botón vuelve a normal
+4. Click nuevamente en "📁 Explorador": Sidebar se cierra, botón vuelve a normal
+
+Para que quede más claro, aquí está el CSS completo corregido:
+
+```css
+/* ===== LAYOUT PRINCIPAL CON SIDEBAR INTEGRADO ===== */
+.container {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #252526;
+  transition: all 0.3s ease;
+}
+
+/* Sidebar colapsable */
+.project-sidebar {
+  width: 0;
+  min-width: 0;
+  height: 100vh;
+  background: #252526;
+  border-right: 1px solid #3c3c3c;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.project-sidebar.open {
+  width: 300px;
+  min-width: 300px;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Contenido principal */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  min-width: 0;
+}
+
+/* Botón activo cuando sidebar está abierto */
+#toggle-sidebar.active {
+  background: #4ec9b0 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .project-sidebar {
+    position: fixed;
+    width: 100%;
+    height: 60vh;
+    z-index: 1000;
+    transform: translateY(-100%);
+  }
+  
+  .project-sidebar.open {
+    transform: translateY(0);
+    width: 100%;
+    min-width: 100%;
+  }
+}
+```
+
+Así el usuario tiene control total: puede abrir cuando necesite ver los archivos y cerrar cuando quiera más espacio para el editor, tantas veces como quiera. ¡Es completamente interactivo!
+__________________________________
+
+Perfecto, ahora veo exactamente dónde está tu código actual. Debes reemplazar desde el comienzo de las funciones del sidebar hasta donde termina el código relacionado con el sidebar.
+
+Aquí te muestro exactamente qué eliminar y qué agregar:
+
+QUITAR ESTO (desde aquí):
+
+```javascript
+// =====================================
+// Funciones para mostrar/ocultar sidebar
+// =====================================
+
+function toggleProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    if (currentProjectHandle) {
+        // Si hay proyecto abierto, alternar visibilidad
+        if (sidebar.classList.contains('open')) {
+            hideProjectSidebar();
+        } else {
+            showProjectSidebar();
+        }
+    } else {
+        // Si no hay proyecto, preguntar si abrir uno
+        if (confirm('No hay proyecto abierto. ¿Deseas abrir un proyecto?')) {
+            openProject();
+        }
+    }
+}
+
+function showProjectSidebar() {
+    if (!currentProjectHandle) {
+        showNotification('No hay proyecto abierto', true);
+        return;
+    }
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    sidebar.classList.add('open');
+    container.classList.add('with-sidebar');
+    toggleBtn.classList.add('active');
+    
+    showNotification('Explorador de proyecto abierto');
+}
+
+function hideProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    sidebar.classList.remove('open');
+    container.classList.remove('with-sidebar');
+    toggleBtn.classList.remove('active');
+    
+    showNotification('Explorador de proyecto cerrado');
+}
+
+function closeProjectSidebar() {
+    hideProjectSidebar();
+}
+```
+
+HASTA AQUÍ (eliminar hasta esta línea):
+
+```javascript
+function closeProjectSidebar() {
+    hideProjectSidebar();
+}
+```
+
+Y AGREGAR ESTO EN SU LUGAR:
+
+```javascript
+// =====================================
+// NUEVAS FUNCIONES MEJORADAS DEL SIDEBAR
+// =====================================
+
+// Toggle del sidebar
+function toggleProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    // Alternar estado abierto/cerrado
+    const isOpening = !sidebar.classList.contains('open');
+    
+    sidebar.classList.toggle('open');
+    container.classList.toggle('with-sidebar');
+    
+    // Actualizar el estado visual del botón
+    this.classList.toggle('active', isOpening);
+    
+    if (isOpening) {
+        showNotification('Explorador de proyecto abierto');
+    } else {
+        showNotification('Explorador de proyecto cerrado');
+    }
+}
+
+// Cerrar sidebar con el botón ×
+function closeProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    sidebar.classList.remove('open');
+    container.classList.remove('with-sidebar');
+    toggleBtn.classList.remove('active');
+    
+    showNotification('Explorador de proyecto cerrado');
+}
+
+// Cerrar sidebar al hacer clic fuera (opcional)
+document.addEventListener('click', function(e) {
+    const sidebar = document.getElementById('project-sidebar');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    if (sidebar.classList.contains('open') && 
+        !sidebar.contains(e.target) && 
+        e.target !== toggleBtn && 
+        !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove('open');
+        document.querySelector('.container').classList.remove('with-sidebar');
+        toggleBtn.classList.remove('active');
+    }
+});
+```
+
+RESUMEN DE LOS CAMBIOS:
+
+1. Eliminas las 4 funciones viejas del sidebar
+2. Agregas las 3 nuevas funciones mejoradas
+3. Mantienes todo el resto del código (listFiles, loadCollapsedProjectStructure, getFileIcon, etc.)
+
+Y también actualiza los event listeners:
+
+En la parte donde tienes esto:
+
+```javascript
+// Event listeners para sidebar
+document.getElementById('toggle-sidebar').addEventListener('click', toggleProjectSidebar);
+document.getElementById('close-sidebar').addEventListener('click', closeProjectSidebar);
+```
+
+Déjalo exactamente igual, porque los nombres de las funciones siguen siendo los mismos (toggleProjectSidebar y closeProjectSidebar), solo que ahora tienen una implementación mejorada.
+
+¡Así el sidebar se integrará perfectamente sin superponerse! 🚀
+
+
+

@@ -1,0 +1,404 @@
+﻿Arreglar consola
+¡Excelente idea, amigo! Vamos a transformar ese input de una línea en un área de texto de 6 líneas con scroll y botones dedicados. Te ayudo con las modificaciones:
+
+## Modificaciones en `index.html`:
+
+**Reemplaza esta sección del console-container:**
+```html
+<div class="console-container">
+    <h2>Consola JavaScript</h2>
+    <textarea id="consoleOutput" readonly></textarea>
+    
+    <!-- REEMPLAZAR ESTA PARTE -->
+    <div class="console-input-container">
+        <input type="text" id="consoleInput" placeholder="Escribe comandos aquí (presiona Enter)">
+    </div>
+    
+    <div class="console-buttons">
+        <button id="runButton" class="button">Ejecutar Código</button>
+        <button id="clearConsole" class="button">Limpiar Consola</button>
+    </div>
+</div>
+```
+
+**Por esta nueva versión mejorada:**
+```html
+<div class="console-container">
+    <h2>Consola JavaScript</h2>
+    <textarea id="consoleOutput" readonly></textarea>
+    
+    <!-- NUEVA CONSOLA INTERACTIVA MEJORADA -->
+    <div class="console-interactive">
+        <div class="console-interactive-header">
+            <h3>Consola Interactiva</h3>
+            <small>Escribe código JavaScript para ejecución rápida</small>
+        </div>
+        
+        <div class="console-input-container">
+            <textarea id="consoleInput" rows="6" placeholder="Escribe tu código JavaScript aquí... 
+Ejemplo: 
+for (let i = 0; i < 5; i++) {
+    console.log('Número:', i);
+}"></textarea>
+        </div>
+        
+        <div class="console-interactive-buttons">
+            <button id="runConsoleButton" class="button">▶ Ejecutar Código</button>
+            <button id="clearConsoleInput" class="button">🗑️ Limpiar Área</button>
+            <button id="clearConsole" class="button">🧹 Limpiar Consola</button>
+        </div>
+    </div>
+</div>
+```
+
+## Modificaciones en `index.css`:
+
+**Agrega estos estilos al final del archivo CSS:**
+```css
+/* Estilos para la nueva consola interactiva mejorada */
+.console-interactive {
+    margin: 20px 0;
+    padding: 15px;
+    background: #2d2d30;
+    border-radius: 8px;
+    border: 1px solid #3c3c3c;
+}
+
+.console-interactive-header h3 {
+    margin: 0 0 5px 0;
+    color: #4ec9b0;
+    font-size: 1.1rem;
+}
+
+.console-interactive-header small {
+    color: #888;
+    font-size: 0.85rem;
+}
+
+.console-input-container textarea {
+    width: 98%;
+    height: 120px; /* 6 líneas aproximadamente */
+    padding: 12px;
+    background: #1a1a1a;
+    color: #d4d4d4;
+    border: 1px solid #3c3c3c;
+    border-radius: 6px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.95rem;
+    resize: vertical;
+    margin: 10px 0;
+    line-height: 1.4;
+}
+
+.console-input-container textarea:focus {
+    outline: none;
+    border-color: #007acc;
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
+
+.console-interactive-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.console-interactive-buttons .button {
+    padding: 10px 15px;
+    background: #007acc;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 0.9rem;
+}
+
+.console-interactive-buttons .button:hover {
+    background: #005a9e;
+}
+
+.console-interactive-buttons .button:active {
+    transform: translateY(1px);
+}
+
+/* Estilo específico para cada botón */
+#runConsoleButton {
+    background: #28a745;
+}
+
+#runConsoleButton:hover {
+    background: #218838;
+}
+
+#clearConsoleInput {
+    background: #ffc107;
+    color: #212529;
+}
+
+#clearConsoleInput:hover {
+    background: #e0a800;
+}
+
+#clearConsole {
+    background: #dc3545;
+}
+
+#clearConsole:hover {
+    background: #c82333;
+}
+
+/* Scrollbar personalizado para el textarea */
+.console-input-container textarea::-webkit-scrollbar {
+    width: 8px;
+}
+
+.console-input-container textarea::-webkit-scrollbar-track {
+    background: #2d2d30;
+    border-radius: 4px;
+}
+
+.console-input-container textarea::-webkit-scrollbar-thumb {
+    background: #007acc;
+    border-radius: 4px;
+}
+
+.console-input-container textarea::-webkit-scrollbar-thumb:hover {
+    background: #005a9e;
+}
+```
+
+## Modificaciones en `index.js`:
+
+**En la sección de configuración de la consola, reemplaza este código:**
+```javascript
+// ===== CONFIGURACIÓN DE LA CONSOLA =====
+const consoleOutput = document.getElementById('consoleOutput');
+const consoleInput = document.getElementById('consoleInput');
+
+// Historial de comandos
+let commandHistory = [];
+let historyIndex = -1;
+
+// Limpiar consola
+document.getElementById('clearConsole').addEventListener('click', () => {
+    consoleOutput.value = '';
+});
+
+// Ejecutar código del editor
+document.getElementById('runButton').addEventListener('click', () => {
+    const language = document.getElementById('modeSelector').value;
+    if (language !== "javascript") {
+        addToConsole("La consola solo ejecuta código JavaScript\nCambia el lenguaje a JavaScript para ejecutar código", "error");
+        return;
+    }
+    executeJavaScriptCode(editor.getValue());
+});
+
+// Configurar input de la consola
+consoleInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        const command = consoleInput.value.trim();
+        if (command) {
+            commandHistory.push(command);
+            historyIndex = -1;
+            
+            addToConsole(`> ${command}`, "input");
+            
+            try {
+                const result = new Function(command)();
+                if (result !== undefined) {
+                    addToConsole(String(result));
+                }
+            } catch (error) {
+                addToConsole(`Error: ${error.message}`, "error");
+            }
+            
+            consoleInput.value = '';
+        }
+    }
+    
+    // Navegar por el historial
+    if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (commandHistory.length > 0 && historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            consoleInput.value = commandHistory[commandHistory.length - 1 - historyIndex];
+        }
+    } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (historyIndex > 0) {
+            historyIndex--;
+            consoleInput.value = commandHistory[commandHistory.length - 1 - historyIndex];
+        } else if (historyIndex === 0) {
+            historyIndex = -1;
+            consoleInput.value = '';
+        }
+    }
+});
+```
+
+**Por esta nueva versión mejorada:**
+```javascript
+// ===== CONFIGURACIÓN DE LA CONSOLA MEJORADA =====
+const consoleOutput = document.getElementById('consoleOutput');
+const consoleInput = document.getElementById('consoleInput');
+
+// Historial de comandos (ahora para bloques de código)
+let commandHistory = [];
+let historyIndex = -1;
+
+// ===== EVENT LISTENERS PARA LOS NUEVOS BOTONES =====
+
+// Limpiar consola principal
+document.getElementById('clearConsole').addEventListener('click', () => {
+    consoleOutput.value = '';
+    addToConsole("Consola limpiada", "info");
+});
+
+// Limpiar área de código interactivo
+document.getElementById('clearConsoleInput').addEventListener('click', () => {
+    consoleInput.value = '';
+    consoleInput.focus();
+    addToConsole("Área de código interactivo limpiada", "info");
+});
+
+// Ejecutar código del editor principal
+document.getElementById('runButton').addEventListener('click', () => {
+    const language = document.getElementById('modeSelector').value;
+    if (language !== "javascript") {
+        addToConsole("La consola solo ejecuta código JavaScript\nCambia el lenguaje a JavaScript para ejecutar código", "error");
+        return;
+    }
+    executeJavaScriptCode(editor.getValue(), 'editor');
+});
+
+// Ejecutar código de la consola interactiva
+document.getElementById('runConsoleButton').addEventListener('click', () => {
+    executeConsoleCode();
+});
+
+// Configurar textarea de la consola interactiva
+consoleInput.addEventListener('keydown', function(e) {
+    // Ctrl+Enter para ejecutar
+    if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        executeConsoleCode();
+    }
+    
+    // Navegar por el historial (solo si no hay texto seleccionado y está en la primera o última línea)
+    if (e.key === 'ArrowUp' && (consoleInput.selectionStart === 0 || 
+        consoleInput.value.substring(0, consoleInput.selectionStart).lastIndexOf('\n') === consoleInput.selectionStart - 1)) {
+        e.preventDefault();
+        navigateHistory(-1);
+    } else if (e.key === 'ArrowDown' && consoleInput.selectionStart === consoleInput.value.length) {
+        e.preventDefault();
+        navigateHistory(1);
+    }
+});
+
+// ===== FUNCIONES MEJORADAS =====
+
+// Función para ejecutar código de la consola interactiva
+async function executeConsoleCode() {
+    const code = consoleInput.value.trim();
+    if (!code) {
+        addToConsole("No hay código para ejecutar", "warning");
+        return;
+    }
+
+    // Agregar al historial si es diferente al último comando
+    if (commandHistory.length === 0 || commandHistory[commandHistory.length - 1] !== code) {
+        commandHistory.push(code);
+        if (commandHistory.length > 50) { // Limitar historial a 50 elementos
+            commandHistory.shift();
+        }
+    }
+    historyIndex = -1;
+
+    addToConsole("> Ejecutando código de consola interactiva...", "input");
+    addToConsole(code, "code");
+
+    try {
+        await executeJavaScriptCode(code, 'console');
+    } catch (error) {
+        addToConsole(`Error ejecutando código: ${error.message}`, "error");
+    }
+}
+
+// Función para navegar por el historial
+function navigateHistory(direction) {
+    if (commandHistory.length === 0) return;
+
+    if (direction === -1) { // Flecha arriba
+        if (historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            consoleInput.value = commandHistory[commandHistory.length - 1 - historyIndex];
+        }
+    } else { // Flecha abajo
+        if (historyIndex > 0) {
+            historyIndex--;
+            consoleInput.value = commandHistory[commandHistory.length - 1 - historyIndex];
+        } else if (historyIndex === 0) {
+            historyIndex = -1;
+            consoleInput.value = '';
+        }
+    }
+}
+
+// Modificar la función addToConsole para soportar más tipos
+function addToConsole(text, type = "normal") {
+    const timestamp = new Date().toLocaleTimeString();
+    let prefix;
+    
+    switch (type) {
+        case "error":
+            prefix = `[${timestamp}] ❌ ERROR: `;
+            break;
+        case "warning":
+            prefix = `[${timestamp}] ⚠️ ADVERTENCIA: `;
+            break;
+        case "info":
+            prefix = `[${timestamp}] ℹ️ INFO: `;
+            break;
+        case "input":
+            prefix = `[${timestamp}] > `;
+            break;
+        case "code":
+            prefix = `[${timestamp}] 📝 CÓDIGO:\n`;
+            text = text.split('\n').map(line => '  ' + line).join('\n'); // Indentar código
+            break;
+        case "success":
+            prefix = `[${timestamp}] ✅ ÉXITO: `;
+            break;
+        default:
+            prefix = `[${timestamp}] `;
+    }
+    
+    consoleOutput.value += prefix + text + '\n';
+    consoleOutput.scrollTop = consoleOutput.scrollHeight;
+}
+
+// Modificar la función executeJavaScriptCode para aceptar el origen
+async function executeJavaScriptCode(code, source = 'editor') {
+    if (source === 'editor') {
+        consoleOutput.value = ''; // Solo limpiar si es del editor principal
+        addToConsole("Ejecutando código del editor...", "info");
+    }
+    
+    // El resto del código de executeJavaScriptCode se mantiene igual...
+    // ... (tu código existente de executeJavaScriptCode)
+}
+```
+
+## Resumen de las mejoras:
+
+1. **✅ Textarea de 6 líneas** con scroll vertical
+2. **✅ Botón dedicado** para ejecutar código de la consola interactiva
+3. **✅ Botón para limpiar** solo el área de código interactivo
+4. **✅ Scroll automático** cuando el contenido excede las 6 líneas
+5. **✅ Atajo Ctrl+Enter** para ejecutar rápidamente
+6. **✅ Historial mejorado** que funciona con bloques de código multilínea
+7. **✅ Mensajes más descriptivos** con iconos y colores
+8. **✅ Focus automático** al limpiar el área de código
+
+Ahora tendrás una consola interactiva mucho más poderosa y cómoda para escribir y probar código JavaScript rápidamente. ¿Te parece bien esta implementación?

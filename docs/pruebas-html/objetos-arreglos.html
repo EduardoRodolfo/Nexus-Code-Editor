@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Completa el Código: Objetos y Arreglos</title>
+<style>
+  body { font-family: Arial; padding: 20px; background: #f9f9f9; }
+  .pregunta { margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; background: #fff; border-radius: 5px; }
+  .codigo {
+    background: #eee;
+    padding: 10px;
+    font-family: monospace;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+  }
+  .resultado { font-weight: bold; margin-top: 20px; font-size: 1.2em; }
+  button {
+    padding: 8px 12px;
+    background: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover { background: #005fa3; }
+</style>
+</head>
+<body>
+  <h1>Completa el Código: Objetos y Arreglos</h1>
+  <div id="cuestionario"></div>
+  <button onclick="verificar()">Verificar respuestas</button>
+  <div class="resultado" id="resultado"></div>
+
+  <script>
+    const preguntas = [
+      {
+        texto: "Completa el método que recorre un arreglo y muestra cada elemento:",
+        codigo: `const frutas = ["manzana", "banana", "mango"];
+frutas.____((fruta) => {
+  console.log(fruta);
+});`,
+        opciones: ["map", "forEach", "filter", "reduce"],
+        correcta: "forEach"
+      },
+      {
+        texto: "Completa el operador que clona un objeto:",
+        codigo: `const original = { nombre: "Ana", edad: 25 };
+const copia = ____original;`,
+        opciones: ["=", "...", "Object.assign", "=="],
+        correcta: "..."
+      },
+      {
+        texto: "Completa el método que filtra elementos por condición:",
+        codigo: `const numeros = [1, 2, 3, 4, 5];
+const pares = numeros.____(n => n % 2 === 0);`,
+        opciones: ["map", "filter", "find", "forEach"],
+        correcta: "filter"
+      },
+      {
+        texto: "Completa la forma correcta de acceder a una propiedad de un objeto:",
+        codigo: `const persona = { nombre: "Luis", edad: 30 };
+console.log(persona.____);`,
+        opciones: ["nombre", '"nombre"', "[nombre]", "persona[nombre]"],
+        correcta: "nombre"
+      },
+      {
+        texto: "Completa el método que transforma cada elemento de un arreglo:",
+        codigo: `const precios = [10, 20, 30];
+const conIVA = precios.____(p => p * 1.21);`,
+        opciones: ["filter", "map", "reduce", "forEach"],
+        correcta: "map"
+      }
+    ];
+
+    const contenedor = document.getElementById("cuestionario");
+
+    preguntas.forEach((pregunta, i) => {
+      const div = document.createElement("div");
+      div.className = "pregunta";
+      div.innerHTML = `
+        <p><strong>${pregunta.texto}</strong></p>
+        <pre class="codigo">${pregunta.codigo.replace("____", "_____")}</pre>
+        ${pregunta.opciones.map(opcion =>
+          `<label><input type="radio" name="p${i}" value="${opcion}"> ${opcion}</label><br>`
+        ).join("")}
+      `;
+      contenedor.appendChild(div);
+    });
+
+    function verificar() {
+      let correctas = 0;
+      preguntas.forEach((pregunta, i) => {
+        const seleccionada = document.querySelector(`input[name="p${i}"]:checked`);
+        if (seleccionada && seleccionada.value === pregunta.correcta) {
+          correctas++;
+        }
+      });
+      document.getElementById("resultado").textContent =
+        `Respuestas correctas: ${correctas} de ${preguntas.length}`;
+    }
+  </script>
+</body>
+</html>

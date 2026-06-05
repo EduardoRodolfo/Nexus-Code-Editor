@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operadores de Asignación en JavaScript</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/mode-javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/theme-monokai.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50, #1a2a6c);
+            color: #ecf0f1;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(30, 30, 40, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: #bdc3c7;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .operator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .operator-card {
+            background: rgba(45, 52, 72, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .operator-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            background: rgba(55, 65, 85, 0.9);
+        }
+        
+        .operator-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #3498db;
+        }
+        
+        .operator-symbol {
+            font-size: 2.2rem;
+            font-weight: bold;
+            background: #2c3e50;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .operator-name {
+            font-size: 1.6rem;
+            color: #3498db;
+        }
+        
+        .editor-container {
+            height: 180px;
+            position: relative;
+            background: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 15px 0;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .editor {
+            height: 100%;
+            width: 100%;
+            font-size: 16px;
+        }
+        
+        .card-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .btn-run {
+            background: linear-gradient(to right, #27ae60, #1e8449);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-run:hover {
+            background: linear-gradient(to right, #219653, #196f3d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .result {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Consolas', monospace;
+            border-left: 4px solid #e74c3c;
+            margin-top: 15px;
+            min-height: 60px;
+        }
+        
+        .result-value {
+            color: #2ecc71;
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 1.2rem;
+            word-break: break-all;
+        }
+        
+        .comment {
+            color: #95a5a6;
+            font-style: italic;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #9b59b6;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            color: #bdc3c7;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .operator-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        .console-header {
+            background: linear-gradient(to right, #2c3e50, #1a5276);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .console-body {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 0 0 8px 8px;
+            min-height: 100px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .console-message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .console-message.result {
+            color: #81c784;
+            border-left: 3px solid #81c784;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Operadores de Asignación en JavaScript</h1>
+            <p class="subtitle">Aprende y prueba los diferentes operadores de asignación con ejemplos interactivos</p>
+        </header>
+        
+        <div class="operator-grid">
+            <!-- Asignación básica -->
+            <div class="operator-card">
+                <div class="operator-header">
+                    <div class="operator-symbol">=</div>
+                    <div class="operator-name">Asignación básica</div>
+                </div>
+                <div class="editor-container">
+                    <div class="editor" id="editor1">// Asignación básica
+let contador = 0;
+contador = 5; // Asignación simple
+console.log(contador);</div>
+                </div>
+                <div class="card-controls">
+                    <button class="btn-run" onclick="runCode('editor1', 'result1')">
+                        <i>▶</i> Ejecutar Código
+                    </button>
+                </div>
+                <div class="result" id="result1">Resultado aparecerá aquí...</div>
+                <div class="comment">// El operador = asigna el valor del lado derecho a la variable del lado izquierdo</div>
+            </div>
+            
+            <!-- Suma y asignación -->
+            <div class="operator-card">
+                <div class="operator-header">
+                    <div class="operator-symbol">+=</div>
+                    <div class="operator-name">Suma y asignación</div>
+                </div>
+                <div class="editor-container">
+                    <div class="editor" id="editor2">// Suma y asignación
+let total = 10;
+total += 5; // Equivalente a: total = total + 5
+console.log(total);</div>
+                </div>
+                <div class="card-controls">
+                    <button class="btn-run" onclick="runCode('editor2', 'result2')">
+                        <i>▶</i> Ejecutar Código
+                    </button>
+                </div>
+                <div class="result" id="result2">Resultado aparecerá aquí...</div>
+                <div class="comment">// Suma el valor de la derecha a la variable y asigna el resultado</div>
+            </div>
+            
+            <!-- Resta y asignación -->
+            <div class="operator-card">
+                <div class="operator-header">
+                    <div class="operator-symbol">-=</div>
+                    <div class="operator-name">Resta y asignación</div>
+                </div>
+                <div class="editor-container">
+                    <div class="editor" id="editor3">// Resta y asignación
+let saldo = 100;
+saldo -= 25; // Equivalente a: saldo = saldo - 25
+console.log(saldo);</div>
+                </div>
+                <div class="card-controls">
+                    <button class="btn-run" onclick="runCode('editor3', 'result3')">
+                        <i>▶</i> Ejecutar Código
+                    </button>
+                </div>
+                <div class="result" id="result3">Resultado aparecerá aquí...</div>
+                <div class="comment">// Resta el valor de la derecha a la variable y asigna el resultado</div>
+            </div>
+            
+            <!-- Multiplicación y asignación -->
+            <div class="operator-card">
+                <div class="operator-header">
+                    <div class="operator-symbol">*=</div>
+                    <div class="operator-name">Multiplicación y asignación</div>
+                </div>
+                <div class="editor-container">
+                    <div class="editor" id="editor4">// Multiplicación y asignación
+let precio = 50;
+precio *= 1.15; // Aumenta el precio en un 15%
+console.log(precio);</div>
+                </div>
+                <div class="card-controls">
+                    <button class="btn-run" onclick="runCode('editor4', 'result4')">
+                        <i>▶</i> Ejecutar Código
+                    </button>
+                </div>
+                <div class="result" id="result4">Resultado aparecerá aquí...</div>
+                <div class="comment">// Multiplica la variable por el valor de la derecha y asigna el resultado</div>
+            </div>
+            
+            <!-- División y asignación -->
+            <div class="operator-card">
+                <div class="operator-header">
+                    <div class="operator-symbol">/=</div>
+                    <div class="operator-name">División y asignación</div>
+                </div>
+                <div class="editor-container">
+                    <div class="editor" id="editor5">// División y asignación
+let presupuesto = 1000;
+presupuesto /= 4; // Divide el presupuesto en 4 partes
+console.log(presupuesto);</div>
+                </div>
+                <div class="card-controls">
+                    <button class="btn-run" onclick="runCode('editor5', 'result5')">
+                        <i>▶</i> Ejecutar Código
+                    </button>
+                </div>
+                <div class="result" id="result5">Resultado aparecerá aquí...</div>
+                <div class="comment">// Divide la variable entre el valor de la derecha y asigna el resultado</div>
+            </div>
+            
+            <!-- Módulo y asignación -->
+            <div class="operator-card">
+                <div class="operator-header">
+                    <div class="operator-symbol">%=</div>
+                    <div class="operator-name">Módulo y asignación</div>
+                </div>
+                <div class="editor-container">
+                    <div class="editor" id="editor6">// Módulo y asignación
+let numero = 17;
+numero %= 5; // Calcula el residuo de la división
+console.log(numero);</div>
+                </div>
+                <div class="card-controls">
+                    <button class="btn-run" onclick="runCode('editor6', 'result6')">
+                        <i>▶</i> Ejecutar Código
+                    </button>
+                </div>
+                <div class="result" id="result6">Resultado aparecerá aquí...</div>
+                <div class="comment">// Calcula el residuo de la división y asigna el resultado</div>
+            </div>
+            
+            <!-- Exponenciación y asignación -->
+            <div class="operator-card">
+                <div class="operator-header">
+                    <div class="operator-symbol">**=</div>
+                    <div class="operator-name">Exponenciación y asignación</div>
+                </div>
+                <div class="editor-container">
+                    <div class="editor" id="editor7">// Exponenciación y asignación
+let base = 3;
+base **= 4; // Eleva la base a la cuarta potencia
+console.log(base);</div>
+                </div>
+                <div class="card-controls">
+                    <button class="btn-run" onclick="runCode('editor7', 'result7')">
+                        <i>▶</i> Ejecutar Código
+                    </button>
+                </div>
+                <div class="result" id="result7">Resultado aparecerá aquí...</div>
+                <div class="comment">// Eleva la variable a la potencia indicada y asigna el resultado</div>
+            </div>
+        </div>
+        
+        <div class="console-header">
+            <span>📟 Consola de Salida</span>
+            <span>🟢 JavaScript en Vivo</span>
+        </div>
+        <div class="console-body" id="consoleOutput">
+            <div class="console-message result">Bienvenido al editor de operadores de asignación de JavaScript</div>
+            <div class="console-message result">Ejecuta cualquier ejemplo para ver los resultados aquí</div>
+        </div>
+        
+        <footer>
+            <p>✅ Editor Interactivo de JavaScript - Prueba y aprende los operadores de asignación</p>
+            <p>✨ Puedes modificar el código en los editores para experimentar</p>
+        </footer>
+    </div>
+
+    <script>
+        // Inicializar editores Ace
+        document.querySelectorAll('.editor').forEach(editorElement => {
+            const editor = ace.edit(editorElement);
+            editor.setTheme("ace/theme/monokai");
+            editor.session.setMode("ace/mode/javascript");
+            editor.setOptions({
+                fontSize: "14px",
+                showPrintMargin: false,
+                highlightActiveLine: true,
+                highlightSelectedWord: true
+            });
+            editorElement.aceEditor = editor;
+        });
+
+        // Función para ejecutar código
+        function runCode(editorId, resultId) {
+            const editorElement = document.getElementById(editorId);
+            const editor = editorElement.aceEditor;
+            const code = editor.getValue();
+            const resultElement = document.getElementById(resultId);
+            const consoleOutput = document.getElementById('consoleOutput');
+            
+            try {
+                // Capturar console.log
+                const originalConsoleLog = console.log;
+                let logs = [];
+                
+                console.log = function(...args) {
+                    logs.push(args.join(' '));
+                    originalConsoleLog.apply(console, args);
+                };
+                
+                // Ejecutar el código
+                const execute = new Function(code);
+                execute();
+                
+                // Restaurar console.log
+                console.log = originalConsoleLog;
+                
+                // Mostrar resultados
+                if (logs.length > 0) {
+                    resultElement.innerHTML = logs.map(log => 
+                        `<div class="result-value">${log}</div>`
+                    ).join('');
+                } else {
+                    resultElement.innerHTML = '<div class="result-value">(El código se ejecutó, pero no se mostraron resultados)</div>';
+                }
+                
+                // Agregar mensaje a la consola
+                const operatorName = editorElement.closest('.operator-card').querySelector('.operator-name').textContent;
+                const consoleMessage = document.createElement('div');
+                consoleMessage.className = 'console-message result';
+                consoleMessage.innerHTML = `▶ <strong>${operatorName}:</strong> ${logs.join(', ') || 'Ejecución exitosa'}`;
+                consoleOutput.appendChild(consoleMessage);
+                
+            } catch (error) {
+                resultElement.innerHTML = `<div class="result-value" style="color:#e74c3c;">Error: ${error.message}</div>`;
+                
+                const operatorName = editorElement.closest('.operator-card').querySelector('.operator-name').textContent;
+                const consoleMessage = document.createElement('div');
+                consoleMessage.className = 'console-message result';
+                consoleMessage.innerHTML = `▶ <strong>Error en ${operatorName}:</strong> ${error.message}`;
+                consoleMessage.style.color = '#e74c3c';
+                consoleOutput.appendChild(consoleMessage);
+            }
+            
+            // Hacer scroll al final de la consola
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+    </script>
+</body>
+</html>

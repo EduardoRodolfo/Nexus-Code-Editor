@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Laboratorio Modularizado</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  textarea, input { width: 100%; font-family: monospace; height: 180px;}
+  input { height: 30px; margin-bottom: 10px; }
+  button { margin-top: 10px; }
+  .bloque { margin-bottom: 40px; }
+
+  pre {
+    background: #f0f0f0;
+    padding: 10px;
+    overflow-x: auto;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    box-sizing: border-box;
+    max-height: 250px;
+  }
+
+  span[data-tip] { border-bottom: 1px dotted #333; cursor: help; position: relative; }
+  span[data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    background: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    display: block;
+    white-space: nowrap;
+    z-index: 1000;
+    top: 100%;
+    left: 0;
+  }
+</style>
+</head>
+<body>
+  <h1>🧬 Laboratorio Modularizado: Funciones en JavaScript</h1>
+
+  <input type="text" id="nombre" placeholder="Escribe tu nombre">
+
+  <div class="bloque">
+    <h2>🔠 Función Tradicional <span data-tip="Define funciones con la palabra clave 'function'">❓</span></h2>
+    <textarea id="tradicional">
+function saludar(nombre) {
+  return "¡Hola, " + nombre + "!";
+}
+
+console.log(saludar("Eduardo"));
+    </textarea>
+    <button onclick="ejecutarBloque('tradicional')">Ejecutar Tradicional</button>
+    <pre id="resultado-tradicional"></pre>
+  </div>
+
+  <div class="bloque">
+    <h2>🏹 Función Flecha <span data-tip="Forma compacta de declarar funciones">❓</span></h2>
+    <textarea id="flecha">
+const saludar = (nombre) => "¡Hola, " + nombre + "!";
+
+console.log(saludar("Eduardo"));
+    </textarea>
+    <button onclick="ejecutarBloque('flecha')">Ejecutar Flecha</button>
+    <pre id="resultado-flecha"></pre>
+  </div>
+
+  <div class="bloque">
+    <h2>🎭 Función Callback <span data-tip="Una función que se pasa como argumento a otra">❓</span></h2>
+    <textarea id="callback">
+function procesarEntrada(nombre, funcionSaludo) {
+  return funcionSaludo(nombre);
+}
+
+console.log(procesarEntrada("Eduardo", function(n) {
+  return "Saludos a " + n;
+}));
+    </textarea>
+    <button onclick="ejecutarBloque('callback')">Ejecutar Callback</button>
+    <pre id="resultado-callback"></pre>
+  </div>
+  <div class="bloque">
+  <h2>📊 Comparación: Función Tradicional vs Función Flecha</h2>
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background: #ddd;">
+        <th style="border: 1px solid #999; padding: 8px;">🔍 Característica</th>
+        <th style="border: 1px solid #999; padding: 8px;">💼 Tradicional</th>
+        <th style="border: 1px solid #999; padding: 8px;">🏹 Flecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="border: 1px solid #999; padding: 8px;">Sintaxis</td>
+        <td style="border: 1px solid #999; padding: 8px;">function saludar(nombre) { ... }</td>
+        <td style="border: 1px solid #999; padding: 8px;">const saludar = (nombre) => { ... }</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #999; padding: 8px;">this vinculado</td>
+        <td style="border: 1px solid #999; padding: 8px;">Dinámico</td>
+        <td style="border: 1px solid #999; padding: 8px;">Léxico</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #999; padding: 8px;">Uso como método</td>
+        <td style="border: 1px solid #999; padding: 8px;">Sí</td>
+        <td style="border: 1px solid #999; padding: 8px;">No recomendado con this</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #999; padding: 8px;">Uso con new</td>
+        <td style="border: 1px solid #999; padding: 8px;">Permitido</td>
+        <td style="border: 1px solid #999; padding: 8px;">❌ No compatible</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #999; padding: 8px;">Acceso a arguments</td>
+        <td style="border: 1px solid #999; padding: 8px;">Disponible</td>
+        <td style="border: 1px solid #999; padding: 8px;">No disponible</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #999; padding: 8px;">Ideal para...</td>
+        <td style="border: 1px solid #999; padding: 8px;">Funciones complejas</td>
+        <td style="border: 1px solid #999; padding: 8px;">Callbacks, expresiones simples</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="bloque">
+  <h2>🧰 Práctica: Crea tu coche con <code>this</code> <span data-tip="Agrega propiedades para comprender cómo 'this' accede a cada valor">❓</span></h2>
+  <textarea id="this-instalab" style="height: 180px;">
+function Coche(marca, color, neumaticos, tipo, descapotable) {
+  this.marca = marca;
+  this.color = color;
+  this.neumaticos = neumaticos;
+  this.tipo = tipo; // "motor", "eléctrico", "híbrido"
+  this.descapotable = descapotable;
+
+  this.obtenerDescripcion = function() {
+    return "🚗 Marca: " + this.marca +
+           "\n🎨 Color: " + this.color +
+           "\n🛞 Neumáticos: " + this.neumaticos +
+           "\n🔋 Tipo: " + this.tipo +
+           "\n🌤 ¿Descapotable?: " + (this.descapotable ? "Sí" : "No");
+  };
+}
+
+const miCoche = new Coche("Mazda", "Rojo", "Michelin", "híbrido", true);
+console.log(miCoche.obtenerDescripcion());
+  </textarea>
+  <button onclick="ejecutarBloque('this-instalab')">Ejecutar Coche Personalizado</button>
+  <pre id="resultado-this-instalab"></pre>
+</div>
+<div class="bloque">
+  <h2>🏹 Funciones Flecha con objetos <span data-tip="Accede a las propiedades del objeto devuelto por la función flecha">❓</span></h2>
+  <textarea id="flecha-propiedades" style="height: 180px;">
+// Flecha que devuelve un objeto
+const crearAuto = (marca, color) => ({
+  marca: marca,
+  color: color
+});
+
+const miAuto = crearAuto("BMW", "Negro");
+
+console.log("Marca:", miAuto.marca);
+console.log("Color:", miAuto.color);
+  </textarea>
+  <button onclick="ejecutarBloque('flecha-propiedades')">Ejecutar Flecha con objeto</button>
+  <pre id="resultado-flecha-propiedades"></pre>
+</div>
+<div class="bloque">
+  <h2>🧠 Funciones Flecha y Métodos de Arrays <span data-tip="Programación funcional con objetos y flechas">❓</span></h2>
+
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+    <thead>
+      <tr style="background: #ddd;">
+        <th style="border: 1px solid #999; padding: 8px;">🔧 Método</th>
+        <th style="border: 1px solid #999; padding: 8px;">💡 Propósito</th>
+        <th style="border: 1px solid #999; padding: 8px;">📦 Ejemplo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="border: 1px solid #999; padding: 8px;">.map()</td>
+        <td style="border: 1px solid #999; padding: 8px;">Transforma cada elemento</td>
+        <td style="border: 1px solid #999; padding: 8px;">array.map(e => e + 1)</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #999; padding: 8px;">.filter()</td>
+        <td style="border: 1px solid #999; padding: 8px;">Selecciona elementos que cumplen condición</td>
+        <td style="border: 1px solid #999; padding: 8px;">array.filter(e => e > 5)</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #999; padding: 8px;">.reduce()</td>
+        <td style="border: 1px solid #999; padding: 8px;">Acumula valor a partir de elementos</td>
+        <td style="border: 1px solid #999; padding: 8px;">array.reduce((acc, e) => acc + e, 0)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <textarea id="flecha-array" style="height: 180px;">
+const autos = [
+  { marca: "Tesla", tipo: "eléctrico" },
+  { marca: "Ford", tipo: "motor" },
+  { marca: "Toyota", tipo: "híbrido" },
+  { marca: "Chevrolet", tipo: "eléctrico" }
+];
+
+// .map(): crear saludos por marca
+const saludos = autos.map(auto => "Hola, soy un " + auto.marca);
+console.log("🗣️ Saludos:");
+saludos.forEach(s => console.log(s));
+
+// .filter(): solo coches eléctricos
+const electricos = autos.filter(auto => auto.tipo === "eléctrico");
+console.log("\n⚡ Eléctricos:");
+electricos.forEach(e => console.log(e.marca));
+
+// .reduce(): contar cuántos de cada tipo
+const cuentaPorTipo = autos.reduce((contador, auto) => {
+  contador[auto.tipo] = (contador[auto.tipo] || 0) + 1;
+  return contador;
+}, {});
+console.log("\n📊 Conteo por tipo:");
+for (let tipo in cuentaPorTipo) {
+  console.log("Tipo:", tipo, "- Cantidad:", cuentaPorTipo[tipo]);
+}
+  </textarea>
+  <button onclick="ejecutarBloque('flecha-array')">Ejecutar Flechas con Arrays</button>
+  <pre id="resultado-flecha-array"></pre>
+</div>
+<div class="bloque">
+  <h2>🎯 Práctica individual de <code>.map()</code>, <code>.filter()</code> y <code>.reduce()</code> <span data-tip="Métodos esenciales para transformar arrays con funciones flecha">❓</span></h2>
+  <textarea id="flecha-individual" style="height: 180px;">
+// Ejemplo con .map()
+const numeros = [1, 2, 3, 4, 5];
+const dobles = numeros.map(n => n * 2);
+console.log("🔁 Dobles:", dobles); // [2, 4, 6, 8, 10]
+
+// Ejemplo con .filter()
+const edades = [12, 17, 19, 25, 30];
+const adultos = edades.filter(e => e >= 18);
+console.log("\n🚪 Adultos:", adultos); // [19, 25, 30]
+
+// Ejemplo con .reduce()
+const precios = [10, 20, 30, 40];
+const total = precios.reduce((acc, p) => acc + p, 0);
+console.log("\n💰 Total acumulado:", total); // 100
+  </textarea>
+  <button onclick="ejecutarBloque('flecha-individual')">Ejecutar Ejemplos de Arrays</button>
+  <pre id="resultado-flecha-individual"></pre>
+</div>
+<div class="bloque">
+  <h2>🧭 Estructura básica de funciones funcionales <span data-tip="Referencia rápida para métodos como map, filter y reduce">❓</span></h2>
+  
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background-color: #ddd;">
+        <th style="padding: 8px; border: 1px solid #999;">🔧 Método</th>
+        <th style="padding: 8px; border: 1px solid #999;">🧠 Sintaxis</th>
+        <th style="padding: 8px; border: 1px solid #999;">📌 ¿Qué hace?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #999;">.map()</td>
+        <td style="padding: 8px; border: 1px solid #999;">array.map((e) => nuevoValor)</td>
+        <td style="padding: 8px; border: 1px solid #999;">Transforma cada elemento</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #999;">.filter()</td>
+        <td style="padding: 8px; border: 1px solid #999;">array.filter((e) => condición)</td>
+        <td style="padding: 8px; border: 1px solid #999;">Selecciona elementos que cumplen una condición</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #999;">.reduce()</td>
+        <td style="padding: 8px; border: 1px solid #999;">array.reduce((acc, e) => nuevoAcc, inicial)</td>
+        <td style="padding: 8px; border: 1px solid #999;">Acumula valor desde el array</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #999;">.find()</td>
+        <td style="padding: 8px; border: 1px solid #999;">array.find((e) => condición)</td>
+        <td style="padding: 8px; border: 1px solid #999;">Devuelve el primer que cumple la condición</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #999;">.some()</td>
+        <td style="padding: 8px; border: 1px solid #999;">array.some((e) => condición)</td>
+        <td style="padding: 8px; border: 1px solid #999;">Devuelve true si al menos uno cumple</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #999;">.every()</td>
+        <td style="padding: 8px; border: 1px solid #999;">array.every((e) => condición)</td>
+        <td style="padding: 8px; border: 1px solid #999;">Devuelve true si todos cumplen</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top: 10px;">💡 Esta guía permite al estudiante identificar qué método usar según su objetivo: transformar, filtrar, acumular o validar.</p>
+</div>
+<div class="bloque">
+  <h2>🎯 Laboratorio de desafíos funcionales <span data-tip="Selecciona un método y un nivel para resolver el reto con funciones flecha">❓</span></h2>
+
+  <div>
+    <label for="metodo-selector">📂 Método:</label>
+    <select id="metodo-selector" onchange="actualizarNiveles()" style="margin-bottom:10px;">
+      <option value="">-- Elegir método --</option>
+      <option value="map">.map()</option>
+      <option value="filter">.filter()</option>
+      <option value="reduce">.reduce()</option>
+      <option value="find">.find()</option>
+      <option value="some">.some()</option>
+      <option value="every">.every()</option>
+    </select>
+  </div>
+
+<div>
+  <label for="nivel-selector">📊 Nivel:</label>
+  <select id="nivel-selector" onchange="mostrarDesafio()" style="margin-bottom:10px;">
+    <option value="">-- Elegir nivel --</option>
+    <option value="principiante">Principiante</option>
+    <option value="intermedio">Intermedio</option>
+    <option value="avanzado">Avanzado</option>
+  </select>
+</div>
+
+  <div id="contenedor-desafio"></div>
+</div>
+
+<script>
+const datosDesafios = {
+  map: {
+    principiante: {
+      codigo: `const numeros = [1, 2, 3, 4, 5];\n// Duplica cada número\nconst duplicados = numeros.map(n => n * 2);\nconsole.log(duplicados);`,
+      pista: "Usa el método map para transformar cada elemento multiplicándolo por 2."
+    },
+    intermedio: {
+      codigo: `const personas = [{nombre: "Ana", edad: 25}, {nombre: "Luis", edad: 30}];\n// Crea un array de strings: "Nombre: [nombre], Edad: [edad]"\nconst strings = personas.map(p => \`Nombre: \${p.nombre}, Edad: \${p.edad}\`);\nconsole.log(strings);`,
+      pista: "Usa map y template strings para crear un string por cada objeto."
+    },
+    avanzado: {
+      codigo: `const palabras = ["hola", "mundo", "javascript"];\n// Convierte cada palabra a su versión capitalizada (primera letra mayúscula)\nconst capitalizadas = palabras.map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1));\nconsole.log(capitalizadas);`,
+      pista: "Usa charAt(0).toUpperCase() y luego concatena el resto de la palabra."
+    }
+  },
+  filter: {
+    principiante: {
+      codigo: `const numeros = [10, 15, 20, 25, 30];\n// Filtra los números mayores a 20\nconst mayores = numeros.filter(n => n > 20);\nconsole.log(mayores);`,
+      pista: "La condición debe ser n > 20."
+    },
+    intermedio: {
+      codigo: `const productos = [{nombre: "Camiseta", stock: 10}, {nombre: "Pantalon", stock: 0}];\n// Filtra los productos que tengan stock (stock > 0)\nconst conStock = productos.filter(p => p.stock > 0);\nconsole.log(conStock);`,
+      pista: "Filtra los objetos que tengan stock mayor a 0."
+    },
+    avanzado: {
+      codigo: `const palabras = ["sol", "luna", "estrella", "nube"];\n// Filtra las palabras que contengan la letra 'e'\nconst conE = palabras.filter(palabra => palabra.includes('e'));\nconsole.log(conE);`,
+      pista: "Usa el método includes para verificar si contiene 'e'."
+    }
+  },
+  reduce: {
+    principiante: {
+      codigo: `const numeros = [1, 2, 3, 4, 5];\n// Suma todos los números\nconst suma = numeros.reduce((acum, num) => acum + num, 0);\nconsole.log(suma);`,
+      pista: "El acumulador empieza en 0 y se suma cada número."
+    },
+    intermedio: {
+      codigo: `const palabras = ["hola", "que", "tal"];\n// Concatena todas las palabras en una frase\nconst frase = palabras.reduce((acum, palabra) => acum + " " + palabra, "");\nconsole.log(frase.trim());`,
+      pista: "Reduce concatenando con un espacio. Luego usa trim para quitar el espacio inicial."
+    },
+    avanzado: {
+      codigo: `const ventas = [{producto: "A", total: 100}, {producto: "B", total: 200}, {producto: "A", total: 50}];\n// Suma el total de ventas del producto "A"\nconst totalA = ventas.reduce((acum, venta) => venta.producto === "A" ? acum + venta.total : acum, 0);\nconsole.log(totalA);`,
+      pista: "Acumula solo si el producto es 'A'."
+    }
+  },
+  find: {
+    principiante: {
+      codigo: `const numeros = [5, 12, 8, 130, 44];\n// Encuentra el primer número mayor a 10\nconst encontrado = numeros.find(n => n > 10);\nconsole.log(encontrado);`,
+      pista: "La condición es n > 10."
+    },
+    intermedio: {
+      codigo: `const personas = [{id: 1, nombre: "Juan"}, {id: 2, nombre: "Maria"}];\n// Encuentra la persona con id 2\nconst persona = personas.find(p => p.id === 2);\nconsole.log(persona);`,
+      pista: "Busca por id igual a 2."
+    },
+    avanzado: {
+      codigo: `const palabras = ["sol", "luna", "estrella", "nube"];\n// Encuentra la primera palabra que tenga más de 4 letras\nconst palabraLarga = palabras.find(p => p.length > 4);\nconsole.log(palabraLarga);`,
+      pista: "Usa la condición sobre la longitud."
+    }
+  },
+  some: {
+    principiante: {
+      codigo: `const edades = [15, 22, 17, 25];\n// Verifica si hay al menos un adulto (edad>=18)\nconst hayAdulto = edades.some(edad => edad >= 18);\nconsole.log(hayAdulto);`,
+      pista: "Condición: edad >= 18."
+    },
+    intermedio: {
+      codigo: `const productos = [{nombre: "Camiseta", stock: 0}, {nombre: "Pantalon", stock: 5}];\n// Verifica si hay algún producto sin stock\nconst haySinStock = productos.some(p => p.stock === 0);\nconsole.log(haySinStock);`,
+      pista: "Condición: stock igual a 0."
+    },
+    avanzado: {
+      codigo: `const palabras = ["sol", "luna", "cielo"];\n// Verifica si alguna palabra contiene la letra 'i'\nconst contieneI = palabras.some(p => p.includes('i'));\nconsole.log(contieneI);`,
+      pista: "Usa includes para la letra 'i'."
+    }
+  },
+  every: {
+    principiante: {
+      codigo: `const edades = [19, 22, 25, 30];\n// Verifica si todos son adultos (edad>=18)\nconst todosAdultos = edades.every(edad => edad >= 18);\nconsole.log(todosAdultos);`,
+      pista: "Condición: edad >= 18."
+    },
+    intermedio: {
+      codigo: `const productos = [{nombre: "Camiseta", stock: 5}, {nombre: "Pantalon", stock: 3}];\n// Verifica si todos los productos tienen stock > 0\nconst todosConStock = productos.every(p => p.stock > 0);\nconsole.log(todosConStock);`,
+      pista: "Condición: stock > 0."
+    },
+    avanzado: {
+      codigo: `const palabras = ["sol", "sal", "si"];\n// Verifica si todas las palabras empiezan con 's'\nconst empiezanConS = palabras.every(p => p.startsWith('s'));\nconsole.log(empiezanConS);`,
+      pista: "Usa el método startsWith."
+    }
+  }
+};
+
+function actualizarNiveles() {
+  const metodo = document.getElementById("metodo-selector").value;
+  const nivelSelector = document.getElementById("nivel-selector");
+  
+  nivelSelector.innerHTML = '<option value="">-- Elegir nivel --</option>';
+  
+  if (metodo && datosDesafios[metodo]) {
+    const niveles = ["principiante", "intermedio", "avanzado"];
+    
+    niveles.forEach(nivel => {
+      if (datosDesafios[metodo][nivel]) {
+        const opt = document.createElement("option");
+        opt.value = nivel;
+        opt.textContent = nivel.charAt(0).toUpperCase() + nivel.slice(1);
+        nivelSelector.appendChild(opt);
+      }
+    });
+  }
+}
+
+function mostrarDesafio() {
+  const metodo = document.getElementById("metodo-selector").value;
+  const nivel = document.getElementById("nivel-selector").value;
+  
+  if (metodo && nivel) {
+    const desafio = datosDesafios[metodo][nivel];
+    
+    if (desafio) {
+      document.getElementById("contenedor-desafio").innerHTML = `
+        <h3>🧪 Desafío ${nivel.charAt(0).toUpperCase() + nivel.slice(1)} de ${metodo}</h3>
+        <textarea id="codigo-${metodo}-${nivel}" style="width:100%; height:120px;">${desafio.codigo}</textarea>
+        <button onclick="ejecutarDesafio('${metodo}', '${nivel}')">Ejecutar</button>
+        <pre id="resultado-${metodo}-${nivel}"></pre>
+        <p style="background:#eef; padding:6px;">💡 Pista: ${desafio.pista}</p>
+      `;
+    }
+  }
+}
+
+function ejecutarDesafio(metodo, nivel) {
+  const idTextarea = `codigo-${metodo}-${nivel}`;
+  const codigo = document.getElementById(idTextarea).value;
+  const idResultado = `resultado-${metodo}-${nivel}`;
+  const preResultado = document.getElementById(idResultado);
+  
+  try {
+    const logs = [];
+    const originalLog = console.log;
+    console.log = (...args) => {
+      logs.push(args.join(' '));
+      originalLog.apply(console, args);
+    };
+    
+    eval(codigo);
+    console.log = originalLog;
+    
+    preResultado.textContent = logs.join('\n');
+  } catch (error) {
+    preResultado.textContent = 'Error: ' + error.message;
+  }
+}
+
+function ejecutarBloque(tipo) {
+  const textarea = document.getElementById(tipo);
+  if (!textarea) return;
+
+  const nombre = document.getElementById('nombre')?.value || 'Visitante';
+  let codigo = textarea.value;
+  codigo = codigo.replace(/Eduardo/g, nombre);
+
+  const resultadoElement = document.getElementById(`resultado-${tipo}`);
+  if (!resultadoElement) return;
+
+  try {
+    let salida = '';
+    const originalLog = console.log;
+    console.log = (...args) => {
+      salida += args.join(' ') + '\n';
+    };
+
+    eval(codigo);
+
+    console.log = originalLog;
+    resultadoElement.textContent = salida;
+  } catch (error) {
+    resultadoElement.textContent = `Error: ${error.message}`;
+  }
+}
+</script>
+</body>
+</html>

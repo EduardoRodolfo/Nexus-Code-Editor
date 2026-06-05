@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio Linux - 7 Tutoriales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <style>
+        /* Variables CSS */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --accent-color: #8b5cf6;
+            --text-color: #1f2937;
+            --bg-color: #ffffff;
+            --card-bg: #f8fafc;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Modo oscuro */
+        .dark-mode {
+            --primary-color: #60a5fa;
+            --secondary-color: #3b82f6;
+            --accent-color: #a78bfa;
+            --text-color: #f3f4f6;
+            --bg-color: #111827;
+            --card-bg: #1f2937;
+            --border-color: #374151;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            transition: var(--transition);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Botón flotante para índice */
+        .floating-index-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .floating-index-btn:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        /* Encabezado */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Índice - Tarjetas */
+        .index-section {
+            padding: 40px 0;
+        }
+
+        .index-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .tutorial-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .tutorial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .tutorial-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .tutorial-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .tutorial-card p {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        /* Contenido de tutoriales */
+        .tutorial-content {
+            padding: 60px 0;
+        }
+
+        .tutorial-section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .tutorial-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tutorial-header i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+
+        .tutorial-header h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        /* Estilos para código */
+        .code-block {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .copy-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        pre {
+            margin: 0;
+            color: #f8f8f2;
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Secciones colapsables */
+        .collapsible {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .collapsible-header:hover {
+            background-color: rgba(37, 99, 235, 0.15);
+        }
+
+        .collapsible-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible.active .collapsible-content {
+            padding: 20px;
+            max-height: 1000px;
+        }
+
+        /* Botón final */
+        .back-to-top {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .back-to-top-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-to-top-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .tutorial-section {
+                padding: 25px;
+            }
+            
+            .tutorial-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .index-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .floating-index-btn {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+
+        /* Barra de progreso */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--border-color);
+            z-index: 1001;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Modo oscuro/claro toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .theme-toggle i {
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de progreso -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Toggle modo oscuro/claro -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <!-- Botón flotante para índice -->
+    <button class="floating-index-btn" id="floatingIndexBtn">
+        <i class="fas fa-list"></i>
+    </button>
+
+    <!-- Encabezado principal -->
+    <header>
+        <div class="container">
+            <h1>🧪 Laboratorio Linux</h1>
+            <p>7 Tutoriales Prácticos para Dominar la Terminal</p>
+        </div>
+    </header>
+
+    <!-- ÍNDICE: 7 tarjetas con enlaces a tutoriales -->
+    <section class="index-section" id="index">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary-color);">📚 Índice de Tutoriales</h2>
+            <div class="index-grid">
+                <!-- Tutorial 1 -->
+                <a href="#tutorial1" class="tutorial-card">
+                    <i class="fas fa-rocket"></i>
+                    <h3>Tutorial 1: Introducción a JS Linux</h3>
+                    <p>Aprende los fundamentos de la terminal Linux y los comandos básicos</p>
+                </a>
+
+                <!-- Tutorial 2 -->
+                <a href="#tutorial2" class="tutorial-card">
+                    <i class="fas fa-folder"></i>
+                    <h3>Tutorial 2: Gestión de Archivos y Permisos</h3>
+                    <p>Domina la manipulación de archivos y el sistema de permisos</p>
+                </a>
+
+                <!-- Tutorial 3 -->
+                <a href="#tutorial3" class="tutorial-card">
+                    <i class="fas fa-edit"></i>
+                    <h3>Tutorial 3: Editores de Texto y Procesamiento</h3>
+                    <p>Usa editores como Vim y Nano, y procesa texto con comandos</p>
+                </a>
+
+                <!-- Tutorial 4 -->
+                <a href="#tutorial4" class="tutorial-card">
+                    <i class="fas fa-cogs"></i>
+                    <h3>Tutorial 4: Gestión de Procesos y Sistema</h3>
+                    <p>Controla procesos, monitorea el sistema y administra servicios</p>
+                </a>
+
+                <!-- Tutorial 5 -->
+                <a href="#tutorial5" class="tutorial-card">
+                    <i class="fas fa-globe"></i>
+                    <h3>Tutorial 5: Redes y Comunicación</h3>
+                    <p>Configura redes, transfiere archivos y diagnostica conexiones</p>
+                </a>
+
+                <!-- Tutorial 6 -->
+                <a href="#tutorial6" class="tutorial-card">
+                    <i class="fas fa-terminal"></i>
+                    <h3>Tutorial 6: Scripting Bash Básico</h3>
+                    <p>Crea scripts bash automatizados para tareas repetitivas</p>
+                </a>
+
+                <!-- Tutorial 7 -->
+                <a href="#tutorial7" class="tutorial-card">
+                    <i class="fas fa-project-diagram"></i>
+                    <h3>Tutorial 7: Proyecto Final Integrador</h3>
+                    <p>Integra todos los conocimientos en un proyecto práctico completo</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENIDO DE LOS 7 TUTORIALES -->
+    <section class="tutorial-content">
+        <div class="container">
+            <!-- Tutorial 1: Introducción -->
+            <div class="tutorial-section" id="tutorial1">
+                <div class="tutorial-header">
+                    <i class="fas fa-rocket"></i>
+                    <h2>🚀 Tutorial 1: Introducción a JS Linux</h2>
+                </div>
+
+                <h3>¿Qué es la Terminal Linux?</h3>
+                <p>La terminal, también conocida como línea de comandos o shell, es una interfaz de texto que permite interactuar directamente con el sistema operativo. A diferencia de las interfaces gráficas, la terminal ofrece mayor control y eficiencia para tareas administrativas y de desarrollo.</p>
+
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        <span>📋 Comandos Básicos</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="collapsible-content">
+                        <p>Estos son los comandos esenciales para empezar:</p>
+                        <ul>
+                            <li><code>pwd</code> - Muestra el directorio actual</li>
+                            <li><code>ls</code> - Lista archivos y directorios</li>
+                            <li><code>cd</code> - Cambia de directorio</li>
+                            <li><code>mkdir</code> - Crea un nuevo directorio</li>
+                            <li><code>touch</code> - Crea un archivo vacío</li>
+                            <li><code>cp</code> - Copia archivos o directorios</li>
+                            <li><code>mv</code> - Mueve o renombra archivos</li>
+                            <li><code>rm</code> - Elimina archivos o directorios</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="language-bash"># Ejemplo: Navegación básica
+pwd                    # Muestra: /home/usuario
+ls -la                 # Lista todos los archivos con detalles
+cd Documentos          # Cambia al directorio Documentos
+mkdir proyecto         # Crea directorio "proyecto"
+cd proyecto            # Entra al directorio
+touch archivo.txt      # Crea archivo vacío
+echo "Hola Linux" > archivo.txt  # Escribe en el archivo
+cat archivo.txt        # Muestra contenido del archivo</code></pre>
+                </div>
+
+                <h3>Consejos para Principiantes</h3>
+                <ul>
+                    <li>Usa la tecla <kbd>Tab</kbd> para autocompletar nombres de archivos y comandos</li>
+                    <li>Presiona <kbd>Ctrl + C</kbd> para cancelar un comando en ejecución</li>
+                    <li>Usa <kbd>Ctrl + L</kbd> o escribe <code>clear</code> para limpiar la terminal</li>
+                    <li>El historial de comandos se navega con las flechas ↑ y ↓</li>
+                </ul>
+            </div>
+
+            <!-- Tutorial 2: Archivos y Permisos -->
+            <div class="tutorial-section" id="tutorial2">
+                <div class="tutorial-header">
+                    <i class="fas fa-folder"></i>
+                    <h2>📁 Tutorial 2: Gestión de Archivos y Permisos</h2>
+                </div>
+
+                <h3>Sistema de Permisos Linux</h3>
+                <p>Linux usa un sistema de permisos basado en tres categorías: propietario (owner), grupo (group) y otros (others). Cada categoría tiene permisos de lectura (r), escritura (w) y ejecución (x).</p>
+
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="language-bash"># Ver permisos de archivos
+ls -l archivo.txt
+# Resultado: -rw-r--r-- 1 usuario grupo 1024 Feb 15 10:30 archivo.txt
+
+# Cambiar permisos (modo numérico)
+chmod 755 script.sh    # rwxr-xr-x
+ch
+
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="language-bash"># Cambiar permisos (modo numérico)
+chmod 755 script.sh    # rwxr-xr-x
+chmod 644 archivo.txt  # rw-r--r--
+chmod 777 todos.sh     # rwxrwxrwx (¡cuidado con este!)
+
+# Cambiar permisos (modo simbólico)
+chmod u+x script.sh    # Agrega ejecución al propietario
+chmod g-w archivo.txt  # Quita escritura al grupo
+chmod o+r archivo.txt  # Agrega lectura a otros</code></pre>
+                </div>
+
+                <h3>Gestión de Archivos Avanzada</h3>
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        <span>🔍 Búsqueda y Filtrado</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            <pre><code class="language-bash"># Buscar archivos por nombre
+find /home -name "*.txt"           # Archivos .txt en /home
+find . -type f -name "config*"     # Archivos que empiezan con "config"
+
+# Buscar archivos por contenido
+grep -r "palabra" /ruta/          # Busca "palabra" en todos los archivos
+grep -i "error" log.txt           # Busca "error" (case insensitive)
+
+# Ordenar y filtrar
+ls -la | sort -k5 -n              # Ordena por tamaño
+ls -la | grep "Feb"               # Filtra archivos de febrero</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tutorial 3: Editores y Procesamiento -->
+            <div class="tutorial-section" id="tutorial3">
+                <div class="tutorial-header">
+                    <i class="fas fa-edit"></i>
+                    <h2>✏️ Tutorial 3: Editores de Texto y Procesamiento</h2>
+                </div>
+
+                <h3>Editores de Texto en Terminal</h3>
+                <p>Los editores de texto en terminal son esenciales para trabajar en servidores remotos o cuando no hay interfaz gráfica disponible.</p>
+
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        <span>📝 Nano - Editor Simple</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            <pre><code class="language-bash"># Abrir archivo con Nano
+nano archivo.txt
+nano -l archivo.txt    # Con números de línea
+
+# Atajos de teclado importantes:
+# Ctrl + O: Guardar (Write Out)
+# Ctrl + X: Salir
+# Ctrl + K: Cortar línea
+# Ctrl + U: Pegar línea
+# Ctrl + W: Buscar
+# Ctrl + \: Reemplazar</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        <span>⚡ Vim - Editor Avanzado</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            <pre><code class="language-bash"># Modos de Vim
+# 1. Modo Normal (comandos)
+# 2. Modo Insertar (escribir)
+# 3. Modo Visual (seleccionar)
+
+# Comandos básicos:
+vim archivo.txt        # Abrir archivo
+i                      # Entrar a modo Insertar
+ESC                    # Volver a modo Normal
+:w                     # Guardar
+:q                     # Salir
+:wq                    # Guardar y salir
+:q!                    # Salir sin guardar
+dd                     # Eliminar línea
+yy                     # Copiar línea
+p                      # Pegar
+/search                # Buscar "search"
+:%s/old/new/g          # Reemplazar "old" por "new"</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Procesamiento de Texto</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="language-bash"># Comandos para procesar texto
+cat archivo.txt                    # Mostrar contenido completo
+head -n 10 archivo.txt             # Primeras 10 líneas
+tail -n 10 archivo.txt             # Últimas 10 líneas
+tail -f log.txt                    # Seguir archivo en tiempo real
+
+# Filtrado y transformación
+grep "error" archivo.txt           # Líneas que contienen "error"
+sed 's/foo/bar/g' archivo.txt      # Reemplazar foo por bar
+awk '{print $1}' archivo.txt       # Imprimir primera columna
+sort archivo.txt                   # Ordenar líneas
+uniq archivo.txt                   # Eliminar duplicados consecutivos</code></pre>
+                </div>
+            </div>
+
+            <!-- Tutorial 4: Procesos y Sistema -->
+            <div class="tutorial-section" id="tutorial4">
+                <div class="tutorial-header">
+                    <i class="fas fa-cogs"></i>
+                    <h2>⚙️ Tutorial 4: Gestión de Procesos y Sistema</h2>
+                </div>
+
+                <h3>Monitoreo de Procesos</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="language-bash"># Ver procesos en ejecución
+ps aux                    # Todos los procesos del sistema
+ps aux | grep proceso     # Buscar proceso específico
+top                       # Monitor interactivo (similar a Task Manager)
+htop                      # Versión mejorada de top (si está instalado)
+
+# Información del sistema
+free -h                   # Memoria RAM disponible
+df -h                     # Espacio en disco
+uptime                    # Tiempo encendido y carga del sistema
+uname -a                  # Información del kernel</code></pre>
+                </div>
+
+                <h3>Control de Procesos</h3>
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        <span>🎯 Señales y Control</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            <pre><code class="language-bash"># Señales comunes a procesos
+kill PID                  # Envía señal TERM (terminar)
+kill -9 PID               # Envía señal KILL (forzar terminación)
+kill -15 PID              # Envía señal TERM (terminación limpia)
+kill -STOP PID            # Pausar proceso
+kill -CONT PID            # Continuar proceso pausado
+
+# Trabajar en segundo plano
+comando &                 # Ejecutar comando en background
+jobs                      # Ver trabajos en background
+fg %1                     # Traer trabajo 1 al foreground
+bg %1                     # Enviar trabajo 1 al background
+Ctrl + Z                  # Pausar proceso actual</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tutorial 5: Redes y Comunicación -->
+            <div class="tutorial-section" id="tutorial5">
+                <div class="tutorial-header">
+                    <i class="fas fa-globe"></i>
+                    <h2>🌐 Tutorial 5: Redes y Comunicación</h2>
+                </div>
+
+                <h3>Diagnóstico de Red</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="language-bash"># Comandos básicos de red
+ping google.com           # Probar conectividad
+traceroute google.com     # Ruta hacia destino
+netstat -tulpn            # Puertos abiertos y conexiones
+ss -tulpn                 # Versión moderna de netstat
+ifconfig                  # Configuración de interfaces (antiguo)
+ip addr show              # Configuración de interfaces (moderno)
+hostname                  # Nombre del host
+whois dominio.com         # Información WHOIS</code></pre>
+                </div>
+
+                <h3>Transferencia de Archivos</h3>
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        <span>📤 SCP y SSH</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            <pre><code class="language-bash"># Copiar archivos con SCP
+scp archivo.txt usuario@servidor:/ruta/        # Subir
+scp usuario@servidor:/ruta/archivo.txt .       # Descargar
+scp -r carpeta/ usuario@servidor:/ruta/        # Copiar carpeta completa
+
+# Conexión SSH
+ssh usuario@servidor                           # Conexión básica
+ssh -p 2222 usuario@servidor                   # Puerto específico
+ssh -i clave.pem usuario@servidor              # Con clave privada
+
+# Generar clave SSH
+ssh-keygen -t rsa -b 4096                      # Generar par de claves
+ssh-copy-id usuario@servidor                   # Copiar clave pública</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tutorial 6: Scripting Bash -->
+            <div class="tutorial-section" id="tutorial6">
+                <div class="tutorial-header">
+                    <i class="fas fa-terminal"></i>
+                    <h2>📜 Tutorial 6: Scripting Bash Básico</h2>
+                </div>
+
+                <h3>Estructura de un Script Bash</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="language-bash">#!/bin/bash
+# Shebang - indica el intérprete a usar
+# Comentarios empiezan con #
+
+# Variables
+NOMBRE="Usuario"
+VERSION=1.0
+
+# Constantes (por convención)
+readonly RUTA_BASE="/home/usuario"
+
+# Uso de variables
+echo "Hola, $NOMBRE"
+echo "Versión: ${VERSION}.0"  # Llaves para claridad</code></pre>
+                </div>
+
+                <h3>Control de Flujo</h3>
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        <span>🔄 Condicionales y Bucles</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            <pre><code class="language-bash">#!/bin/bash
+
+# Condicional if
+if [ "$1" == "start" ]; then
+    echo "Iniciando servicio..."
+elif [ "$1" == "stop" ]; then
+    echo "Deteniendo servicio..."
+else
+    echo "Uso: $0 {start|stop}"
+fi
+
+# Bucle for
+for i in {1..5}; do
+    echo "Iteración $i"
+done
+
+# Bucle while
+CONTADOR=0
+while [ $CONTADOR -lt 3 ]; do
+    echo "Contador: $CONTADOR"
+    ((CONTADOR++))
+done</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Script de Ejemplo Completo</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="language-bash">#!/bin/bash
+# backup.sh - Script de backup automático
+
+# Configuración
+BACKUP_DIR="/backups"
+SOURCE_DIR="/home/usuario/datos"
+DATE=$(date +%Y%m%d_%H%M%S)
+BACKUP_FILE="$BACKUP_DIR/backup_$DATE.tar.gz"
+
+# Verificar si existe directorio de backup
+if [ ! -d "$BACKUP_DIR" ]; then
+    mkdir -p "$BACKUP_DIR"
+    echo "Directorio de backup creado: $BACKUP_DIR"
+fi
+
+# Crear backup
+echo "Creando backup de $SOURCE_DIR..."
+tar -czf "$BACKUP_FILE" "$SOURCE_DIR" 2>/dev/null
+
+# Verificar éxito
+if [ $? -eq 0 ]; then
+    echo "✓ Backup completado: $BACKUP_FILE"
+    echo "Tamaño: $(du -h "$BACKUP_FILE" | cut -f1)"
+else
+    echo "✗ Error al crear backup"
+    exit 1
+fi
+
+# Limpiar backups antiguos (más de 7 días)
+find "$BACKUP_DIR" -name "backup_*.tar.gz" -mtime +7 -delete
+echo "Backups antiguos eliminados"</code></pre>
+                </div>
+            </div>
+
+            <!-- Tutorial 7: Proyecto Final -->
+            <div class="tutorial-section" id="tutorial7">
+                <div class="tutorial-header">
+                    <i class="fas fa-project-diagram"></i>
+                    <h2>🏗️ Tutorial 7: Proyecto Final Integrador</h2>
+                </div>
+
+                <h3>Proyecto: Sistema de Monitoreo de Servidores</h3>
+                <p>Vamos a crear un sistema completo que monitoree múltiples servidores y genere reportes automáticos.</p>
+
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        <span>📊 Estructura del Proyecto</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            <pre><code class="language-bash"># Estructura de directorios
+monitoreo/
+├── bin/                    # Scripts ejecutables
+│   ├── monitor.sh         # Script principal
+│   └── reporte.sh         # Generador de reportes
+├── config/                # Archivos de configuración
+│   └── servidores.conf    # Lista de servidores
+├── logs/                  # Logs del sistema
+├── reportes/              # Reportes generados
+└── README.md              # Documentación</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Script Principal de Monitoreo</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="language-bash">#!/bin/bash
+# monitor.sh - Sistema de monitoreo de servidores
+
+CONFIG_FILE="config/servidores.conf"
+LOG_FILE="logs/monitor_$(date +%Y%m%d).log"
+REPORT_DIR="reportes"
+
+# Crear directorios si no existen
+mkdir -p logs reportes
+
+# Función para verificar servidor
+verificar_servidor() {
+    local servidor=$1
+    local puerto=$2
+    
+    echo "=== Verificando $servidor (puerto $puerto) ===" | tee -a "$LOG_FILE"
+    
+    # Verificar conectividad
+    if ping -c 2 -W 1 "$servidor" > /dev/null 2>&1; then
+        echo "✓ Ping exitoso" | tee -a "$LOG_FILE"
+        
+        # Verificar puerto
+        if nc -z -w 2 "$servidor" "$puerto" > /dev/null 2>&1; then
+            echo "✓ Puerto $puerto accesible" | tee -a "$LOG_FILE"
+            return 0
+        else
+            echo "✗ Puerto $puerto inaccesible" | tee -a "$LOG_FILE"
+            return 1
+        fi
+    else
+        echo "✗ Servidor no responde al ping" | tee -a "$LOG_FILE"
+        return 2
+    fi
+}
+
+# Leer configuración
+echo "Iniciando monitoreo: $(date)" | tee -a "$LOG_FILE"
+echo "======================================" | tee -a "$LOG_FILE"
+
+while IFS=',' read -r nombre servidor puerto; do
+    # Saltar comentarios y líneas vacías
+    [[ "$nombre" =~ ^#.*$ ]] && continue
+    [[ -z "$nombre" ]] && continue
+    
+    verificar_servidor "$servidor" "$puerto"
+    echo "" | tee -a "$LOG_FILE"
+    
+done < "$CONFIG_FILE"
+
+echo "Monitoreo completado: $(date)" | tee -a "$LOG_FILE"
+echo "Log guardado en: $LOG_FILE" | tee -a "$LOG_FILE"
+
+# Generar reporte resumen
+echo "=== RESUMEN DEL MONITOREO ===" > "$REPORT_DIR/resumen_$(date +%Y%m%d_%H%M).txt"
+echo "Fecha: $(date)" >> "$REPORT_DIR/resumen_$(date +%Y%m%d_%H%M).txt"
+echo "Total servidores verificados: $(grep -c "===" "$LOG_FILE")" >> "$REPORT_DIR/resumen_$(date +%Y%m%d_%H%M).txt"
+echo "Servidores con problemas: $(grep -c "✗" "$LOG_FILE")" >> "$REPORT_DIR/resumen_$(date +%Y%m%d_%H%M).txt"
+echo "" >> "$REPORT_DIR/resumen_$(date +%Y%m%d_%H%M).txt"
+grep "✗" "$LOG_FILE" >> "$REPORT_DIR/resumen_$(date +%Y%m%d_%H%M).txt"
+
+echo "Reporte generado en: $REPORT_DIR/resumen_$(date +%Y%m%d_%H%M).txt"</code></pre>
+                </div>
+
+                <h3>Archivo de Configuración</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="language-ini"># config/servidores.conf
+# Formato: nombre,servidor,puerto
+# Servidores web
+web_principal,192.168.1.100,80
+web_secundario,192.168.1.101,443
+
+# Servidores de base de datos
+mysql_principal,192.168.1.200,3306
+mysql_replica,192.168.1.201,3306
+
+# Servidores de aplicaciones
+app_server_1,192.168.1.50,8080
+app_server_2,192.168.1.51,8080
+
+# Servidores de archivos
+file_server,192.168.1.150,21
+file_server_ssh,192.168.1.150,22</code></pre>
+                </div>
+
+                <h3>Script de Reportes Automáticos</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="language-bash">#!/bin/bash
+# reporte.sh - Genera reportes detallados
+
+REPORT_DIR="reportes"
+LOG_DIR="logs"
+DAYS_TO_KEEP=30
+
+echo "Generando reporte de rendimiento..."
+echo "======================================"
+
+# Reporte de uso de disco
+echo "=== USO DE DISCO ===" > "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+df -h >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+echo "" >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+
+# Reporte de memoria
+echo "=== MEMORIA RAM ===" >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+free -h >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+echo "" >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+
+# Reporte de carga del sistema
+echo "=== CARGA DEL SISTEMA ===" >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+uptime >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+echo "" >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+
+# Top 5 procesos por CPU
+echo "=== TOP 5 PROCESOS (CPU) ===" >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+ps aux --sort=-%cpu | head -6 >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+echo "" >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+
+# Top 5 procesos por memoria
+echo "=== TOP 5 PROCESOS (MEMORIA) ===" >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+ps aux --sort=-%mem | head -6 >> "$REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+
+echo "Reporte generado: $REPORT_DIR/rendimiento_$(date +%Y%m%d).txt"
+
+# Limpiar logs y reportes antiguos
+echo "Limpiando archivos antiguos (más de $DAYS_TO_KEEP días)..."
+find "$LOG_DIR" -name "*.log" -mtime +$DAYS_TO_KEEP -delete
+find "$REPORT_DIR" -name "*.txt" -mtime +$DAYS_TO_KEEP -delete
+echo "Limpieza completada"</code></pre>
+                </div>
+
+                <h3>Instalación y Uso</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="language-bash"># 1. Clonar o crear la estructura
+mkdir -p ~/monitoreo/{bin,config,logs,reportes}
+cd ~/monitoreo
+
+# 2. Crear los scripts
+nano bin/monitor.sh    # Pegar el script de monitoreo
+nano bin/reporte.sh    # Pegar el script de reportes
+nano config/servidores.conf  # Configurar servidores
+
+# 3. Dar permisos de ejecución
+chmod +x bin/*.sh
+
+# 4. Ejecutar manualmente
+./bin/monitor.sh
+./bin/reporte.sh
+
+# 5. Programar con cron (ejecución automática)
+crontab -e
+# Agregar estas líneas:
+# */30 * * * * /home/usuario/monitoreo/bin/monitor.sh
+# 0 2 * * * /home/usuario/monitoreo/bin/reporte.sh</code></pre>
+                </div>
+
+                <h3>Mejoras y Extensiones</h3>
+                <ul>
+                    <li><strong>Notificaciones por email:</strong> Configurar mailx o sendmail para enviar alertas</li>
+                    <li><strong>Dashboard web:</strong> Crear una interfaz web con Python Flask o Node.js</li>
+                    <li><strong>Base de datos:</strong> Almacenar métricas en SQLite o MySQL para análisis histórico</li>
+                    <li><strong>Gráficos:</strong> Generar gráficos con gnuplot o exportar a Excel</li>
+                    <li><strong>Monitoreo de servicios:</strong> Agregar verificación de servicios específicos (Apache, MySQL, etc.)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Botón final para volver al inicio -->
+    <div class="back-to-top">
+        <button class="back-to-top-btn" onclick="scrollToTop()">
+            <i class="fas fa-arrow-up"></i>
+            Volver al Índice
+        </button>
+    </div>
+
+    <!-- Scripts JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script>
+        // Inicializar highlight.js para sintaxis de código
+        hljs.highlightAll();
+
+        // Navegación suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Botón flotante para índice
+        document.getElementById('floatingIndexBtn').addEventListener('click', () => {
+            window.scrollTo({
+                top: document.getElementById('index').offsetTop - 80,
+                behavior: 'smooth'
+            });
+        });
+
+        // Función para volver al inicio
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Secciones colapsables
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const collapsible = this.parentElement;
+                collapsible.classList.toggle('active');
+                
+                const icon = this.querySelector('i');
+                if (collapsible.classList.contains('active')) {
+                    icon.className = 'fas fa-chevron-up';
+                } else {
+                    icon.className = 'fas fa-chevron-down';
+                }
+            });
+        });
+
+        // Copiar código al portapapeles
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const codeText = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '¡Copiado!';
+                button.style.backgroundColor = '#10b981';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.backgroundColor = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+                button.textContent = 'Error';
+                button.style.backgroundColor = '#ef4444';
+            });
+        }
+
+        // Barra de progreso de scroll
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // Modo oscuro/claro
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Cargar tema guardado
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-sun';
+        }
+
+        // Sistema de progreso (marcar tutoriales completados)
+        const tutorialSections = document.querySelectorAll('.tutorial-section');
+        const tutorialCards = document.querySelectorAll('.tutorial-card');
+        
+        // Marcar tutorial como visto cuando se desplaza hasta él
+        const observerOptions = {
+            threshold: 0.5
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const tutorialId = entry.target.id;
+                    const correspondingCard = document.querySelector(`a[href="#${tutorialId}"]`);
+                    
+                    if (correspondingCard && !correspondingCard.classList.contains('completed')) {
+                        correspondingCard.classList.add('completed');
+                        correspondingCard.style.borderLeft = '4px solid #10b981';
+                        
+                        // Guardar en localStorage
+                        const completedTutorials = JSON.parse(localStorage.getItem('completedTutorials') || '[]');
+                        if (!completedTutorials.includes(tutorialId)) {
+                            completedTutorials.push(tutorialId);
+                            localStorage.setItem('completedTutorials', JSON.stringify(completedTutorials));
+                        }
+                    }
+                }
+            });
+        }, observerOptions);
+        
+        tutorialSections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // Cargar tutoriales completados
+        const completedTutorials = JSON.parse(localStorage.getItem('completedTutorials') || '[]');
+        completedTutorials.forEach(tutorialId => {
+            const card = document.querySelector(`a[href="#${tutorialId}"]`);
+            if (card) {
+                card.classList.add('completed');
+                card.style.borderLeft = '4px solid #10b981';
+            }
+        });
+
+        // Mostrar estadísticas de progreso
+        function updateProgressStats() {
+            const totalTutorials = tutorialSections.length;
+            const completedCount = completedTutorials.length;
+            const progressPercentage = Math.round((completedCount / totalTutorials) * 100);
+            
+            // Actualizar título con progreso (opcional)
+            document.title = `Laboratorio Linux - ${progressPercentage}% Completado`;
+            
+            // Podrías agregar una barra de progreso visual en el header
+            console.log(`Progreso: ${completedCount}/${totalTutorials} tutoriales (${progressPercentage}%)`);
+        }
+        
+        // Llamar inicialmente
+        updateProgressStats();
+    </script>
+</body>
+</html>

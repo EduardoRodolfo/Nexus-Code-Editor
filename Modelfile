@@ -1,0 +1,4 @@
+﻿FROM ./modelos/qwen2.5-coder-1.5b-instruct-q3_k_m.gguf
+TEMPLATE "{{ .Prompt }}"
+PARAMETER temperature 0.7
+PARAMETER num_ctx 2048

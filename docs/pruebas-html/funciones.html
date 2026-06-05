@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funciones en JavaScript - Tutorial Completo</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            background-attachment: fixed;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            border: 2px solid var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: #4ec9b0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: #bdc3c7;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border: 2px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            background: #2980b9;
+        }
+        
+        .btn-tutorial {
+            background: linear-gradient(135deg, var(--success), #27ae60);
+        }
+        
+        .subenlaces {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 10px 0 10px 20px;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .subenlaces a {
+            font-size: 0.95em;
+            color: #eee;
+            background-color: transparent;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+        
+        .subenlaces a:hover,
+        .subenlaces a:focus,
+        .subenlaces a:active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #eee !important;
+        }
+        
+        .concept-section {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            border-left: 5px solid var(--primary);
+            backdrop-filter: blur(5px);
+        }
+        
+        h2 {
+            color: var(--dark);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        h2::before {
+            content: "➤";
+            margin-right: 15px;
+            color: var(--primary);
+        }
+        
+        .concept-description {
+            margin-bottom: 30px;
+            font-size: 1.15rem;
+            color: #2c3e50;
+            line-height: 1.8;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .examples-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .example {
+            background: #2c3e50;
+            border-radius: 12px;
+            padding: 25px;
+            position: relative;
+            border: 1px solid #3c4b5a;
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .example:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        .example-title {
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #4ec9b0;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .example-title::before {
+            content: "★";
+            color: var(--warning);
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        pre {
+            background: #1a252f;
+            color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            margin-bottom: 20px;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            border: 1px solid #34495e;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(78, 201, 176, 0.9);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .copy-btn:hover {
+            background: #3498db;
+            transform: scale(1.05);
+        }
+        
+        .explanation {
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 8px;
+            padding: 18px;
+            color: #2c3e50;
+            border: 1px dashed var(--primary);
+            margin-bottom: 25px;
+        }
+        
+        .tip-box {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 40px 0;
+            border-left: 5px solid var(--warning);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .tip-title {
+            color: #d35400;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tip-title::before {
+            content: "💡";
+        }
+        
+        .tip-content {
+            color: #2d3436;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            header {
+                padding: 20px 12px;
+                margin-bottom: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+                margin-bottom: 15px;
+            }
+            
+            .btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+            
+            .concept-section {
+                padding: 20px 15px;
+                margin-bottom: 25px;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+            }
+            
+            .concept-description {
+                font-size: 0.95rem;
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .examples-container {
+                grid-template-columns: minmax(250px, 1fr);
+                gap: 20px;
+            }
+            
+            .example {
+                padding: 18px;
+                width: 100%;
+            }
+            
+            .example-title {
+                font-size: 1.15rem;
+            }
+            
+            pre {
+                padding: 15px;
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            body {
+                padding: 5px;
+            }
+            
+            header {
+                padding: 15px 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .btn {
+                padding: 8px 15px;
+                font-size: 0.85rem;
+            }
+            
+            .concept-section {
+                padding: 15px 10px;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .concept-description {
+                font-size: 0.9rem;
+                padding: 12px;
+            }
+            
+            .examples-container {
+                gap: 15px;
+            }
+            
+            .example {
+                padding: 15px;
+            }
+            
+            .example-title {
+                font-size: 1.1rem;
+            }
+            
+            pre {
+                padding: 12px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Funciones en JavaScript</h1>
+            <p class="subtitle">Domina las funciones desde lo básico hasta lo avanzado</p>
+            <div class="btn-group">
+                <a href="index.html" class="btn">← Volver al Editor</a>
+                <a href="#fundamentos" class="btn btn-tutorial">Fundamentos de Funciones</a>
+                <div class="subenlaces">
+                    <a href="#declaracion">Declaración de funciones</a>
+                    <a href="#expresion">Expresiones de funciones</a>
+                    <a href="#flecha">Funciones flecha</a>
+                    <a href="#parametros">Parámetros y argumentos</a>
+                </div>
+                <a href="#avanzado" class="btn btn-tutorial">Temas Avanzados</a>
+                <div class="subenlaces">
+                    <a href="#closure">Closures</a>
+                    <a href="#iife">IIFE</a>
+                    <a href="#callback">Callbacks</a>
+                    <a href="#recursion">Recursión</a>
+                    <a href="#promesas">Promesas</a>
+                </div>
+                <a href="#practico" class="btn btn-tutorial">Ejercicios Prácticos</a>
+            </div>
+        </header>
+        
+        <!-- Introducción -->
+        <div class="explanation" style="background-color: white">
+            <h2>🧠 ¿Qué son las funciones en JavaScript?</h2>
+            <p class="concept-description">
+                Las funciones son bloques de código reutilizables que realizan una tarea específica. Son fundamentales en JavaScript porque:
+                <br><br>
+                ✅ Permiten organizar el código en tareas más pequeñas y manejables<br>
+                ✅ Evitan la repetición de código (principio DRY - Don't Repeat Yourself)<br>
+                ✅ Facilitan la depuración y mantenimiento del código<br>
+                ✅ Son ciudadanos de primera clase (pueden asignarse, pasarse y retornarse)<br>
+                <br>
+                En JavaScript, las funciones pueden definirse de varias formas y tienen características únicas que las hacen extremadamente poderosas.
+            </p>
+        </div>
+        
+        <!-- Fundamentos de funciones -->
+        <section class="concept-section">
+            <h2 id="fundamentos">Fundamentos de Funciones</h2>
+            
+            <p class="concept-description">
+                Las funciones son el corazón de JavaScript. Comencemos con los conceptos básicos:
+            </p>
+            
+            <!-- Declaración de funciones -->
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title" id="declaracion">Declaración de funciones</h3>
+                    <pre><code>// Sintaxis básica
+function saludar(nombre) {
+    return `¡Hola, ${nombre}!`;
+}
+
+console.log(saludar("María")); // ¡Hola, María!
+
+// Características:
+// - Se pueden llamar antes de declararse (hoisting)
+// - Tienen su propio contexto (this)</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <!-- Expresiones de funciones -->
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title" id="expresion">Expresiones de funciones</h3>
+                    <pre><code>// Asignar una función a una variable
+const sumar = function(a, b) {
+    return a + b;
+};
+
+console.log(sumar(5, 3)); // 8
+
+// Características:
+// - No tienen hoisting
+// - Pueden ser anónimas (sin nombre)
+// - Útiles como callbacks</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <!-- Funciones flecha -->
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title" id="flecha">Funciones flecha (Arrow Functions)</h3>
+                    <pre><code>// Sintaxis concisa
+const cuadrado = x => x * x;
+console.log(cuadrado(4)); // 16
+
+// Con múltiples parámetros
+const multiplicar = (a, b) => a * b;
+
+// Con múltiples líneas
+const factorial = n => {
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+};
+
+console.log(factorial(5)); // 120
+
+// Características:
+// - Sintaxis más corta
+// - No tienen su propio 'this'
+// - No tienen objeto 'arguments'</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <!-- Parámetros y argumentos -->
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title" id="parametros">Parámetros y argumentos</h3>
+                    <pre><code>// Parámetros por defecto
+function crearUsuario(nombre, rol = "usuario") {
+    return { nombre, rol };
+}
+
+console.log(crearUsuario("Ana")); 
+// {nombre: "Ana", rol: "usuario"}
+
+// Parámetros rest (...)
+function sumarNumeros(...numeros) {
+    return numeros.reduce((sum, num) => sum + num, 0);
+}
+
+console.log(sumarNumeros(1, 2, 3, 4)); // 10
+
+// Desestructuración de objetos
+function mostrarDatos({nombre, edad}) {
+    return `${nombre} tiene ${edad} años`;
+}
+
+const persona = {nombre: "Carlos", edad: 30};
+console.log(mostrarDatos(persona)); 
+// Carlos tiene 30 años</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Temas avanzados -->
+        <section class="concept-section">
+            <h2 id="avanzado">Temas Avanzados</h2>
+            
+            <div class="tip-box">
+                <div class="tip-title">Consejo Profesional</div>
+                <div class="tip-content">
+                    Dominar estos conceptos avanzados te convertirá en un desarrollador JavaScript más competente y te permitirá escribir código más eficiente y mantenible.
+                </div>
+            </div>
+            
+            <!-- Closures -->
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title" id="closure">Closures</h3>
+                    <pre><code>// Un closure es una función que recuerda su entorno léxico
+function crearContador() {
+    let contador = 0;
+    
+    return function() {
+        contador++;
+        return contador;
+    };
+}
+
+const incrementar = crearContador();
+console.log(incrementar()); // 1
+console.log(incrementar()); // 2
+console.log(incrementar()); // 3
+
+// Características:
+// - Mantienen acceso a variables de su ámbito padre
+// - Útiles para crear datos privados
+// - Base de la programación funcional</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <!-- IIFE -->
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title" id="iife">IIFE (Immediately Invoked Function Expression)</h3>
+                    <pre><code>// Función que se ejecuta inmediatamente
+(function() {
+    console.log("Esta función se ejecuta inmediatamente");
+})();
+
+// Con parámetros
+(function(mensaje) {
+    console.log(mensaje);
+})("¡Hola desde IIFE!");
+
+// Uso moderno (reemplazado por bloques {})
+{
+    let temporal = "Variable temporal";
+    console.log(temporal);
+}
+
+// Características:
+// - Creaban un ámbito privado antes de ES6
+// - Evitaban contaminación del ámbito global
+// - Menos necesarias con let/const</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <!-- Callbacks -->
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title" id="callback">Funciones Callback</h3>
+                    <pre><code>// Una función que se pasa como argumento a otra
+function procesarDatos(datos, callback) {
+    // Simulamos procesamiento asíncrono
+    setTimeout(() => {
+        const resultado = datos.map(item => item * 2);
+        callback(resultado);
+    }, 1000);
+}
+
+procesarDatos([1, 2, 3], resultado => {
+    console.log("Resultado procesado:", resultado);
+    // Después de 1 segundo: [2, 4, 6]
+});
+
+// Uso con array methods
+const numeros = [1, 2, 3, 4, 5];
+const pares = numeros.filter(num => num % 2 === 0);
+console.log(pares); // [2, 4]
+
+// Características:
+// - Fundamentales para operaciones asíncronas
+// - Base de métodos de arrays (map, filter, etc.)
+// - Pueden llevar al "callback hell" si se anidan mucho</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <!-- Recursión -->
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title" id="recursion">Recursión</h3>
+                    <pre><code>// Función que se llama a sí misma
+function factorial(n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
+}
+
+console.log(factorial(5)); // 120
+
+// Recursión con memorización (mejora rendimiento)
+function fibonacci(n, memo = {}) {
+    if (n in memo) return memo[n];
+    if (n <= 2) return 1;
+    
+    memo[n] = fibonacci(n - 1, memo) + fibonacci(n - 2, memo);
+    return memo[n];
+}
+
+console.log(fibonacci(10)); // 55
+
+// Características:
+// - Útil para problemas que pueden dividirse en subproblemas
+// - Requiere un caso base para evitar bucles infinitos
+// - Puede ser menos eficiente que las soluciones iterativas</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <!-- Promesas -->
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title" id="promesas">Promesas y Async/Await</h3>
+                    <pre><code>// Promesa: representa un valor futuro
+function cargarDatos() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const exito = Math.random() > 0.3;
+            exito ? resolve("Datos cargados") : reject("Error de carga");
+        }, 1000);
+    });
+}
+
+// Uso con .then() y .catch()
+cargarDatos()
+    .then(datos => console.log(datos))
+    .catch(error => console.error(error));
+
+// Async/Await (sintaxis más limpia)
+async function procesar() {
+    try {
+        const datos = await cargarDatos();
+        console.log("Procesando:", datos);
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+procesar();
+
+// Características:
+// - Manejan operaciones asíncronas de forma elegante
+// - Async/await hace que el código asíncrono parezca síncrono
+// - Evitan el "callback hell"</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Ejercicios prácticos -->
+        <section class="concept-section">
+            <h2 id="practico">Ejercicios Prácticos</h2>
+            
+            <p class="concept-description">
+                Aplica lo aprendido con estos ejercicios prácticos. Intenta resolverlos antes de ver la solución.
+            </p>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Ejercicio 1: Convertidor de Temperatura</h3>
+                    <pre><code>// Crea una función que convierta Celsius a Fahrenheit
+function celsiusToFahrenheit(celsius) {
+    return (celsius * 9/5) + 32;
+}
+
+console.log("0°C =", celsiusToFahrenheit(0), "°F"); // 32°F
+console.log("100°C =", celsiusToFahrenheit(100), "°F"); // 212°F</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Ejercicio 2: Generador de Contraseñas</h3>
+                    <pre><code>// Crea una función que genere contraseñas aleatorias
+function generarContraseña(longitud = 12) {
+    const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+    let contraseña = "";
+    
+    for (let i = 0; i < longitud; i++) {
+        const randomIndex = Math.floor(Math.random() * caracteres.length);
+        contraseña += caracteres[randomIndex];
+    }
+    
+    return contraseña;
+}
+
+console.log("Contraseña:", generarContraseña()); // Ej: "xT8$kL2!pQ9z"</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Ejercicio 3: Validador de Palíndromos</h3>
+                    <pre><code>// Crea una función que verifique si una palabra es palíndromo
+function esPalindromo(palabra) {
+    const limpia = palabra.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return limpia === limpia.split('').reverse().join('');
+}
+
+console.log("reconocer:", esPalindromo("reconocer")); // true
+console.log("JavaScript:", esPalindromo("JavaScript")); // false
+console.log("Anita lava la tina:", esPalindromo("Anita lava la tina")); // true</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Ejercicio 4: Calculadora de Propinas</h3>
+                    <pre><code>// Crea una función que calcule propinas con diferentes niveles de servicio
+function calcularPropina(total, servicio = "bueno") {
+    const niveles = {
+        "excelente": 0.20,
+        "bueno": 0.15,
+        "regular": 0.10,
+        "malo": 0.05
+    };
+    
+    const porcentaje = niveles[servicio.toLowerCase()] || 0.15;
+    const propina = total * porcentaje;
+    const totalConPropina = total + propina;
+    
+    return {
+        propina: propina.toFixed(2),
+        total: totalConPropina.toFixed(2),
+        porcentaje: `${(porcentaje * 100).toFixed(0)}%`
+    };
+}
+
+console.log(calcularPropina(100, "excelente"));
+// {propina: "20.00", total: "120.00", porcentaje: "20%"}</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Ejercicio 5: Temporizador con Closure</h3>
+                    <pre><code>// Crea un temporizador con closure que mantenga el estado
+function crearTemporizador() {
+    let inicio = null;
+    let intervalo = null;
+    let tiempoTranscurrido = 0;
+    
+    function iniciar() {
+        if (intervalo) return;
+        inicio = Date.now() - tiempoTranscurrido;
+        intervalo = setInterval(() => {
+            tiempoTranscurrido = Date.now() - inicio;
+            console.log(`Tiempo: ${(tiempoTranscurrido/1000).toFixed(1)}s`);
+        }, 100);
+    }
+    
+    function pausar() {
+        if (!intervalo) return;
+        clearInterval(intervalo);
+        intervalo = null;
+    }
+    
+    function resetear() {
+        pausar();
+        tiempoTranscurrido = 0;
+        console.log("Temporizador reiniciado");
+    }
+    
+    return { iniciar, pausar, resetear };
+}
+
+const temporizador = crearTemporizador();
+// temporizador.iniciar();
+// temporizador.pausar();
+// temporizador.resetear();</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Función para copiar código
+        function copyCode(button) {
+            const codeBlock = button.previousElementSibling;
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    button.textContent = "✅ Copiado!";
+                    setTimeout(() => {
+                        button.textContent = "📋 Copiar";
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Error al copiar: ', err);
+                    button.textContent = "❌ Error";
+                    setTimeout(() => {
+                        button.textContent = "📋 Copiar";
+                    }, 2000);
+                });
+        }
+    </script>
+</body>
+</html>

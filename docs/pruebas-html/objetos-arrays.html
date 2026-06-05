@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Desafío Interactivo: Objetos y Arreglos</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+    h1 { color: #333; }
+    .pregunta { margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; background: #fff; border-radius: 5px; }
+    .pregunta h3 { margin-top: 0; color: #0077cc; }
+    .resultado { font-weight: bold; margin-top: 20px; font-size: 1.2em; }
+    button { margin-top: 10px; padding: 8px 12px; background: #0077cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #005fa3; }
+    .correcta { border: 2px solid green; }
+    .incorrecta { border: 2px solid red; }
+    .sin-respuesta { border: 2px dashed orange; }
+    .pista { color: gray; font-style: italic; display: none; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Desafío Interactivo: Objetos y Arreglos</h1>
+  <div id="cuestionario"></div>
+  <button onclick="verificarNivel()">Verificar Nivel</button>
+  <div class="resultado" id="resultado"></div>
+
+  <script>
+    const preguntas = [
+      {
+        nivel: "Principiante",
+        texto: "¿Cuál método se usa para recorrer un arreglo y ejecutar una función por cada elemento?",
+        opciones: ["map", "filter", "forEach", "reduce"],
+        correcta: "forEach",
+        pista: "Este método no devuelve un nuevo arreglo, solo ejecuta una acción."
+      },
+      {
+        nivel: "Principiante",
+        texto: "¿Qué operador se usa para clonar un objeto?",
+        opciones: ["=", "...", "==", "Object.assign"],
+        correcta: "...",
+        pista: "Es un operador de propagación que copia propiedades."
+      },
+      {
+        nivel: "Intermedio",
+        texto: "¿Cuál método devuelve un nuevo arreglo con elementos que cumplen una condición?",
+        opciones: ["forEach", "filter", "find", "map"],
+        correcta: "filter",
+        pista: "Este método filtra sin modificar el original."
+      },
+      {
+        nivel: "Intermedio",
+        texto: "¿Qué estructura representa pares clave-valor?",
+        opciones: ["Arreglo", "Objeto", "Función", "Clase"],
+        correcta: "Objeto",
+        pista: "Se accede a sus valores con notación punto o corchetes."
+      },
+      {
+        nivel: "Avanzado",
+        texto: "¿Qué método transforma cada elemento de un arreglo y devuelve uno nuevo?",
+        opciones: ["map", "reduce", "forEach", "sort"],
+        correcta: "map",
+        pista: "Ideal para aplicar una función a cada elemento y obtener un nuevo arreglo."
+      }
+    ];
+
+    const niveles = {
+      Principiante: [],
+      Intermedio: [],
+      Avanzado: []
+    };
+
+    preguntas.forEach(p => niveles[p.nivel].push(p));
+
+    let nivelActual = "Principiante";
+    let progreso = [];
+
+    const contenedor = document.getElementById("cuestionario");
+
+    function mostrarNivel(nivel) {
+      contenedor.innerHTML = "";
+      niveles[nivel].forEach((pregunta, i) => {
+        const div = document.createElement("div");
+        div.className = "pregunta";
+        div.innerHTML = `
+          <h3>Nivel: ${pregunta.nivel}</h3>
+          <p>${pregunta.texto}</p>
+          ${pregunta.opciones.map(opcion =>
+            `<label><input type="radio" name="p${i}" value="${opcion}"> ${opcion}</label><br>`
+          ).join("")}
+          <button onclick="mostrarPista(${i})">Mostrar pista</button>
+          <p class="pista" id="pista${i}">${pregunta.pista}</p>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function mostrarPista(i) {
+      const pista = document.getElementById(`pista${i}`);
+      pista.style.display = "block";
+    }
+
+    function verificarNivel() {
+      const preguntasNivel = niveles[nivelActual];
+      let correctas = 0;
+
+      preguntasNivel.forEach((pregunta, i) => {
+        const seleccionada = document.querySelector(`input[name="p${i}"]:checked`);
+        const div = document.querySelectorAll(".pregunta")[i];
+        div.classList.remove("correcta", "incorrecta", "sin-respuesta");
+
+        if (seleccionada) {
+          if (seleccionada.value === pregunta.correcta) {
+            correctas++;
+            div.classList.add("correcta");
+          } else {
+            div.classList.add("incorrecta");
+          }
+        } else {
+          div.classList.add("sin-respuesta");
+        }
+      });
+
+      const resultado = document.getElementById("resultado");
+      resultado.textContent = `Nivel ${nivelActual}: ${correctas} de ${preguntasNivel.length} correctas`;
+
+      if (correctas === preguntasNivel.length) {
+        progreso.push(nivelActual);
+        desbloquearSiguienteNivel();
+      }
+    }
+
+    function desbloquearSiguienteNivel() {
+      if (nivelActual === "Principiante") nivelActual = "Intermedio";
+      else if (nivelActual === "Intermedio") nivelActual = "Avanzado";
+      else {
+        document.getElementById("resultado").textContent += " 🎉 ¡Has completado todos los niveles!";
+        return;
+      }
+
+      setTimeout(() => {
+        alert(`¡Nivel desbloqueado: ${nivelActual}!`);
+        mostrarNivel(nivelActual);
+      }, 1000);
+    }
+
+    mostrarNivel(nivelActual);
+  </script>
+</body>
+</html>

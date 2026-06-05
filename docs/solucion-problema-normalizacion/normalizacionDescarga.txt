@@ -1,0 +1,694 @@
+﻿Veo el problema en tu código. El botón de normalización está configurado pero hay algunos issues en la implementación. Te ayudo a corregirlo:
+
+🔧 Problemas Identificados y Soluciones
+
+1. El HTML se limpia pero no se reconstruye correctamente
+
+El ProjectNormalizer extrae CSS y JS pero no los reincorpora al HTML normalizado. Aquí está la corrección:
+
+```javascript
+class ProjectNormalizer {
+    constructor() {
+        this.originalHTML = '';
+        this.normalizedHTML = '';
+        this.combinedCSS = '';
+        this.combinedJS = '';
+    }
+
+    normalizeDownloadedProject(html, css = '', js = '') {
+        this.originalHTML = html;
+        this.combinedCSS = css;
+        this.combinedJS = js;
+
+        this.extractAllCSS();
+        this.extractAllJS();
+        
+        // CORRECIÓN: Reconstruir HTML con CSS y JS incorporados
+        return this.reconstructHTML();
+    }
+
+    extractAllCSS() {
+        const html = this.originalHTML;
+        const internalCSS = this.extractInternalCSS(html);
+        if (internalCSS) {
+            this.combinedCSS += '\n' + internalCSS;
+        }
+        this.extractExternalCSS(html);
+    }
+
+    extractInternalCSS(html) {
+        const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+        const matches = [];
+        let match;
+        while ((match = styleRegex.exec(html)) !== null) {
+            matches.push(match[1].trim());
+        }
+        return matches.join('\n');
+    }
+
+    extractExternalCSS(html) {
+        const linkRegex = /<link[^>]*href=["']([^"']*\.css)["'][^>]*>/gi;
+        let match;
+        while ((match = linkRegex.exec(html)) !== null) {
+            const cssPath = match[1];
+            this.combinedCSS += `\n/* CSS externo: ${cssPath} */\n`;
+            this.combinedCSS += `/* Contenido necesita ser incorporado manualmente */\n`;
+        }
+    }
+
+    extractAllJS() {
+        const html = this.originalHTML;
+        const internalJS = this.extractInternalJS(html);
+        if (internalJS) {
+            this.combinedJS += '\n' + internalJS;
+        }
+        this.extractExternalJS(html);
+    }
+
+    extractInternalJS(html) {
+        const scriptRegex = /<script(?!.*src)[^>]*>([\s\S]*?)<\/script>/gi;
+        const matches = [];
+        let match;
+        while ((match = scriptRegex.exec(html)) !== null) {
+            matches.push(match[1].trim());
+        }
+        return matches.join('\n');
+    }
+
+    extractExternalJS(html) {
+        const scriptRegex = /<script[^>]*src=["']([^"']*\.js)["'][^>]*><\/script>/gi;
+        let match;
+        while ((match = scriptRegex.exec(html)) !== null) {
+            const jsPath = match[1];
+            this.combinedJS += `\n// JS externo: ${jsPath}\n`;
+            this.combinedJS += `// Contenido necesita ser incorporado manualmente\n`;
+        }
+    }
+
+    // NUEVO MÉTODO: Reconstruir HTML con estructura normalizada
+    reconstructHTML() {
+        let html = this.originalHTML;
+        
+        // 1. Extraer solo el body content
+        const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+        const bodyContent = bodyMatch ? bodyMatch[1] : html;
+        
+        // 2. Extraer título
+        const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+        const title = titleMatch ? titleMatch[1] : 'Documento Normalizado';
+        
+        // 3. Crear nuevo HTML estructurado
+        let normalizedHTML = `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>`;
+    
+        // 4. Agregar CSS si existe
+        if (this.combinedCSS.trim()) {
+            normalizedHTML += '\n    <style>\n' + this.combinedCSS + '\n    </style>';
+        }
+        
+        normalizedHTML += '\n</head>\n<body>\n';
+        
+        // 5. Agregar contenido del body
+        normalizedHTML += bodyContent;
+        
+        // 6. Agregar JS si existe (al final del body)
+        if (this.combinedJS.trim()) {
+            normalizedHTML += '\n    <script>\n' + this.combinedJS + '\n    </script>';
+        }
+        
+        normalizedHTML += '\n</body>\n</html>';
+        
+        return {
+            html: normalizedHTML,
+            css: this.combinedCSS,
+            js: this.combinedJS
+        };
+    }
+}
+```
+
+2. Mejorar la función de normalización con manejo de errores
+
+```javascript
+async function normalizeDownloadedProject() {
+    const htmlContent = editor.getValue();
+    
+    // Verificar que hay contenido
+    if (!htmlContent.trim()) {
+        showNotification('No hay contenido para normalizar', true);
+        return;
+    }
+    
+    try {
+        addToConsole('=== INICIANDO NORMALIZACIÓN ===', 'input');
+        addToConsole('Analizando estructura HTML...', 'normal');
+        
+        const normalized = projectNormalizer.normalizeDownloadedProject(htmlContent);
+        
+        // Mostrar estadísticas
+        const originalLines = htmlContent.split('\n').length;
+        const normalizedLines = normalized.html.split('\n').length;
+        const cssLines = normalized.css.split('\n').length;
+        const jsLines = normalized.js.split('\n').length;
+        
+        addToConsole(`✓ HTML procesado: ${originalLines} → ${normalizedLines} líneas`, 'normal');
+        if (cssLines > 0) addToConsole(`✓ CSS extraído: ${cssLines} líneas`, 'normal');
+        if (jsLines > 0) addToConsole(`✓ JavaScript extraído: ${jsLines} líneas`, 'normal');
+        
+        // Actualizar editor con HTML normalizado
+        editor.setValue(normalized.html);
+        
+        showNotification(`Proyecto normalizado: ${cssLines} líneas CSS, ${jsLines} líneas JS`);
+        
+        // Ofertar guardar archivos extraídos
+        if (currentProjectHandle) {
+            setTimeout(() => {
+                if (normalized.css.trim() && confirm('¿Deseas guardar el CSS extraído como archivo separado?')) {
+                    saveNormalizedFile('styles-normalized.css', normalized.css);
+                }
+                if (normalized.js.trim() && confirm('¿Deseas guardar el JavaScript extraído como archivo separado?')) {
+                    saveNormalizedFile('scripts-normalized.js', normalized.js);
+                }
+            }, 1000);
+        }
+        
+    } catch (error) {
+        console.error('Error en normalización:', error);
+        showNotification(`Error normalizando proyecto: ${error.message}`, true);
+        addToConsole(`❌ Error: ${error.message}`, 'error');
+    }
+}
+```
+
+3. Agregar indicador visual de normalización
+
+```javascript
+// Agregar esta función para mostrar progreso
+function showNormalizationProgress(message) {
+    const progress = document.createElement('div');
+    progress.className = 'notification info';
+    progress.innerHTML = `🔄 ${message}`;
+    document.body.appendChild(progress);
+    
+    setTimeout(() => {
+        progress.remove();
+    }, 2000);
+}
+
+// Modificar la función principal para usar el progreso
+async function normalizeDownloadedProject() {
+    const htmlContent = editor.getValue();
+    
+    if (!htmlContent.trim()) {
+        showNotification('No hay contenido para normalizar', true);
+        return;
+    }
+    
+    showNormalizationProgress('Normalizando proyecto...');
+    
+    try {
+        // ... resto del código igual ...
+        
+        showNormalizationProgress('Proyecto normalizado correctamente');
+        
+    } catch (error) {
+        // ... manejo de errores ...
+    }
+}
+```
+
+4. CSS para las notificaciones de progreso (agregar a tu CSS)
+
+```css
+.notification.info {
+    background: #3498db;
+    color: white;
+}
+
+.loading {
+    padding: 10px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+```
+
+🎯 Cómo usar la normalización:
+
+1. Descarga un proyecto web (HTML completo con CSS/JS)
+2. Pégalo en el editor o ábrelo como archivo
+3. Haz clic en "Normalizar Proyecto" en el menú
+4. El sistema:
+   · Extraerá todo el CSS y JavaScript
+   · Reconstruirá el HTML con estructura limpia
+   · Ofrecerá guardar CSS/JS como archivos separados
+
+🔍 Verificación:
+
+Para probar si funciona, pega este HTML de ejemplo:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { color: blue; }
+    </style>
+    <link rel="stylesheet" href="externo.css">
+</head>
+<body>
+    <h1>Test</h1>
+    <script src="externo.js"></script>
+    <script>
+        console.log("Hola mundo");
+    </script>
+</body>
+</html>
+```
+
+¿Te gustaría que ajuste alguna parte específica o necesitas ayuda con algún otro aspecto del normalizador?
+
+____________________________________________________________________
+
+Te voy a mostrar exactamente dónde colocar cada parte del código en tu index.js:
+
+📍 Ubicaciones Específicas para el Código
+
+1. REEMPLAZAR la clase ProjectNormalizer completa (líneas ~120-190)
+
+Busca esto:
+
+```javascript
+class ProjectNormalizer {
+    constructor() {
+        this.originalHTML = '';
+        this.normalizedHTML = '';
+        this.combinedCSS = '';
+        this.combinedJS = '';
+    }
+
+    normalizeDownloadedProject(html, css = '', js = '') {
+        // ... código original ...
+    }
+    // ... métodos originales ...
+}
+```
+
+Y reemplázalo COMPLETAMENTE con:
+
+```javascript
+class ProjectNormalizer {
+    constructor() {
+        this.originalHTML = '';
+        this.normalizedHTML = '';
+        this.combinedCSS = '';
+        this.combinedJS = '';
+    }
+
+    normalizeDownloadedProject(html, css = '', js = '') {
+        this.originalHTML = html;
+        this.combinedCSS = css;
+        this.combinedJS = js;
+
+        this.extractAllCSS();
+        this.extractAllJS();
+        
+        // CORRECIÓN: Reconstruir HTML con CSS y JS incorporados
+        return this.reconstructHTML();
+    }
+
+    extractAllCSS() {
+        const html = this.originalHTML;
+        const internalCSS = this.extractInternalCSS(html);
+        if (internalCSS) {
+            this.combinedCSS += '\n' + internalCSS;
+        }
+        this.extractExternalCSS(html);
+    }
+
+    extractInternalCSS(html) {
+        const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+        const matches = [];
+        let match;
+        while ((match = styleRegex.exec(html)) !== null) {
+            matches.push(match[1].trim());
+        }
+        return matches.join('\n');
+    }
+
+    extractExternalCSS(html) {
+        const linkRegex = /<link[^>]*href=["']([^"']*\.css)["'][^>]*>/gi;
+        let match;
+        while ((match = linkRegex.exec(html)) !== null) {
+            const cssPath = match[1];
+            this.combinedCSS += `\n/* CSS externo: ${cssPath} */\n`;
+            this.combinedCSS += `/* Contenido necesita ser incorporado manualmente */\n`;
+        }
+    }
+
+    extractAllJS() {
+        const html = this.originalHTML;
+        const internalJS = this.extractInternalJS(html);
+        if (internalJS) {
+            this.combinedJS += '\n' + internalJS;
+        }
+        this.extractExternalJS(html);
+    }
+
+    extractInternalJS(html) {
+        const scriptRegex = /<script(?!.*src)[^>]*>([\s\S]*?)<\/script>/gi;
+        const matches = [];
+        let match;
+        while ((match = scriptRegex.exec(html)) !== null) {
+            matches.push(match[1].trim());
+        }
+        return matches.join('\n');
+    }
+
+    extractExternalJS(html) {
+        const scriptRegex = /<script[^>]*src=["']([^"']*\.js)["'][^>]*><\/script>/gi;
+        let match;
+        while ((match = scriptRegex.exec(html)) !== null) {
+            const jsPath = match[1];
+            this.combinedJS += `\n// JS externo: ${jsPath}\n`;
+            this.combinedJS += `// Contenido necesita ser incorporado manualmente\n`;
+        }
+    }
+
+    // NUEVO MÉTODO: Reconstruir HTML con estructura normalizada
+    reconstructHTML() {
+        let html = this.originalHTML;
+        
+        // 1. Extraer solo el body content
+        const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+        const bodyContent = bodyMatch ? bodyMatch[1] : html;
+        
+        // 2. Extraer título
+        const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+        const title = titleMatch ? titleMatch[1] : 'Documento Normalizado';
+        
+        // 3. Crear nuevo HTML estructurado
+        let normalizedHTML = `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>`;
+    
+        // 4. Agregar CSS si existe
+        if (this.combinedCSS.trim()) {
+            normalizedHTML += '\n    <style>\n' + this.combinedCSS + '\n    </style>';
+        }
+        
+        normalizedHTML += '\n</head>\n<body>\n';
+        
+        // 5. Agregar contenido del body
+        normalizedHTML += bodyContent;
+        
+        // 6. Agregar JS si existe (al final del body)
+        if (this.combinedJS.trim()) {
+            normalizedHTML += '\n    <script>\n' + this.combinedJS + '\n    </script>';
+        }
+        
+        normalizedHTML += '\n</body>\n</html>';
+        
+        return {
+            html: normalizedHTML,
+            css: this.combinedCSS,
+            js: this.combinedJS
+        };
+    }
+}
+```
+
+2. REEMPLAZAR la función normalizeDownloadedProject (líneas ~200-250)
+
+Busca esto:
+
+```javascript
+async function normalizeDownloadedProject() {
+    const htmlContent = editor.getValue();
+    
+    try {
+        const normalized = projectNormalizer.normalizeDownloadedProject(htmlContent);
+        
+        // Crear nuevo archivo con el HTML normalizado
+        editor.setValue(normalized.html);
+        
+        // Mostrar resultados en la consola
+        addToConsole('=== PROYECTO NORMALIZADO ===', 'input');
+        // ... resto del código original ...
+    } catch (error) {
+        // ... manejo de errores ...
+    }
+}
+```
+
+Y reemplázala COMPLETAMENTE con:
+
+```javascript
+// Agregar esta función para mostrar progreso (ANTES de normalizeDownloadedProject)
+function showNormalizationProgress(message) {
+    const progress = document.createElement('div');
+    progress.className = 'notification info';
+    progress.innerHTML = `🔄 ${message}`;
+    document.body.appendChild(progress);
+    
+    setTimeout(() => {
+        progress.remove();
+    }, 2000);
+}
+
+async function normalizeDownloadedProject() {
+    const htmlContent = editor.getValue();
+    
+    // Verificar que hay contenido
+    if (!htmlContent.trim()) {
+        showNotification('No hay contenido para normalizar', true);
+        return;
+    }
+    
+    showNormalizationProgress('Normalizando proyecto...');
+    
+    try {
+        addToConsole('=== INICIANDO NORMALIZACIÓN ===', 'input');
+        addToConsole('Analizando estructura HTML...', 'normal');
+        
+        const normalized = projectNormalizer.normalizeDownloadedProject(htmlContent);
+        
+        // Mostrar estadísticas
+        const originalLines = htmlContent.split('\n').length;
+        const normalizedLines = normalized.html.split('\n').length;
+        const cssLines = normalized.css.split('\n').length;
+        const jsLines = normalized.js.split('\n').length;
+        
+        addToConsole(`✓ HTML procesado: ${originalLines} → ${normalizedLines} líneas`, 'normal');
+        if (cssLines > 0) addToConsole(`✓ CSS extraído: ${cssLines} líneas`, 'normal');
+        if (jsLines > 0) addToConsole(`✓ JavaScript extraído: ${jsLines} líneas`, 'normal');
+        
+        // Actualizar editor con HTML normalizado
+        editor.setValue(normalized.html);
+        
+        showNormalizationProgress('Proyecto normalizado correctamente');
+        
+        // Ofertar guardar archivos extraídos
+        if (currentProjectHandle) {
+            setTimeout(() => {
+                if (normalized.css.trim() && confirm('¿Deseas guardar el CSS extraído como archivo separado?')) {
+                    saveNormalizedFile('styles-normalized.css', normalized.css);
+                }
+                if (normalized.js.trim() && confirm('¿Deseas guardar el JavaScript extraído como archivo separado?')) {
+                    saveNormalizedFile('scripts-normalized.js', normalized.js);
+                }
+            }, 1000);
+        }
+        
+    } catch (error) {
+        console.error('Error en normalización:', error);
+        showNotification(`Error normalizando proyecto: ${error.message}`, true);
+        addToConsole(`❌ Error: ${error.message}`, 'error');
+    }
+}
+```
+
+3. AGREGAR el CSS para las notificaciones (en tu archivo CSS)
+
+Agrega esto a tu archivo CSS:
+
+```css
+.notification.info {
+    background: #3498db;
+    color: white;
+    border-left: 4px solid #2980b9;
+}
+
+.loading {
+    padding: 10px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+/* Estilos existentes para notificaciones (si no los tienes) */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    max-width: 300px;
+}
+
+.notification.success {
+    background: #2ecc71;
+    color: white;
+    border-left: 4px solid #27ae60;
+}
+
+.notification.error {
+    background: #e74c3c;
+    color: white;
+    border-left: 4px solid #c0392b;
+}
+```
+
+🗂️ Resumen de Cambios:
+
+1. 📍 Líneas ~120-190: Reemplazar clase ProjectNormalizer completa
+2. 📍 Líneas ~200-250: Reemplazar función normalizeDownloadedProject completa
+3. 📍 Archivo CSS: Agregar estilos para notificaciones de información
+
+🔍 Para verificar que quedó bien:
+
+Después de hacer los cambios, tu estructura debería verse así:
+
+```javascript
+// ... código anterior ...
+
+// ===== PROJECT NORMALIZER ===== 
+class ProjectNormalizer {
+    // NUEVA VERSÓN COMPLETA aquí
+}
+
+// Instancia del normalizador
+const projectNormalizer = new ProjectNormalizer();
+
+// =====================================
+// Funciones para normalizar proyectos descargados
+// =====================================
+
+// FUNCIÓN showNormalizationProgress aquí
+
+async function normalizeDownloadedProject() {
+    // NUEVA VERSIÓN COMPLETA aquí
+}
+
+// ... resto del código ...
+```
+
+¿Necesitas que te ayude con alguna parte específica de la implementación?
+
+____________________________________________________________________
+
+¡Sí, exactamente! Te incluyo todo completo en las ubicaciones específicas:
+
+✅ Todo Incluido en el Código Anterior
+
+1. Manejo de Errores Mejorado:
+
+```javascript
+// Verificación de contenido vacío
+if (!htmlContent.trim()) {
+    showNotification('No hay contenido para normalizar', true);
+    return;
+}
+
+// Try-catch robusto
+try {
+    // ... proceso de normalización ...
+} catch (error) {
+    console.error('Error en normalización:', error);
+    showNotification(`Error normalizando proyecto: ${error.message}`, true);
+    addToConsole(`❌ Error: ${error.message}`, 'error');
+}
+```
+
+2. Indicador Visual de Progreso:
+
+```javascript
+// Función para mostrar progreso
+function showNormalizationProgress(message) {
+    const progress = document.createElement('div');
+    progress.className = 'notification info';
+    progress.innerHTML = `🔄 ${message}`;
+    document.body.appendChild(progress);
+    
+    setTimeout(() => {
+        progress.remove();
+    }, 2000);
+}
+
+// Uso en la normalización
+showNormalizationProgress('Normalizando proyecto...');
+// ... proceso ...
+showNormalizationProgress('Proyecto normalizado correctamente');
+```
+
+3. Feedback Detallado en Consola:
+
+```javascript
+addToConsole('=== INICIANDO NORMALIZACIÓN ===', 'input');
+addToConsole('Analizando estructura HTML...', 'normal');
+
+// Estadísticas detalladas
+addToConsole(`✓ HTML procesado: ${originalLines} → ${normalizedLines} líneas`, 'normal');
+if (cssLines > 0) addToConsole(`✓ CSS extraído: ${cssLines} líneas`, 'normal');
+if (jsLines > 0) addToConsole(`✓ JavaScript extraído: ${jsLines} líneas`, 'normal');
+```
+
+4. Sistema de Confirmación para Guardar:
+
+```javascript
+// Ofertar guardar archivos extraídos
+if (currentProjectHandle) {
+    setTimeout(() => {
+        if (normalized.css.trim() && confirm('¿Deseas guardar el CSS extraído como archivo separado?')) {
+            saveNormalizedFile('styles-normalized.css', normalized.css);
+        }
+        if (normalized.js.trim() && confirm('¿Deseas guardar el JavaScript extraído como archivo separado?')) {
+            saveNormalizedFile('scripts-normalized.js', normalized.js);
+        }
+    }, 1000);
+}
+```
+
+🎯 Flujo Completo que Obtendrás:
+
+1. ✅ Verificación inicial - Comprueba que hay contenido
+2. ✅ Indicador visual - Muestra "Normalizando proyecto..."
+3. ✅ Procesamiento robusto - Con manejo de errores
+4. ✅ Feedback en consola - Estadísticas detalladas
+5. ✅ Indicador de éxito - Muestra "Proyecto normalizado correctamente"
+6. ✅ Opciones de guardado - Pregunta si quieres guardar CSS/JS por separado
+7. ✅ Manejo de errores - Captura y muestra cualquier error elegante
+
+📋 Resumen de Mejoras Incluidas:
+
+· 🛡️ Manejo de errores robusto con try-catch
+· 🔄 Indicadores visuales de progreso
+· 📊 Estadísticas detalladas en consola
+· 💾 Sistema de confirmación para guardar archivos
+· ⚡ Feedback en tiempo real al usuario
+· 🎨 Notificaciones estilizadas para diferentes estados
+
+Sí, todo está incluido en el código que te proporcioné anteriormente. Solo necesitas reemplazar las secciones exactas como te indiqué y agregar el CSS para las notificaciones de información.
+
+¿Quieres que verifique alguna parte específica o necesitas ayuda con la implementación?
+
+

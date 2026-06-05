@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo de Fetch API</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: rgba(20, 20, 40, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .panel h2 {
+            margin-bottom: 20px;
+            color: #61dafb;
+            border-bottom: 2px solid #61dafb;
+            padding-bottom: 10px;
+        }
+        
+        .code-container {
+            background: #1e1e2e;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Consolas', monospace;
+            margin-bottom: 20px;
+        }
+        
+        .code {
+            color: #9cdcfe;
+            line-height: 1.5;
+        }
+        
+        .code .keyword {
+            color: #c586c0;
+        }
+        
+        .code .function {
+            color: #dcdcaa;
+        }
+        
+        .code .string {
+            color: #ce9178;
+        }
+        
+        .code .comment {
+            color: #6a9955;
+        }
+        
+        .btn {
+            background: #61dafb;
+            color: #20232a;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            display: block;
+            width: 100%;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(97, 218, 251, 0.4);
+        }
+        
+        .btn:hover {
+            background: #4fc1e9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(97, 218, 251, 0.6);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .result-container {
+            background: rgba(30, 30, 40, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 200px;
+            margin-top: 20px;
+            overflow: auto;
+        }
+        
+        .result-title {
+            margin-bottom: 15px;
+            color: #61dafb;
+        }
+        
+        pre {
+            background: #1e1e2e;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+        
+        .error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            display: none;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #61dafb;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Ejemplo de Fetch API</h1>
+            <p class="subtitle">Demostración de cómo usar fetch() para obtener datos de una API</p>
+        </header>
+        
+        <div class="content">
+            <div class="panel">
+                <h2>Código JavaScript</h2>
+                <div class="code-container">
+                    <div class="code">
+                        <span class="keyword">async</span> <span class="function">function</span> obtenerDatos() {<br>
+                        &nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Usamos fetch directamente con su contexto original</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;const respuesta = <span class="keyword">await</span> fetch(<span class="string">'https://jsonplaceholder.typicode.com/todos/1'</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;const datos = <span class="keyword">await</span> respuesta.json();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;mostrarResultado(datos);<br>
+                        &nbsp;&nbsp;} <span class="keyword">catch</span> (error) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;mostrarError(<span class="string">"Error al obtener datos: "</span> + error);<br>
+                        &nbsp;&nbsp;}<br>
+                        }<br><br>
+                        <span class="comment">// Alternativa segura con contexto bind</span><br>
+                        const safeFetch = window.fetch.bind(window);<br><br>
+                        <span class="keyword">async</span> <span class="function">function</span> obtenerDatosSeguro() {<br>
+                        &nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;const respuesta = <span class="keyword">await</span> safeFetch(<span class="string">'https://jsonplaceholder.typicode.com/todos/1'</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;const datos = <span class="keyword">await</span> respuesta.json();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;mostrarResultado(datos);<br>
+                        &nbsp;&nbsp;} <span class="keyword">catch</span> (error) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;mostrarError(<span class="string">"Error al obtener datos (safe): "</span> + error);<br>
+                        &nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </div>
+                
+                <button id="btnFetch" class="btn">Obtener datos con fetch</button>
+                <button id="btnSafeFetch" class="btn">Obtener datos con safeFetch</button>
+                <button id="btnError" class="btn">Generar error (fetch inválido)</button>
+            </div>
+            
+            <div class="panel">
+                <h2>Resultado</h2>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando datos...</p>
+                </div>
+                
+                <div class="result-container">
+                    <h3 class="result-title">Datos de la API:</h3>
+                    <pre id="result"></pre>
+                </div>
+                
+                <div class="status success" id="successStatus">¡Datos obtenidos correctamente!</div>
+                <div class="status error" id="errorStatus"></div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Ejemplo educativo de uso de Fetch API | JSONPlaceholder como API de prueba</p>
+        </footer>
+    </div>
+
+    <script>
+        // Elementos del DOM
+        const btnFetch = document.getElementById('btnFetch');
+        const btnSafeFetch = document.getElementById('btnSafeFetch');
+        const btnError = document.getElementById('btnError');
+        const resultElement = document.getElementById('result');
+        const loadingElement = document.getElementById('loading');
+        const successStatus = document.getElementById('successStatus');
+        const errorStatus = document.getElementById('errorStatus');
+        
+        // Función para mostrar el resultado
+        function mostrarResultado(datos) {
+            resultElement.textContent = JSON.stringify(datos, null, 2);
+            successStatus.style.display = 'block';
+            errorStatus.style.display = 'none';
+            loadingElement.style.display = 'none';
+        }
+        
+        // Función para mostrar error
+        function mostrarError(mensaje) {
+            errorStatus.textContent = mensaje;
+            errorStatus.style.display = 'block';
+            successStatus.style.display = 'none';
+            resultElement.textContent = '';
+            loadingElement.style.display = 'none';
+        }
+        
+        // Función para mostrar carga
+        function mostrarCarga() {
+            loadingElement.style.display = 'flex';
+            successStatus.style.display = 'none';
+            errorStatus.style.display = 'none';
+        }
+        
+        // Función original con fetch
+        async function obtenerDatos() {
+            mostrarCarga();
+            try {
+                // Usamos fetch directamente
+                const respuesta = await fetch('https://jsonplaceholder.typicode.com/todos/1');
+                if (!respuesta.ok) {
+                    throw new Error(`Error HTTP: ${respuesta.status}`);
+                }
+                const datos = await respuesta.json();
+                mostrarResultado(datos);
+            } catch (error) {
+                mostrarError("Error al obtener datos: " + error);
+            }
+        }
+        
+        // Versión segura con contexto bind
+        const safeFetch = window.fetch.bind(window);
+        
+        async function obtenerDatosSeguro() {
+            mostrarCarga();
+            try {
+                const respuesta = await safeFetch('https://jsonplaceholder.typicode.com/todos/1');
+                if (!respuesta.ok) {
+                    throw new Error(`Error HTTP: ${respuesta.status}`);
+                }
+                const datos = await respuesta.json();
+                mostrarResultado(datos);
+            } catch (error) {
+                mostrarError("Error al obtener datos (safe): " + error);
+            }
+        }
+        
+        // Función para generar un error de contexto
+        function generarErrorContexto() {
+            mostrarCarga();
+            try {
+                // Creamos una copia de fetch sin contexto
+                const fetchCopiado = fetch;
+                
+                // Intentamos usar la copia (esto causará un error)
+                fetchCopiado('https://jsonplaceholder.typicode.com/todos/1')
+                    .then(respuesta => respuesta.json())
+                    .then(datos => mostrarResultado(datos))
+                    .catch(error => {
+                        mostrarError("Error generado: " + error);
+                    });
+            } catch (error) {
+                mostrarError("Error generado: " + error);
+            }
+        }
+        
+        // Event listeners
+        btnFetch.addEventListener('click', obtenerDatos);
+        btnSafeFetch.addEventListener('click', obtenerDatosSeguro);
+        btnError.addEventListener('click', generarErrorContexto);
+        
+        // Inicializar obteniendo datos
+        obtenerDatos();
+    </script>
+</body>
+</html>

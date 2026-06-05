@@ -1,0 +1,400 @@
+﻿Segunda propuesta para mejorar consola
+
+¡Perfecto! Entiendo perfectamente. Vamos a crear una extensión para el canal alterno sin modificar lo que ya está funcionando. Te propongo esta solución:
+
+## Modificaciones en `index.html`:
+
+**Agrega esta nueva sección DESPUÉS del console-container existente:**
+
+```html
+<!-- CANAL ALTERNO PARA LA CONSOLA JS -->
+<div class="alternate-console-container">
+    <h2>Canal Alterno Consola JS</h2>
+    
+    <div class="alternate-console-input">
+        <textarea id="alternateConsoleInput" rows="6" placeholder="Escribe código JavaScript aquí...
+Ejemplo: 
+for (let i = 0; i < 3; i++) {
+    console.log('Iteración:', i);
+}"></textarea>
+    </div>
+    
+    <div class="alternate-console-buttons">
+        <button id="runAlternateConsole" class="alt-button run-alt">▶ Ejecutar</button>
+        <button id="clearAlternateInput" class="alt-button clear-alt">🗑️ Limpiar Código</button>
+        <button id="clearAlternateOutput" class="alt-button output-alt">🧹 Limpiar Respuesta</button>
+    </div>
+    
+    <div class="alternate-console-output">
+        <textarea id="alternateConsoleOutput" readonly placeholder="Aquí aparecerán los resultados..."></textarea>
+    </div>
+</div>
+```
+
+## Modificaciones en `index.css`:
+
+**Agrega estos estilos al final del archivo:**
+
+```css
+/* ===== ESTILOS PARA EL CANAL ALTERNO ===== */
+.alternate-console-container {
+    margin: 25px 0;
+    padding: 20px;
+    background: #1e1e1e;
+    border: 2px solid #333;
+    border-radius: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.alternate-console-container h2 {
+    color: #4ec9b0;
+    margin: 0 0 15px 0;
+    font-size: 1.3rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 8px;
+}
+
+.alternate-console-input textarea {
+    width: 98%;
+    min-height: 120px;
+    max-height: 300px;
+    padding: 12px;
+    background: #252526;
+    color: #d4d4d4;
+    border: 1px solid #3c3c3c;
+    border-radius: 6px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.95rem;
+    resize: vertical;
+    line-height: 1.4;
+    margin-bottom: 15px;
+}
+
+.alternate-console-input textarea:focus {
+    outline: none;
+    border-color: #007acc;
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
+
+.alternate-console-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.alt-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    min-width: 120px;
+}
+
+.alt-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.alt-button:active {
+    transform: translateY(0);
+}
+
+.run-alt {
+    background: #28a745;
+    color: white;
+}
+
+.run-alt:hover {
+    background: #218838;
+}
+
+.clear-alt {
+    background: #ffc107;
+    color: #212529;
+}
+
+.clear-alt:hover {
+    background: #e0a800;
+}
+
+.output-alt {
+    background: #dc3545;
+    color: white;
+}
+
+.output-alt:hover {
+    background: #c82333;
+}
+
+.alternate-console-output textarea {
+    width: 98%;
+    height: 150px;
+    padding: 12px;
+    background: #1a1a1a;
+    color: #d4d4d4;
+    border: 1px solid #3c3c3c;
+    border-radius: 6px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.9rem;
+    resize: vertical;
+}
+
+/* Scrollbar personalizado para las áreas de texto del canal alterno */
+.alternate-console-input textarea::-webkit-scrollbar,
+.alternate-console-output textarea::-webkit-scrollbar {
+    width: 10px;
+}
+
+.alternate-console-input textarea::-webkit-scrollbar-track,
+.alternate-console-output textarea::-webkit-scrollbar-track {
+    background: #2d2d30;
+    border-radius: 4px;
+}
+
+.alternate-console-input textarea::-webkit-scrollbar-thumb,
+.alternate-console-output textarea::-webkit-scrollbar-thumb {
+    background: #007acc;
+    border-radius: 4px;
+}
+
+.alternate-console-input textarea::-webkit-scrollbar-thumb:hover,
+.alternate-console-output textarea::-webkit-scrollbar-thumb:hover {
+    background: #005a9e;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .alternate-console-buttons {
+        flex-direction: column;
+    }
+    
+    .alt-button {
+        min-width: auto;
+        width: 100%;
+    }
+}
+```
+
+## Nuevo archivo: `alternate-console.js`
+
+**Crea este archivo nuevo para manejar el canal alterno:**
+
+```javascript
+// ===== EXTENSIÓN PARA EL CANAL ALTERNO DE CONSOLA =====
+// Este código es independiente y no modifica la consola principal
+
+class AlternateConsole {
+    constructor() {
+        this.initializeElements();
+        this.setupEventListeners();
+        this.commandHistory = [];
+        this.historyIndex = -1;
+    }
+
+    initializeElements() {
+        // Elementos del canal alterno
+        this.alternateInput = document.getElementById('alternateConsoleInput');
+        this.alternateOutput = document.getElementById('alternateConsoleOutput');
+        this.runButton = document.getElementById('runAlternateConsole');
+        this.clearInputButton = document.getElementById('clearAlternateInput');
+        this.clearOutputButton = document.getElementById('clearAlternateOutput');
+    }
+
+    setupEventListeners() {
+        // Botón ejecutar
+        this.runButton.addEventListener('click', () => {
+            this.executeAlternateCode();
+        });
+
+        // Botón limpiar código
+        this.clearInputButton.addEventListener('click', () => {
+            this.clearAlternateInput();
+        });
+
+        // Botón limpiar respuesta
+        this.clearOutputButton.addEventListener('click', () => {
+            this.clearAlternateOutput();
+        });
+
+        // Atajos de teclado
+        this.alternateInput.addEventListener('keydown', (e) => {
+            // Ctrl+Enter para ejecutar
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                this.executeAlternateCode();
+            }
+            
+            // Ctrl+L para limpiar código
+            if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                this.clearAlternateInput();
+            }
+            
+            // Ctrl+K para limpiar respuesta
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                this.clearAlternateOutput();
+            }
+        });
+    }
+
+    executeAlternateCode() {
+        const code = this.alternateInput.value.trim();
+        
+        if (!code) {
+            this.addToAlternateOutput('❌ No hay código para ejecutar', 'error');
+            return;
+        }
+
+        // Agregar al historial si es diferente al último comando
+        if (this.commandHistory.length === 0 || this.commandHistory[this.commandHistory.length - 1] !== code) {
+            this.commandHistory.push(code);
+            if (this.commandHistory.length > 20) {
+                this.commandHistory.shift();
+            }
+        }
+        this.historyIndex = -1;
+
+        this.addToAlternateOutput('▶️ Ejecutando código...', 'info');
+        this.addToAlternateOutput(code, 'code');
+
+        try {
+            // Capturar console.log y otros métodos
+            const originalConsole = {
+                log: console.log,
+                error: console.error,
+                warn: console.warn,
+                info: console.info
+            };
+
+            // Redirigir console.log al output alterno
+            console.log = (...args) => {
+                const message = args.map(arg => 
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                ).join(' ');
+                this.addToAlternateOutput(message, 'log');
+                originalConsole.log.apply(console, args);
+            };
+
+            console.error = (...args) => {
+                const message = args.map(arg => 
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                ).join(' ');
+                this.addToAlternateOutput(`❌ ${message}`, 'error');
+                originalConsole.error.apply(console, args);
+            };
+
+            console.warn = (...args) => {
+                const message = args.map(arg => 
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                ).join(' ');
+                this.addToAlternateOutput(`⚠️ ${message}`, 'warning');
+                originalConsole.warn.apply(console, args);
+            };
+
+            // Ejecutar el código
+            const result = new Function(code)();
+            
+            // Mostrar el resultado si no es undefined
+            if (result !== undefined) {
+                this.addToAlternateOutput(`✅ Resultado: ${String(result)}`, 'result');
+            } else {
+                this.addToAlternateOutput('✅ Código ejecutado correctamente', 'success');
+            }
+
+            // Restaurar console original
+            console.log = originalConsole.log;
+            console.error = originalConsole.error;
+            console.warn = originalConsole.warn;
+            console.info = originalConsole.info;
+
+        } catch (error) {
+            this.addToAlternateOutput(`❌ Error: ${error.message}`, 'error');
+        }
+    }
+
+    addToAlternateOutput(text, type = 'normal') {
+        const timestamp = new Date().toLocaleTimeString();
+        let formattedText = '';
+
+        switch (type) {
+            case 'error':
+                formattedText = `[${timestamp}] ❌ ${text}\n`;
+                break;
+            case 'warning':
+                formattedText = `[${timestamp}] ⚠️ ${text}\n`;
+                break;
+            case 'info':
+                formattedText = `[${timestamp}] ℹ️ ${text}\n`;
+                break;
+            case 'success':
+                formattedText = `[${timestamp}] ✅ ${text}\n`;
+                break;
+            case 'code':
+                formattedText = `[${timestamp}] 📝 Código:\n${text}\n${'-'.repeat(50)}\n`;
+                break;
+            case 'result':
+                formattedText = `[${timestamp}] 💡 ${text}\n`;
+                break;
+            case 'log':
+                formattedText = `[${timestamp}] ${text}\n`;
+                break;
+            default:
+                formattedText = `[${timestamp}] ${text}\n`;
+        }
+
+        this.alternateOutput.value += formattedText;
+        this.alternateOutput.scrollTop = this.alternateOutput.scrollHeight;
+    }
+
+    clearAlternateInput() {
+        this.alternateInput.value = '';
+        this.alternateInput.focus();
+        this.addToAlternateOutput('🗑️ Área de código limpiada', 'info');
+    }
+
+    clearAlternateOutput() {
+        this.alternateOutput.value = '';
+        this.addToAlternateOutput('🧹 Respuesta de consola limpiada', 'info');
+    }
+}
+
+// Inicializar el canal alterno cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    new AlternateConsole();
+});
+```
+
+## Modificación en `index.html` para incluir el nuevo JS:
+
+**Agrega esta línea antes de cerrar el `</body>`:**
+
+```html
+<!-- Scripts existentes -->
+<script src="index.js"></script>
+<!-- Nuevo script para el canal alterno -->
+<script src="alternate-console.js"></script>
+```
+
+## Resumen de la solución:
+
+1. **✅ NO SE TOCÓ NADA del código existente** - Todo funciona como antes
+2. **✅ Se creó una instancia completamente separada** para el canal alterno
+3. **✅ Tres botones nuevos:**
+   - ▶ Ejecutar (desde el canal alterno)
+   - 🗑️ Limpiar Código (del área de entrada alterna)
+   - 🧹 Limpiar Respuesta (del área de salida alterna)
+4. **✅ Textarea de 6 filas** con scroll automático
+5. **✅ Atajos de teclado:**
+   - `Ctrl+Enter` → Ejecutar
+   - `Ctrl+L` → Limpiar código
+   - `Ctrl+K` → Limpiar respuesta
+6. **✅ Sistema de historial** independiente
+7. **✅ Output formateado** con colores y timestamps
+8. **✅ Captura de console.log** redirigida al output alterno
+
+¡El canal alterno ahora funciona completamente independiente de la consola principal! Puedes ejecutar código JavaScript, ver los resultados y limpiar tanto el código como la respuesta sin afectar para nada la funcionalidad existente.

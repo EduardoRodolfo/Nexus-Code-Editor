@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Integración con TinyFileManager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .integration-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 1200px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #0f1724, #15233a);
+            color: white;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .header img {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+        
+        .iframe-container {
+            height: 600px;
+            border-right: 1px solid #e0e0e0;
+        }
+        
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .controls {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        .control-group h3 {
+            color: #0f1724;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .control-group h3 i {
+            font-size: 20px;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .btn {
+            background: #0b3b66;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: #0a2e4d;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(11, 59, 102, 0.3);
+        }
+        
+        .btn i {
+            font-size: 18px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #43A047 0%, #27662a 100%);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #FF9800 0%, #EF6C00 100%);
+        }
+        
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #F57C00 0%, #E65100 100%);
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        .info-box h4 {
+            color: #0d47a1;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .info-box p {
+            color: #1565c0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .footer {
+            background: #0f1724;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .iframe-container {
+                height: 400px;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="integration-container">
+        <div class="header">
+            <img src="imagenes/nexus-code-editor.gif" alt="Nexus Logo">
+            <div>
+                <h1>Nexus + TinyFileManager</h1>
+                <p>Integración completa entre el editor de código y el gestor de archivos</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="iframe-container">
+                <iframe src="../tinyfilemanager/tinyfilemanager.php" id="filemanager-frame"></iframe>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <h3><i class="fas fa-cogs"></i> Acciones Rápidas</h3>
+                    <div class="button-group">
+                        <a href="../tinyfilemanager/tinyfilemanager.php" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt"></i> Abrir en nueva pestaña
+                        </a>
+                        <button onclick="refreshFileManager()" class="btn">
+                            <i class="fas fa-sync-alt"></i> Actualizar gestor
+                        </button>
+                        <button onclick="openInNexus()" class="btn btn-success">
+                            <i class="fas fa-code"></i> Abrir en Nexus Editor
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-folder-open"></i> Directorios</h3>
+                    <div class="button-group">
+                        <button onclick="navigateTo('nexus')" class="btn">
+                            <i class="fas fa-folder"></i> Ir a carpeta Nexus
+                        </button>
+                        <button onclick="navigateTo('htdocs')" class="btn">
+                            <i class="fas fa-home"></i> Ir a htdocs
+                        </button>
+                        <button onclick="createNewFolder()" class="btn btn-warning">
+                            <i class="fas fa-plus-circle"></i> Nueva carpeta
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-file-code"></i> Archivos</h3>
+                    <div class="button-group">
+                        <button onclick="createNewFile()" class="btn">
+                            <i class="fas fa-file-alt"></i> Nuevo archivo
+                        </button>
+                        <button onclick="uploadFile()" class="btn">
+                            <i class="fas fa-upload"></i> Subir archivo
+                        </button>
+                        <button onclick="downloadSelected()" class="btn">
+                            <i class="fas fa-download"></i> Descargar seleccionado
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <h4><i class="fas fa-info-circle"></i> Información de integración</h4>
+                    <p>Esta interfaz permite gestionar archivos directamente desde Nexus. Los archivos que abras aquí se pueden editar inmediatamente en el editor principal de Nexus.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Nexus Code Editor v1.0 | TinyFileManager v2.6 | Integración completa</p>
+        </div>
+    </div>
+
+    <script>
+        function refreshFileManager() {
+            document.getElementById('filemanager-frame').src = document.getElementById('filemanager-frame').src;
+            showNotification('Gestor de archivos actualizado');
+        }
+        
+        function openInNexus() {
+            // Esta función se integrará con Nexus para abrir archivos directamente
+            alert('Función de integración con Nexus. Próximamente se abrirá el archivo seleccionado en el editor.');
+        }
+        
+        function navigateTo(folder) {
+            let url = '../tinyfilemanager/tinyfilemanager.php';
+            if (folder === 'nexus') {
+                url += '?p=nexus';
+            } else if (folder === 'htdocs') {
+                url += '?p=';
+            }
+            document.getElementById('filemanager-frame').src = url;
+            showNotification(`Navegando a: ${folder}`);
+        }
+        
+        function createNewFolder() {
+            const folderName = prompt('Nombre de la nueva carpeta:', 'nueva_carpeta');
+            if (folderName) {
+                alert(`Creando carpeta: ${folderName}\nEsta función se integrará con TinyFileManager API.`);
+            }
+        }
+        
+        function createNewFile() {
+            const fileName = prompt('Nombre del nuevo archivo (con extensión):', 'nuevo_archivo.html');
+            if (fileName) {
+                alert(`Creando archivo: ${fileName}\nSe abrirá en Nexus para edición.`);
+            }
+        }
+        
+        function uploadFile() {
+            alert('Funcionalidad de subida de archivos. Se abrirá el diálogo de selección de archivos.');
+        }
+        
+        function downloadSelected() {
+            alert('Descargando archivo seleccionado...');
+        }
+        
+        function showNotification(message) {
+            // Crear notificación temporal
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: #4CAF50;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Agregar estilos de animación
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Comunicación con el iframe
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'fileSelected') {
+                console.log('Archivo seleccionado:', event.data.file);
+                // Aquí podrías abrir el archivo en Nexus
+            }
+        });
+    </script>
+</body>
+</html>

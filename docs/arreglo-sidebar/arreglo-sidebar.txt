@@ -1,0 +1,748 @@
+﻿Tienes toda la razón. Vamos a mantener totalmente intactos los nombres existentes. Aquí está la solución que respeta toda tu estructura actual:
+
+CSS Modificado (manteniendo todos los nombres):
+
+```css
+/* ===== LAYOUT PRINCIPAL CON SIDEBAR ===== */
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* ===== SIDEBAR DE PROYECTO ===== */
+#project-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 300px;
+    height: 100vh;
+    background: #252526;
+    border-right: 1px solid #3c3c3c;
+    z-index: 900;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+#project-sidebar.open {
+    transform: translateX(0);
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #2d2d30;
+    border-bottom: 1px solid #3c3c3c;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    color: #4ec9b0;
+    font-size: 1.1rem;
+}
+
+#close-sidebar {
+    background: none;
+    border: none;
+    color: #f0f0f0;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+}
+
+#close-sidebar:hover {
+    background: #3c3c3c;
+    color: #4ec9b0;
+}
+
+/* ===== CONTENIDO PRINCIPAL ===== */
+/* El contenido principal se ajusta cuando el sidebar está abierto */
+.container.with-sidebar {
+    margin-left: 300px;
+    transition: margin-left 0.3s ease;
+}
+
+/* ===== EDITOR Y CONTROLES ===== */
+#editor {
+    min-height: 400px;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    margin: 10px 15px;
+}
+
+.ace-controls {
+    background: #2d2d30;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 10px 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.control-group label {
+    color: #f0f0f0;
+    font-size: 0.9rem;
+}
+
+.control-group select,
+.control-group input[type="number"] {
+    background: #1e1e1e;
+    color: #f0f0f0;
+    border: 1px solid #3c3c3c;
+    padding: 5px 8px;
+    border-radius: 3px;
+}
+
+/* ===== TABS DEL EDITOR ===== */
+.editor-tabs {
+    display: flex;
+    background: #2d2d30;
+    border-bottom: 1px solid #3c3c3c;
+    overflow-x: auto;
+    margin: 0 15px;
+}
+
+.editor-tab {
+    padding: 10px 15px;
+    background: #252526;
+    border-right: 1px solid #3c3c3c;
+    cursor: pointer;
+    color: #f0f0f0;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+}
+
+.editor-tab.active {
+    background: #1e1e1e;
+    border-bottom: 2px solid #007acc;
+}
+
+.editor-tab:hover {
+    background: #2d2d30;
+}
+
+.close-tab {
+    margin-left: auto;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.close-tab:hover {
+    background: #3c3c3c;
+}
+
+/* ===== EXPLORADOR DE ARCHIVOS ===== */
+.file-explorer {
+    padding: 10px;
+}
+
+.file-item {
+    padding: 8px 12px;
+    margin: 2px 0;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.file-item:hover {
+    background: #2d2d30;
+}
+
+.file-item.active {
+    background: #007acc;
+}
+
+.file-item .folder-toggle {
+    width: 16px;
+    text-align: center;
+    font-size: 10px;
+    transition: transform 0.2s;
+}
+
+.file-item .folder-children {
+    margin-left: 20px;
+    border-left: 1px solid #3c3c3c;
+    padding-left: 5px;
+    display: none;
+}
+
+.file-item.expanded .folder-children {
+    display: block;
+}
+
+.file-icon {
+    font-size: 1.1rem;
+}
+
+.folder-item {
+    font-weight: 600;
+}
+
+.loading {
+    padding: 20px;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+
+/* ===== BOTÓN TOGGLE SIDEBAR ===== */
+#toggle-sidebar.active {
+    background: #007acc;
+    color: white;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    #project-sidebar {
+        width: 250px;
+    }
+    
+    .container.with-sidebar {
+        margin-left: 250px;
+    }
+    
+    .ace-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+```
+
+JavaScript Modificado (totalmente compatible):
+
+```javascript
+// =====================================
+// Funciones para mostrar/ocultar sidebar
+// =====================================
+
+function toggleProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    if (currentProjectHandle) {
+        // Si hay proyecto abierto, alternar visibilidad
+        if (sidebar.classList.contains('open')) {
+            hideProjectSidebar();
+        } else {
+            showProjectSidebar();
+        }
+    } else {
+        // Si no hay proyecto, preguntar si abrir uno
+        if (confirm('No hay proyecto abierto. ¿Deseas abrir un proyecto?')) {
+            openProject();
+        }
+    }
+}
+
+function showProjectSidebar() {
+    if (!currentProjectHandle) {
+        showNotification('No hay proyecto abierto', true);
+        return;
+    }
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    sidebar.classList.add('open');
+    container.classList.add('with-sidebar');
+    toggleBtn.classList.add('active');
+    
+    showNotification('Explorador de proyecto abierto');
+}
+
+function hideProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    sidebar.classList.remove('open');
+    container.classList.remove('with-sidebar');
+    toggleBtn.classList.remove('active');
+    
+    showNotification('Explorador de proyecto cerrado');
+}
+
+// Modificar la función closeProjectSidebar existente
+function closeProjectSidebar() {
+    hideProjectSidebar();
+}
+```
+
+HTML (NO necesita cambios):
+
+Tu HTML actual se mantiene exactamente igual:
+
+```html
+<div class="container">
+    <header>...</header>
+    <div class="ace-controls">...</div>
+    <nav>...</nav>
+    
+    <!-- Sidebar - SE MANTIENE IGUAL -->
+    <div id="project-sidebar" class="project-sidebar" style="display: none;">
+        <div class="sidebar-header">
+            <h3>Explorador de Proyecto</h3>
+            <button id="close-sidebar">×</button>
+        </div>
+        <div id="file-explorer" class="file-explorer"></div>
+    </div>
+
+    <!-- Contenido - SE MANTIENE IGUAL -->
+    <div id="editor"></div>
+    <div class="console-container">...</div>
+    <div class="alternate-console-container">...</div>
+    <div class="preview-container">...</div>
+</div>
+```
+
+Cambios mínimos y compatibles:
+
+1. Solo agregamos clases (open, with-sidebar) sin modificar estructura existente
+2. Todos los IDs y clases existentes se mantienen intactos
+3. No hay conflictos con tu código actual
+4. Transiciones suaves con CSS transforms en lugar de cambios bruscos de display
+5. Layout fluido que respeta tu estructura actual
+
+Esta solución es 100% compatible con todo tu código existente y no causará conflictos.
+
+
+----------------------------------------------------------------------------------------------------
+
+
+Segunda revisión DeepSeek
+
+Te ayudo a revisar y aplicar las correcciones para el sidebar. Voy a analizar el código y mostrarte exactamente qué cambiar.
+
+📋 ANÁLISIS DEL PROBLEMA
+
+El problema principal es que tu código actual tiene dos sistemas de sidebar conflictivos:
+
+1. El sistema original con display: none/block
+2. El nuevo sistema con transform: translateX()
+
+🔧 SOLUCIÓN: REEMPLAZAR EL CÓDIGO CSS
+
+En tu index.css, REEMPLAZA todo el CSS del sidebar con esto:
+
+```css
+/* ===== LAYOUT PRINCIPAL CON SIDEBAR ===== */
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* ===== SIDEBAR DE PROYECTO ===== */
+#project-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 300px;
+    height: 100vh;
+    background: #252526;
+    border-right: 1px solid #3c3c3c;
+    z-index: 900;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+#project-sidebar.open {
+    transform: translateX(0);
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #2d2d30;
+    border-bottom: 1px solid #3c3c3c;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    color: #4ec9b0;
+    font-size: 1.1rem;
+}
+
+#close-sidebar {
+    background: none;
+    border: none;
+    color: #f0f0f0;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+}
+
+#close-sidebar:hover {
+    background: #3c3c3c;
+    color: #4ec9b0;
+}
+
+/* ===== CONTENIDO PRINCIPAL ===== */
+/* El contenido principal se ajusta cuando el sidebar está abierto */
+.container.with-sidebar {
+    margin-left: 300px;
+    transition: margin-left 0.3s ease;
+}
+
+/* ===== EDITOR Y CONTROLES ===== */
+#editor {
+    min-height: 400px;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    margin: 10px 15px;
+}
+
+.ace-controls {
+    background: #2d2d30;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 10px 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.control-group label {
+    color: #f0f0f0;
+    font-size: 0.9rem;
+}
+
+.control-group select,
+.control-group input[type="number"] {
+    background: #1e1e1e;
+    color: #f0f0f0;
+    border: 1px solid #3c3c3c;
+    padding: 5px 8px;
+    border-radius: 3px;
+}
+
+/* ===== TABS DEL EDITOR ===== */
+.editor-tabs {
+    display: flex;
+    background: #2d2d30;
+    border-bottom: 1px solid #3c3c3c;
+    overflow-x: auto;
+    margin: 0 15px;
+}
+
+.editor-tab {
+    padding: 10px 15px;
+    background: #252526;
+    border-right: 1px solid #3c3c3c;
+    cursor: pointer;
+    color: #f0f0f0;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+}
+
+.editor-tab.active {
+    background: #1e1e1e;
+    border-bottom: 2px solid #007acc;
+}
+
+.editor-tab:hover {
+    background: #2d2d30;
+}
+
+.close-tab {
+    margin-left: auto;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.close-tab:hover {
+    background: #3c3c3c;
+}
+
+/* ===== EXPLORADOR DE ARCHIVOS ===== */
+.file-explorer {
+    padding: 10px;
+}
+
+.file-item {
+    padding: 8px 12px;
+    margin: 2px 0;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.file-item:hover {
+    background: #2d2d30;
+}
+
+.file-item.active {
+    background: #007acc;
+}
+
+.file-item .folder-toggle {
+    width: 16px;
+    text-align: center;
+    font-size: 10px;
+    transition: transform 0.2s;
+}
+
+.file-item .folder-children {
+    margin-left: 20px;
+    border-left: 1px solid #3c3c3c;
+    padding-left: 5px;
+    display: none;
+}
+
+.file-item.expanded .folder-children {
+    display: block;
+}
+
+.file-icon {
+    font-size: 1.1rem;
+}
+
+.folder-item {
+    font-weight: 600;
+}
+
+.loading {
+    padding: 20px;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+
+/* ===== BOTÓN TOGGLE SIDEBAR ===== */
+#toggle-sidebar.active {
+    background: #007acc;
+    color: white;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    #project-sidebar {
+        width: 250px;
+    }
+    
+    .container.with-sidebar {
+        margin-left: 250px;
+    }
+    
+    .ace-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+```
+
+🔄 MODIFICACIONES EN EL HTML
+
+En tu index.html, CAMBIA esta línea:
+
+```html
+<!-- ANTES: -->
+<div id="project-sidebar" class="project-sidebar" style="display: none;">
+
+<!-- DESPUÉS: -->
+<div id="project-sidebar" class="project-sidebar">
+```
+
+ELIMINA el CSS inline style="display: none;" del sidebar.
+
+🛠️ ACTUALIZACIÓN DEL JAVASCRIPT
+
+En tu index.js, REEMPLAZA estas funciones:
+
+```javascript
+// =====================================
+// Funciones para mostrar/ocultar sidebar (NUEVAS)
+// =====================================
+
+function toggleProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    if (currentProjectHandle) {
+        // Si hay proyecto abierto, alternar visibilidad
+        if (sidebar.classList.contains('open')) {
+            hideProjectSidebar();
+        } else {
+            showProjectSidebar();
+        }
+    } else {
+        // Si no hay proyecto, preguntar si abrir uno
+        if (confirm('No hay proyecto abierto. ¿Deseas abrir un proyecto?')) {
+            openProject();
+        }
+    }
+}
+
+function showProjectSidebar() {
+    if (!currentProjectHandle) {
+        showNotification('No hay proyecto abierto', true);
+        return;
+    }
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    sidebar.classList.add('open');
+    container.classList.add('with-sidebar');
+    toggleBtn.classList.add('active');
+    
+    showNotification('Explorador de proyecto abierto');
+}
+
+function hideProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    sidebar.classList.remove('open');
+    container.classList.remove('with-sidebar');
+    toggleBtn.classList.remove('active');
+    
+    showNotification('Explorador de proyecto cerrado');
+}
+
+// Modificar la función closeProjectSidebar existente
+function closeProjectSidebar() {
+    hideProjectSidebar();
+}
+```
+
+📝 RESUMEN DE CAMBIOS
+
+Nuevas Clases CSS agregadas:
+
+· .open - Para el sidebar cuando está visible
+· .with-sidebar - Para el contenedor principal cuando el sidebar está abierto
+
+IDs y Classes que SE MANTIENEN:
+
+· #project-sidebar ✅
+· #file-explorer ✅
+· #close-sidebar ✅
+· #toggle-sidebar ✅
+· .sidebar-header ✅
+· .file-explorer ✅
+· .file-item ✅
+· Todas las demás existentes ✅
+
+En el JavaScript:
+
+Los nombres de funciones y variables se mantienen igual, solo se actualiza la lógica interna.
+
+🎯 VERIFICACIÓN FINAL
+
+Después de aplicar estos cambios:
+
+1. El sidebar empezará oculto (con transform: translateX(-100%))
+2. Al abrir proyecto se mostrará suavemente con transición
+3. No habrá superposición porque el contenido principal se desplaza
+4. Todas las funciones existentes seguirán trabajando igual
+
+¿Quieres que revise alguna parte específica o necesitas ayuda para implementar estos cambios?
+
+----------------------------------------------------------------------------------------------------
+
+Basándome en el código que has mostrado, debes sustituir desde el inicio del primer bloque hasta la función closeProjectSidebar() original.
+
+Específicamente, debes reemplazar:
+
+DESDE:
+
+```javascript
+// =====================================
+// Funciones para mostrar/ocultar sidebar
+// =====================================
+
+function toggleProjectSidebar() {
+```
+
+HASTA:
+
+```javascript
+// Modificar la función closeProjectSidebar existente
+function closeProjectSidebar() {
+    hideProjectSidebar();
+    // No cerramos el proyecto, solo ocultamos el sidebar
+    showNotification('Explorador de proyecto cerrado');
+}
+```
+
+Y REEMPLAZAR CON el nuevo código completo que proporcionaste.
+
+Punto importante: La función listFiles que mencionas al final NO debe ser sustituida, ya que es una función diferente para el manejo de archivos, no para el sidebar.
+
+Resumen de lo que se reemplaza:
+
+· toggleProjectSidebar()
+· showProjectSidebar()
+· hideProjectSidebar()
+· closeProjectSidebar()
+
+El cambio principal es que en lugar de usar style.display y ajustes de margen directos, ahora se usa un sistema basado en clases CSS (open, with-sidebar, active) para un mejor control del estilo.

@@ -1,0 +1,781 @@
+﻿Veo que quieres integrar la clase ProjectNormalizer en tu editor. 
+Te sugiero insertarlo después de las declaraciones de variables globales y antes del DOMContentLoaded. Aquí te muestro dónde y cómo:
+
+```javascript
+// Variables globales
+let currentFileName = null;
+let fileHandle = null;
+let currentDirectoryHandle = null;
+let currentProjectHandle = null;
+let openFiles = new Map(); // Map para archivos abiertos: {fileHandle, content, modified}
+let currentFileTab = null;
+let projectFiles = []; // Lista de archivos en el proyecto
+
+// ===== PROJECT NORMALIZER =====
+class ProjectNormalizer {
+  constructor() {
+    this.originalHTML = '';
+    this.normalizedHTML = '';
+    this.combinedCSS = '';
+    this.combinedJS = '';
+  }
+
+  /**
+   * Normaliza un proyecto descargado para que funcione en tu editor
+   */
+  normalizeDownloadedProject(html, css = '', js = '') {
+    this.originalHTML = html;
+    this.combinedCSS = css;
+    this.combinedJS = js;
+
+    // Paso 1: Extraer CSS interno y externo
+    this.extractAllCSS();
+    
+    // Paso 2: Extraer JS interno y externo  
+    this.extractAllJS();
+    
+    // Paso 3: Limpiar HTML (quitar links y scripts externos)
+    this.cleanHTML();
+
+    return {
+      html: this.normalizedHTML,
+      css: this.combinedCSS,
+      js: this.combinedJS
+    };
+  }
+
+  /**
+   * Extrae todo el CSS (interno y simula externo)
+   */
+  extractAllCSS() {
+    const html = this.originalHTML;
+
+    // 1. Extraer CSS interno (<style> tags)
+    const internalCSS = this.extractInternalCSS(html);
+    if (internalCSS) {
+      this.combinedCSS += '\n' + internalCSS;
+    }
+
+    // 2. Extraer CSS externo (convertir a interno)
+    this.extractExternalCSS(html);
+  }
+
+  /**
+   * Extrae CSS de tags <style>
+   */
+  extractInternalCSS(html) {
+    const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+    const matches = [];
+    let match;
+
+    while ((match = styleRegex.exec(html)) !== null) {
+      matches.push(match[1].trim());
+    }
+
+    return matches.join('\n');
+  }
+
+  /**
+   * Maneja CSS externo - para proyectos descargados lo agregamos como comentario
+   */
+  extractExternalCSS(html) {
+    const linkRegex = /<link[^>]*href=["']([^"']*\.css)["'][^>]*>/gi;
+    let match;
+
+    while ((match = linkRegex.exec(html)) !== null) {
+      const cssPath = match[1];
+      // Agregar como comentario para que el usuario sepa que había CSS externo
+      this.combinedCSS += `\n/* CSS externo original: ${cssPath} */\n`;
+      this.combinedCSS += `/* Nota: El archivo ${cssPath} necesita ser incorporado manualmente */\n`;
+    }
+  }
+
+  /**
+   * Extrae todo el JavaScript (interno y simula externo)
+   */
+  extractAllJS() {
+    const html = this.originalHTML;
+
+    // 1. Extraer JS interno (<script> sin src)
+    const internalJS = this.extractInternalJS(html);
+    if (internalJS) {
+      this.combinedJS += '\n' + internalJS;
+    }
+
+    // 2. Manejar JS externo
+    this.extractExternalJS(html);
+  }
+
+  /**
+   * Extrae JS de tags <script> sin src
+   */
+  extractInternalJS(html) {
+    const scriptRegex = /<script(?!.*src)[^>]*>([\s\S]*?)<\/script>/gi;
+    const matches = [];
+    let match;
+
+    while ((match = scriptRegex.exec(html)) !== null) {
+      matches.push(match[1].trim());
+    }
+
+    return matches.join('\n');
+  }
+
+  /**
+   * Maneja JS externo - para proyectos descargados
+   */
+  extractExternalJS(html) {
+    const scriptRegex = /<script[^>]*src=["']([^"']*\.js)["'][^>]*><\/script>/gi;
+    let match;
+
+    while ((match = scriptRegex.exec(html)) !== null) {
+      const jsPath = match[1];
+      // Agregar como comentario para que el usuario sepa que había JS externo
+      this.combinedJS += `\n// JS externo original: ${jsPath}\n`;
+      this.combinedJS += `// Nota: El archivo ${jsPath} necesita ser incorporado manualmente\n`;
+    }
+  }
+
+  /**
+   * Limpia el HTML quitando referencias externas
+   */
+  cleanHTML() {
+    let html = this.originalHTML;
+
+    // Quitar links a CSS externos
+    html = html.replace(/<link[^>]*href=["'][^"']*\.css["'][^>]*>/gi, '');
+    
+    // Quitar scripts externos
+    html = html.replace(/<script[^>]*src=["'][^"']*\.js["'][^>]*><\/script>/gi, '');
+    
+    // Quitar tags style (ya extraímos el contenido)
+    html = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+    
+    // Quitar scripts internos (ya extraímos el contenido)
+    html = html.replace(/<script(?!.*src)[^>]*>[\s\S]*?<\/script>/gi, '');
+
+    this.normalizedHTML = html.trim();
+  }
+}
+
+// Instancia global del normalizador
+const projectNormalizer = new ProjectNormalizer();
+
+// Verificar si las APIs están disponibles
+const isFileSystemAccessSupported = () => {
+    return 'showOpenFilePicker' in window && 'showSaveFilePicker' in window && 'showDirectoryPicker' in window;
+};
+
+// Resto del código...
+```
+
+Y luego, dentro del DOMContentLoaded, puedes agregar una función para usar el normalizador. Te sugiero añadir esto después de las funciones de manejo de proyectos:
+
+```javascript
+// =====================================
+// Funciones para normalizar proyectos descargados
+// =====================================
+
+async function normalizeDownloadedProject() {
+    const htmlContent = editor.getValue();
+    
+    try {
+        const normalized = projectNormalizer.normalizeDownloadedProject(htmlContent);
+        
+        // Crear nuevo archivo con el HTML normalizado
+        editor.setValue(normalized.html);
+        
+        // Mostrar CSS y JS en la consola o en pestañas separadas
+        console.log('CSS extraído:', normalized.css);
+        console.log('JS extraído:', normalized.js);
+        
+        showNotification('Proyecto normalizado correctamente');
+        
+        // Opcional: Guardar automáticamente los archivos CSS y JS
+        if (normalized.css.trim()) {
+            await saveNormalizedFile('styles.css', normalized.css);
+        }
+        if (normalized.js.trim()) {
+            await saveNormalizedFile('script.js', normalized.js);
+        }
+        
+    } catch (error) {
+        console.error('Error normalizando proyecto:', error);
+        showNotification(`Error normalizando proyecto: ${error.message}`, true);
+    }
+}
+
+async function saveNormalizedFile(filename, content) {
+    if (!currentProjectHandle) {
+        // Si no hay proyecto abierto, preguntar dónde guardar
+        if (confirm(`¿Deseas guardar ${filename}?`)) {
+            // Aquí puedes implementar la lógica para guardar como archivo individual
+        }
+        return;
+    }
+    
+    try {
+        const fileHandle = await currentProjectHandle.getFileHandle(filename, { create: true });
+        const writable = await fileHandle.createWritable();
+        await writable.write(content);
+        await writable.close();
+        
+        showNotification(`Archivo ${filename} guardado en el proyecto`);
+    } catch (error) {
+        console.error(`Error guardando ${filename}:`, error);
+        showNotification(`Error guardando ${filename}: ${error.message}`, true);
+    }
+}
+
+// Y agregar el event listener para el menú (si quieres un botón en la UI)
+document.addEventListener('DOMContentLoaded', () => {
+    // ... código existente ...
+    
+    // Agregar después de los otros event listeners del menú
+    document.getElementById('normalizar-proyecto').addEventListener('click', normalizeDownloadedProject);
+});
+```
+
+También necesitarás agregar el botón en tu HTML si quieres tenerlo en la interfaz:
+
+```html
+<button id="normalizar-proyecto" class="menu-button">
+    <span>🔄</span> Normalizar Proyecto
+</button>
+```
+
+Resumen de lo que hace el ProjectNormalizer:
+
+· Extrae CSS interno y externo de HTML
+· Extrae JavaScript interno y externo
+· Limpia el HTML quitando referencias externas
+· Combina todo en archivos separados para que funcione en tu editor
+
+¡La clase está bien ubicada y lista para usar!
+---------------------------------------------
+
+Te voy a mostrar exactamente dónde colocar la clase ProjectNormalizer y la función para normalizar proyectos. Aquí está la ubicación específica:
+
+Ubicación 1: La clase ProjectNormalizer - después de las variables globales
+
+```javascript
+// Variables globales
+let currentFileName = null;
+let fileHandle = null;
+let currentDirectoryHandle = null;
+let currentProjectHandle = null;
+let openFiles = new Map(); // Map para archivos abiertos: {fileHandle, content, modified}
+let currentFileTab = null;
+let projectFiles = []; // Lista de archivos en el proyecto
+
+// ===== PROJECT NORMALIZER =====
+class ProjectNormalizer {
+  constructor() {
+    this.originalHTML = '';
+    this.normalizedHTML = '';
+    this.combinedCSS = '';
+    this.combinedJS = '';
+  }
+
+  /**
+   * Normaliza un proyecto descargado para que funcione en tu editor
+   */
+  normalizeDownloadedProject(html, css = '', js = '') {
+    this.originalHTML = html;
+    this.combinedCSS = css;
+    this.combinedJS = js;
+
+    // Paso 1: Extraer CSS interno y externo
+    this.extractAllCSS();
+    
+    // Paso 2: Extraer JS interno y externo  
+    this.extractAllJS();
+    
+    // Paso 3: Limpiar HTML (quitar links y scripts externos)
+    this.cleanHTML();
+
+    return {
+      html: this.normalizedHTML,
+      css: this.combinedCSS,
+      js: this.combinedJS
+    };
+  }
+
+  /**
+   * Extrae todo el CSS (interno y simula externo)
+   */
+  extractAllCSS() {
+    const html = this.originalHTML;
+
+    // 1. Extraer CSS interno (<style> tags)
+    const internalCSS = this.extractInternalCSS(html);
+    if (internalCSS) {
+      this.combinedCSS += '\n' + internalCSS;
+    }
+
+    // 2. Extraer CSS externo (convertir a interno)
+    this.extractExternalCSS(html);
+  }
+
+  /**
+   * Extrae CSS de tags <style>
+   */
+  extractInternalCSS(html) {
+    const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+    const matches = [];
+    let match;
+
+    while ((match = styleRegex.exec(html)) !== null) {
+      matches.push(match[1].trim());
+    }
+
+    return matches.join('\n');
+  }
+
+  /**
+   * Maneja CSS externo - para proyectos descargados lo agregamos como comentario
+   */
+  extractExternalCSS(html) {
+    const linkRegex = /<link[^>]*href=["']([^"']*\.css)["'][^>]*>/gi;
+    let match;
+
+    while ((match = linkRegex.exec(html)) !== null) {
+      const cssPath = match[1];
+      // Agregar como comentario para que el usuario sepa que había CSS externo
+      this.combinedCSS += `\n/* CSS externo original: ${cssPath} */\n`;
+      this.combinedCSS += `/* Nota: El archivo ${cssPath} necesita ser incorporado manualmente */\n`;
+    }
+  }
+
+  /**
+   * Extrae todo el JavaScript (interno y simula externo)
+   */
+  extractAllJS() {
+    const html = this.originalHTML;
+
+    // 1. Extraer JS interno (<script> sin src)
+    const internalJS = this.extractInternalJS(html);
+    if (internalJS) {
+      this.combinedJS += '\n' + internalJS;
+    }
+
+    // 2. Manejar JS externo
+    this.extractExternalJS(html);
+  }
+
+  /**
+   * Extrae JS de tags <script> sin src
+   */
+  extractInternalJS(html) {
+    const scriptRegex = /<script(?!.*src)[^>]*>([\s\S]*?)<\/script>/gi;
+    const matches = [];
+    let match;
+
+    while ((match = scriptRegex.exec(html)) !== null) {
+      matches.push(match[1].trim());
+    }
+
+    return matches.join('\n');
+  }
+
+  /**
+   * Maneja JS externo - para proyectos descargados
+   */
+  extractExternalJS(html) {
+    const scriptRegex = /<script[^>]*src=["']([^"']*\.js)["'][^>]*><\/script>/gi;
+    let match;
+
+    while ((match = scriptRegex.exec(html)) !== null) {
+      const jsPath = match[1];
+      // Agregar como comentario para que el usuario sepa que había JS externo
+      this.combinedJS += `\n// JS externo original: ${jsPath}\n`;
+      this.combinedJS += `// Nota: El archivo ${jsPath} necesita ser incorporado manualmente\n`;
+    }
+  }
+
+  /**
+   * Limpia el HTML quitando referencias externas
+   */
+  cleanHTML() {
+    let html = this.originalHTML;
+
+    // Quitar links a CSS externos
+    html = html.replace(/<link[^>]*href=["'][^"']*\.css["'][^>]*>/gi, '');
+    
+    // Quitar scripts externos
+    html = html.replace(/<script[^>]*src=["'][^"']*\.js["'][^>]*><\/script>/gi, '');
+    
+    // Quitar tags style (ya extraímos el contenido)
+    html = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+    
+    // Quitar scripts internos (ya extraímos el contenido)
+    html = html.replace(/<script(?!.*src)[^>]*>[\s\S]*?<\/script>/gi, '');
+
+    this.normalizedHTML = html.trim();
+  }
+}
+
+// Instancia global del normalizador
+const projectNormalizer = new ProjectNormalizer();
+
+// Verificar si las APIs están disponibles
+const isFileSystemAccessSupported = () => {
+    return 'showOpenFilePicker' in window && 'showSaveFilePicker' in window && 'showDirectoryPicker' in window;
+};
+```
+
+Ubicación 2: La función para normalizar proyectos - DENTRO del DOMContentLoaded, después de las funciones de manejo de proyectos
+
+Busca esta línea en tu código:
+
+```javascript
+});  // FIN de DOMContentLoaded - ¡Este cierre debe mantenerse!
+```
+
+Y ANTES de esa línea, añade esto:
+
+```javascript
+    // =====================================
+    // Funciones para normalizar proyectos descargados
+    // =====================================
+
+    async function normalizeDownloadedProject() {
+        const htmlContent = editor.getValue();
+        
+        try {
+            const normalized = projectNormalizer.normalizeDownloadedProject(htmlContent);
+            
+            // Crear nuevo archivo con el HTML normalizado
+            editor.setValue(normalized.html);
+            
+            // Mostrar resultados en la consola
+            addToConsole('=== PROYECTO NORMALIZADO ===', 'input');
+            addToConsole('HTML limpiado y listo para usar', 'normal');
+            
+            if (normalized.css.trim()) {
+                addToConsole(`CSS extraído (${normalized.css.split('\n').length} líneas):`, 'normal');
+                addToConsole(normalized.css, 'normal');
+            }
+            
+            if (normalized.js.trim()) {
+                addToConsole(`JavaScript extraído (${normalized.js.split('\n').length} líneas):`, 'normal');
+                addToConsole(normalized.js, 'normal');
+            }
+            
+            showNotification('Proyecto normalizado correctamente - Ver consola para detalles');
+            
+            // Opcional: Guardar automáticamente los archivos CSS y JS si hay proyecto abierto
+            if (currentProjectHandle) {
+                if (normalized.css.trim() && confirm('¿Guardar CSS extraído en el proyecto?')) {
+                    await saveNormalizedFile('styles-normalized.css', normalized.css);
+                }
+                if (normalized.js.trim() && confirm('¿Guardar JavaScript extraído en el proyecto?')) {
+                    await saveNormalizedFile('script-normalized.js', normalized.js);
+                }
+            }
+            
+        } catch (error) {
+            console.error('Error normalizando proyecto:', error);
+            showNotification(`Error normalizando proyecto: ${error.message}`, true);
+            addToConsole(`Error normalizando proyecto: ${error.message}`, 'error');
+        }
+    }
+
+    async function saveNormalizedFile(filename, content) {
+        if (!currentProjectHandle) {
+            showNotification('Abre un proyecto primero para guardar los archivos', true);
+            return;
+        }
+        
+        try {
+            const fileHandle = await currentProjectHandle.getFileHandle(filename, { create: true });
+            const writable = await fileHandle.createWritable();
+            await writable.write(content);
+            await writable.close();
+            
+            showNotification(`Archivo ${filename} guardado en el proyecto`);
+            addToConsole(`Archivo guardado: ${filename}`, 'normal');
+            
+            // Recargar estructura del proyecto para mostrar el nuevo archivo
+            await loadProjectStructure();
+            
+        } catch (error) {
+            console.error(`Error guardando ${filename}:`, error);
+            showNotification(`Error guardando ${filename}: ${error.message}`, true);
+            addToConsole(`Error guardando ${filename}: ${error.message}`, 'error');
+        }
+    }
+
+    // Agregar event listener para el botón de normalizar (si existe en tu HTML)
+    // document.getElementById('normalizar-proyecto').addEventListener('click', normalizeDownloadedProject);
+```
+
+Ubicación 3: Para agregar un botón en el menú (opcional)
+
+Si quieres un botón en la interfaz, añade este event listener con los otros event listeners del menú:
+
+```javascript
+    // ===== EVENTOS DEL MENÚ =====
+    document.getElementById('abrir-documento').addEventListener('click', openFile);
+    document.getElementById('guardar').addEventListener('click', saveFile);
+    document.getElementById('guardar-como').addEventListener('click', saveFileAs);
+    document.getElementById('nuevo-documento').addEventListener('click', newDocument);
+    document.getElementById('nueva-carpeta').addEventListener('click', createNewFolder);
+    document.getElementById('limpiar-editor').addEventListener('click', clearEditor);
+
+    // Agregar este si tienes un botón para normalizar
+    // document.getElementById('normalizar-proyecto').addEventListener('click', normalizeDownloadedProject);
+```
+
+Resumen de las ubicaciones exactas:
+
+1. Clase ProjectNormalizer: Después de las variables globales y antes de isFileSystemAccessSupported
+2. Función normalizeDownloadedProject: Dentro de DOMContentLoaded, antes del cierre final });
+3. Event listener: Con los otros event listeners del menú (comentado por ahora)
+
+¡Así tu función de normalización estará perfectamente integrada en el editor!
+
+
+
+--------------------------------------------------
+
+
+Tienes razón, el problema es que la clase ProjectNormalizer debe estar DENTRO del DOMContentLoaded, después de que se inicialice el editor. 
+Aquí te muestro la ubicación correcta:
+
+```javascript
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar Ace Editor
+    let editor = ace.edit("editor");
+    editor.setTheme("ace/theme/dreamweaver");
+    editor.session.setMode("ace/mode/html");
+    
+    // Configuración inicial del editor...
+    
+    // ===== PROJECT NORMALIZER ===== 
+    class ProjectNormalizer {
+      constructor() {
+        this.originalHTML = '';
+        this.normalizedHTML = '';
+        this.combinedCSS = '';
+        this.combinedJS = '';
+      }
+
+      normalizeDownloadedProject(html, css = '', js = '') {
+        this.originalHTML = html;
+        this.combinedCSS = css;
+        this.combinedJS = js;
+
+        this.extractAllCSS();
+        this.extractAllJS();
+        this.cleanHTML();
+
+        return {
+          html: this.normalizedHTML,
+          css: this.combinedCSS,
+          js: this.combinedJS
+        };
+      }
+
+      extractAllCSS() {
+        const html = this.originalHTML;
+        const internalCSS = this.extractInternalCSS(html);
+        if (internalCSS) {
+          this.combinedCSS += '\n' + internalCSS;
+        }
+        this.extractExternalCSS(html);
+      }
+
+      extractInternalCSS(html) {
+        const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+        const matches = [];
+        let match;
+        while ((match = styleRegex.exec(html)) !== null) {
+          matches.push(match[1].trim());
+        }
+        return matches.join('\n');
+      }
+
+      extractExternalCSS(html) {
+        const linkRegex = /<link[^>]*href=["']([^"']*\.css)["'][^>]*>/gi;
+        let match;
+        while ((match = linkRegex.exec(html)) !== null) {
+          const cssPath = match[1];
+          this.combinedCSS += `\n/* CSS externo original: ${cssPath} */\n`;
+          this.combinedCSS += `/* Nota: El archivo ${cssPath} necesita ser incorporado manualmente */\n`;
+        }
+      }
+
+      extractAllJS() {
+        const html = this.originalHTML;
+        const internalJS = this.extractInternalJS(html);
+        if (internalJS) {
+          this.combinedJS += '\n' + internalJS;
+        }
+        this.extractExternalJS(html);
+      }
+
+      extractInternalJS(html) {
+        const scriptRegex = /<script(?!.*src)[^>]*>([\s\S]*?)<\/script>/gi;
+        const matches = [];
+        let match;
+        while ((match = scriptRegex.exec(html)) !== null) {
+          matches.push(match[1].trim());
+        }
+        return matches.join('\n');
+      }
+
+      extractExternalJS(html) {
+        const scriptRegex = /<script[^>]*src=["']([^"']*\.js)["'][^>]*><\/script>/gi;
+        let match;
+        while ((match = scriptRegex.exec(html)) !== null) {
+          const jsPath = match[1];
+          this.combinedJS += `\n// JS externo original: ${jsPath}\n`;
+          this.combinedJS += `// Nota: El archivo ${jsPath} necesita ser incorporado manualmente\n`;
+        }
+      }
+
+      cleanHTML() {
+        let html = this.originalHTML;
+        html = html.replace(/<link[^>]*href=["'][^"']*\.css["'][^>]*>/gi, '');
+        html = html.replace(/<script[^>]*src=["'][^"']*\.js["'][^>]*><\/script>/gi, '');
+        html = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+        html = html.replace(/<script(?!.*src)[^>]*>[\s\S]*?<\/script>/gi, '');
+        this.normalizedHTML = html.trim();
+      }
+    }
+
+    // Instancia del normalizador
+    const projectNormalizer = new ProjectNormalizer();
+
+    // =====================================
+    // Funciones para normalizar proyectos descargados
+    // =====================================
+
+    async function normalizeDownloadedProject() {
+        const htmlContent = editor.getValue();
+        
+        try {
+            const normalized = projectNormalizer.normalizeDownloadedProject(htmlContent);
+            
+            // Crear nuevo archivo con el HTML normalizado
+            editor.setValue(normalized.html);
+            
+            // Mostrar resultados en la consola
+            addToConsole('=== PROYECTO NORMALIZADO ===', 'input');
+            addToConsole('HTML limpiado y listo para usar', 'normal');
+            
+            if (normalized.css.trim()) {
+                addToConsole(`CSS extraído (${normalized.css.split('\n').length} líneas):`, 'normal');
+                addToConsole(normalized.css, 'normal');
+            }
+            
+            if (normalized.js.trim()) {
+                addToConsole(`JavaScript extraído (${normalized.js.split('\n').length} líneas):`, 'normal');
+                addToConsole(normalized.js, 'normal');
+            }
+            
+            showNotification('Proyecto normalizado correctamente - Ver consola para detalles');
+            
+            // Opcional: Guardar automáticamente los archivos CSS y JS si hay proyecto abierto
+            if (currentProjectHandle) {
+                if (normalized.css.trim() && confirm('¿Guardar CSS extraído en el proyecto?')) {
+                    await saveNormalizedFile('styles-normalized.css', normalized.css);
+                }
+                if (normalized.js.trim() && confirm('¿Guardar JavaScript extraído en el proyecto?')) {
+                    await saveNormalizedFile('script-normalized.js', normalized.js);
+                }
+            }
+            
+        } catch (error) {
+            console.error('Error normalizando proyecto:', error);
+            showNotification(`Error normalizando proyecto: ${error.message}`, true);
+            addToConsole(`Error normalizando proyecto: ${error.message}`, 'error');
+        }
+    }
+
+    async function saveNormalizedFile(filename, content) {
+        if (!currentProjectHandle) {
+            showNotification('Abre un proyecto primero para guardar los archivos', true);
+            return;
+        }
+        
+        try {
+            const fileHandle = await currentProjectHandle.getFileHandle(filename, { create: true });
+            const writable = await fileHandle.createWritable();
+            await writable.write(content);
+            await writable.close();
+            
+            showNotification(`Archivo ${filename} guardado en el proyecto`);
+            addToConsole(`Archivo guardado: ${filename}`, 'normal');
+            
+            // Recargar estructura del proyecto para mostrar el nuevo archivo
+            await loadProjectStructure();
+            
+        } catch (error) {
+            console.error(`Error guardando ${filename}:`, error);
+            showNotification(`Error guardando ${filename}: ${error.message}`, true);
+            addToConsole(`Error guardando ${filename}: ${error.message}`, 'error');
+        }
+    }
+
+    // ===== EVENTOS DEL MENÚ =====
+    // Agregar esto con los otros event listeners:
+    // document.getElementById('normalizar-proyecto').addEventListener('click', normalizeDownloadedProject);
+
+    // ... el resto de tu código existente ...
+});  // FIN de DOMContentLoaded
+```
+
+Y para agregar el botón en tu menú, modifica el HTML así:
+
+```html
+<nav>
+  <ul class="menu">
+    <li class="menu-item dropdown">
+      <a href="#"><span class="menu-icon">≡</span> Archivo</a>
+      <div class="dropdown-content">
+        <a id="abrir-documento" href="#"><span class="menu-icon">📂</span> Abrir documento</a>
+        <a id="guardar" href="#"><span class="menu-icon">💾</span> Guardar</a>
+        <a id="guardar-como" href="#"><span class="menu-icon">🔄</span> Guardar como</a>
+        <a id="nuevo-documento" href="#"><span class="menu-icon">📄</span> Nuevo documento</a>
+        <a id="nueva-carpeta" href="#"><span class="menu-icon">📁</span> Nueva carpeta</a>
+        <a id="nuevo-proyecto" href="#"><span class="menu-icon">🆕</span> Nuevo Proyecto</a>
+        <a id="abrir-proyecto" href="#"><span class="menu-icon">📂</span> Abrir Proyecto</a>
+        <a id="limpiar-editor" href="#"><span class="menu-icon">🧹</span> Limpiar Editor</a>
+        <!-- AGREGAR ESTA NUEVA OPCIÓN -->
+        <a id="normalizar-proyecto" href="#"><span class="menu-icon">🔄</span> Normalizar Proyecto</a>
+      </div>
+    </li>
+    <li class="menu-item">
+      <a href="#" id="toggle-sidebar"><span class="menu-icon">📁</span> Explorador</a>
+    </li>
+  </ul>
+</nav>
+```
+
+Y luego en los event listeners, agrega:
+
+```javascript
+// ===== EVENTOS DEL MENÚ =====
+document.getElementById('abrir-documento').addEventListener('click', openFile);
+document.getElementById('guardar').addEventListener('click', saveFile);
+document.getElementById('guardar-como').addEventListener('click', saveFileAs);
+document.getElementById('nuevo-documento').addEventListener('click', newDocument);
+document.getElementById('nueva-carpeta').addEventListener('click', createNewFolder);
+document.getElementById('limpiar-editor').addEventListener('click', clearEditor);
+document.getElementById('nuevo-proyecto').addEventListener('click', newProject);
+document.getElementById('abrir-proyecto').addEventListener('click', openProject);
+document.getElementById('normalizar-proyecto').addEventListener('click', normalizeDownloadedProject); // ← NUEVA LÍNEA
+```
+
+Resumen de la ubicación correcta:
+
+· La clase ProjectNormalizer va DENTRO del DOMContentLoaded
+· Después de inicializar el editor
+· Antes de las funciones de manejo de archivos
+· Las funciones de normalización también van dentro del DOMContentLoaded
+
+¡Así no interferirá con la inicialización de Ace Editor!
+
+

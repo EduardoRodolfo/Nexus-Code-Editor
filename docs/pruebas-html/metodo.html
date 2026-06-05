@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Laboratorio de Strings</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .challenge { margin-bottom: 30px; border: 1px solid #ccc; padding: 15px; border-radius: 8px; }
+    .output { font-weight: bold; margin-top: 10px; }
+    .hint { font-size: 14px; color: gray; }
+  </style>
+</head>
+<body>
+<h2>Métodos String</h2>
+  <h2>🟢 Desafío 1: Convertir texto a mayúsculas</h2>
+  <div class="challenge">
+    <label>Texto original:</label>
+    <input type="text" id="stringInput" value="Hola, Eduardo">
+    <button onclick="convertirMayusculas()">Aplicar .toUpperCase()</button>
+    <div class="output" id="output1"></div>
+    <div class="hint">💡 Pista: Usa <code>.toUpperCase()</code> para transformar el texto</div>
+  </div>
+
+  <h2>🟢 Desafío 2: Verificar si contiene una palabra</h2>
+  <div class="challenge">
+    <label>Texto:</label>
+    <input type="text" id="verificarInput" value="Bienvenido a JavaScript">
+    <label>Buscar palabra:</label>
+    <input type="text" id="keywordInput" value="JavaScript">
+    <button onclick="verificarPalabra()">Aplicar .includes()</button>
+    <div class="output" id="output2"></div>
+    <div class="hint">💡 Pista: <code>.includes("palabra")</code> devuelve true si se encuentra</div>
+  </div>
+
+  <h2>Métodos Array</h2>
+  <h2>🔵 Desafío 1: Agregar un número a un array</h2>
+<div class="challenge">
+  <p>Array original: <code>[1, 2, 3]</code></p>
+  <input type="number" id="numInput" placeholder="Número a agregar">
+  <button onclick="agregarNumero()">Aplicar .push()</button>
+  <div class="output" id="arrayOutput1"></div>
+  <div class="hint">💡 Pista: <code>.push(número)</code> agrega al final del array</div>
+</div>
+
+<h2>🔵 Desafío 2: Duplicar cada elemento del array</h2>
+<div class="challenge">
+  <p>Array original: <code>[4, 5, 6]</code></p>
+  <button onclick="duplicarArray()">Aplicar .map()</button>
+  <div class="output" id="arrayOutput2"></div>
+  <div class="hint">💡 Pista: Usa <code>.map(n => n * 2)</code> para transformar</div>
+</div>
+<h2>Métodos DOM</h2>
+<h2>🔴 Desafío 1: Activar alerta al hacer clic</h2>
+<div class="challenge">
+  <button id="botonAlerta">Haz clic aquí</button>
+  <div class="hint">💡 Pista: Usa <code>addEventListener("click")</code> para escuchar el evento</div>
+</div>
+
+<h2>🔴 Desafío 2: Cambiar estilo del texto al hacer clic</h2>
+<div class="challenge">
+  <p id="textoCambiante">Texto que cambiará de color</p>
+  <button onclick="activarEstilo()">Activar estilo</button>
+  <div class="hint">💡 Pista: Usa <code>classList.toggle("activo")</code></div>
+</div>
+
+<style>
+  .activo { color: crimson; font-weight: bold; }
+</style>
+
+
+
+<script>
+    function convertirMayusculas() {
+      let texto = document.getElementById("stringInput").value;
+      let resultado = texto.toUpperCase();
+      document.getElementById("output1").textContent = `Resultado: ${resultado}`;
+    }
+
+    function verificarPalabra() {
+      let texto = document.getElementById("verificarInput").value;
+      let palabra = document.getElementById("keywordInput").value;
+      let contiene = texto.includes(palabra);
+      document.getElementById("output2").textContent = `¿Contiene "${palabra}"?: ${contiene}`;
+    }
+  </script>
+  <script>
+  function agregarNumero() {
+    let num = parseInt(document.getElementById("numInput").value);
+    let arr = [1, 2, 3];
+    arr.push(num);
+    document.getElementById("arrayOutput1").textContent = `Resultado: [${arr.join(", ")}]`;
+  }
+
+  function duplicarArray() {
+    let base = [4, 5, 6];
+    let nuevo = base.map(n => n * 2);
+    document.getElementById("arrayOutput2").textContent = `Resultado: [${nuevo.join(", ")}]`;
+  }
+</script>
+
+<script>
+  document.querySelector("#botonAlerta").addEventListener("click", function() {
+    alert("¡Evento activado!");
+  });
+
+  function activarEstilo() {
+    let texto = document.getElementById("textoCambiante");
+    texto.classList.toggle("activo");
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Constructor de Objetos</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .objeto { margin-top: 20px; background: #f0f0f0; padding: 10px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Crear Usuario</h1>
+  <form id="formulario">
+    <input type="text" id="nombre" placeholder="Nombre" required>
+    <input type="number" id="edad" placeholder="Edad" required>
+    <input type="email" id="correo" placeholder="Correo" required>
+    <button type="submit">Crear</button>
+  </form>
+  <div class="objeto" id="resultado"></div>
+
+  <script>
+    document.getElementById("formulario").addEventListener("submit", e => {
+      e.preventDefault();
+      const nombre = document.getElementById("nombre").value;
+      const edad = document.getElementById("edad").value;
+      const correo = document.getElementById("correo").value;
+      const usuario = { nombre, edad, correo };
+      document.getElementById("resultado").textContent = JSON.stringify(usuario, null, 2);
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>

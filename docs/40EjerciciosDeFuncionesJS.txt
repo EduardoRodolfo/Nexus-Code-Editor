@@ -1,0 +1,364 @@
+﻿¡Claro! Aquí tienes 40 ejercicios de funciones JavaScript con sus soluciones separadas. Los problemas cubren desde conceptos básicos hasta nivel intermedio.
+
+---
+
+### **Ejercicios Propuestos**
+
+1. **Función que devuelve el mayor de dos números**  
+   Crear una función `encontrarMayor` que tome dos números y devuelva el mayor.
+
+2. **Función para verificar si un número es par**  
+   Crear una función `esPar` que devuelva `true` si un número es par, o `false` si es impar.
+
+3. **Función que devuelve el área de un círculo**  
+   Crear una función `areaCirculo` que reciba el radio y devuelva el área.
+
+4. **Función para convertir grados Celsius a Fahrenheit**  
+   Crear una función `celsiusAFahrenheit` que realice la conversión.
+
+5. **Función que invierte una cadena**  
+   Crear una función `invertirCadena` que devuelva la cadena invertida.
+
+6. **Función para contar vocales en una cadena**  
+   Crear una función `contarVocales` que cuente las vocales en una cadena.
+
+7. **Función que encuentra la palabra más larga en un array**  
+   Crear una función `palabraMasLarga` que reciba un array de palabras y devuelva la más larga.
+
+8. **Función para generar un número aleatorio en un rango**  
+   Crear una función `numeroAleatorio` que reciba un rango (min, max) y devuelva un número aleatorio en ese rango.
+
+9. **Función que calcula el factorial de un número**  
+   Crear una función `factorial` que calcule el factorial de un número.
+
+10. **Función para verificar si una palabra es un palíndromo**  
+    Crear una función `esPalindromo` que devuelva `true` si la palabra es un palíndromo.
+
+11. **Función que suma todos los números de un array**  
+    Crear una función `sumarArray` que sume todos los números de un array.
+
+12. **Función para encontrar la diferencia de edad entre dos personas**  
+    Crear una función `diferenciaEdad` que reciba dos edades y devuelva la diferencia.
+
+13. **Función que convierte horas a segundos**  
+    Crear una función `horasASegundos` que convierta horas a segundos.
+
+14. **Función para calcular el IMC (Índice de Masa Corporal)**  
+    Crear una función `calcularIMC` que reciba peso y altura y devuelva el IMC.
+
+15. **Función que capitaliza la primera letra de una cadena**  
+    Crear una función `capitalizar` que capitalice la primera letra de una cadena.
+
+16. **Función para verificar si un número es primo**  
+    Crear una función `esPrimo` que devuelva `true` si un número es primo.
+
+17. **Función que elimina los elementos falsy de un array**  
+    Crear una función `eliminarFalsy` que elimine valores falsy (false, 0, "", null, undefined, NaN) de un array.
+
+18. **Función para ordenar un array de números de forma ascendente**  
+    Crear una función `ordenarAscendente` que ordene un array de números.
+
+19. **Función que cuenta la cantidad de letras en una cadena**  
+    Crear una función `contarLetras` que cuente cuántas letras (ignorando espacios y símbolos) hay en una cadena.
+
+20. **Función para generar una contraseña aleatoria**  
+    Crear una función `generarPassword` que genere una contraseña aleatoria de 8 caracteres (letras y números).
+
+21. **Función que calcula el promedio de un array de números**  
+    Crear una función `calcularPromedio` que calcule el promedio de un array de números.
+
+22. **Función para encontrar la intersección de dos arrays**  
+    Crear una función `interseccionArrays` que devuelva los elementos comunes entre dos arrays.
+
+23. **Función que repite una cadena n veces**  
+    Crear una función `repetirCadena` que repita una cadena un número específico de veces.
+
+24. **Función para calcular la potencia de un número**  
+    Crear una función `potencia` que reciba base y exponente y devuelva el resultado.
+
+25. **Función que devuelve el tipo de dato de un valor**  
+    Crear una función `tipoDeDato` que devuelva el tipo de dato del valor ingresado.
+
+26. **Función para eliminar duplicados de un array**  
+    Crear una función `eliminarDuplicados` que elimine elementos duplicados de un array.
+
+27. **Función que convierte una cadena a camelCase**  
+    Crear una función `aCamelCase` que convierta una cadena separada por guiones o guiones bajos a camelCase.
+
+28. **Función para obtener la fecha actual en formato dd/mm/aaaa**  
+    Crear una función `fechaActual` que devuelva la fecha actual en ese formato.
+
+29. **Función que calcula la hipotenusa de un triángulo rectángulo**  
+    Crear una función `calcularHipotenusa` que reciba los dos catetos y devuelva la hipotenusa.
+
+30. **Función para verificar si un año es bisiesto**  
+    Crear una función `esBisiesto` que devuelva `true` si el año es bisiesto.
+
+31. **Función que encuentra el número de veces que aparece un elemento en un array**  
+    Crear una función `contarOcurrencias` que cuente cuántas veces aparece un elemento en un array.
+
+32. **Función para reemplazar todos los espacios de una cadena por guiones**  
+    Crear una función `reemplazarEspacios` que reemplace espacios por guiones.
+
+33. **Función que calcula la media geométrica de un array de números**  
+    Crear una función `mediaGeometrica` que calcule la media geométrica.
+
+34. **Función para obtener el nombre del mes a partir de un número (1-12)**  
+    Crear una función `obtenerMes` que devuelva el nombre del mes correspondiente al número.
+
+35. **Función que devuelve los primeros n números de la secuencia de Fibonacci**  
+    Crear una función `fibonacci` que devuelva un array con los primeros n números de Fibonacci.
+
+36. **Función para calcular la diferencia absoluta entre dos números**  
+    Crear una función `diferenciaAbsoluta` que devuelva la diferencia absoluta entre dos números.
+
+37. **Función que verifica si todas las letras de una cadena están en mayúsculas**  
+    Crear una función `estaEnMayusculas` que devuelva `true` si todos los caracteres están en mayúsculas.
+
+38. **Función para calcular el descuento de un producto**  
+    Crear una función `calcularDescuento` que reciba precio original y porcentaje de descuento, y devuelva el precio final.
+
+39. **Función que mezcla dos arrays alternando sus elementos**  
+    Crear una función `mezclarArrays` que mezcle dos arrays alternando sus elementos.
+
+40. **Función para calcular la suma de los dígitos de un número**  
+    Crear una función `sumarDigitos` que sume los dígitos de un número.
+
+---
+
+### **Soluciones**
+
+```javascript
+// 1. Función que devuelve el mayor de dos números
+function encontrarMayor(a, b) {
+  return a > b ? a : b;
+}
+
+// 2. Función para verificar si un número es par
+function esPar(num) {
+  return num % 2 === 0;
+}
+
+// 3. Función que devuelve el área de un círculo
+function areaCirculo(radio) {
+  return Math.PI * radio ** 2;
+}
+
+// 4. Función para convertir grados Celsius a Fahrenheit
+function celsiusAFahrenheit(celsius) {
+  return (celsius * 9/5) + 32;
+}
+
+// 5. Función que invierte una cadena
+function invertirCadena(str) {
+  return str.split('').reverse().join('');
+}
+
+// 6. Función para contar vocales en una cadena
+function contarVocales(str) {
+  const vocales = str.match(/[aeiouáéíóú]/gi);
+  return vocales ? vocales.length : 0;
+}
+
+// 7. Función que encuentra la palabra más larga en un array
+function palabraMasLarga(arr) {
+  return arr.reduce((larga, actual) => 
+    actual.length > larga.length ? actual : larga, "");
+}
+
+// 8. Función para generar un número aleatorio en un rango
+function numeroAleatorio(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// 9. Función que calcula el factorial de un número
+function factorial(n) {
+  if (n === 0) return 1;
+  return n * factorial(n - 1);
+}
+
+// 10. Función para verificar si una palabra es un palíndromo
+function esPalindromo(str) {
+  const limpia = str.replace(/[\W_]/g, '').toLowerCase();
+  return limpia === invertirCadena(limpia);
+}
+
+// 11. Función que suma todos los números de un array
+function sumarArray(arr) {
+  return arr.reduce((suma, num) => suma + num, 0);
+}
+
+// 12. Función para encontrar la diferencia de edad entre dos personas
+function diferenciaEdad(edad1, edad2) {
+  return Math.abs(edad1 - edad2);
+}
+
+// 13. Función que convierte horas a segundos
+function horasASegundos(horas) {
+  return horas * 3600;
+}
+
+// 14. Función para calcular el IMC
+function calcularIMC(peso, altura) {
+  return peso / (altura ** 2);
+}
+
+// 15. Función que capitaliza la primera letra de una cadena
+function capitalizar(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// 16. Función para verificar si un número es primo
+function esPrimo(num) {
+  if (num <= 1) return false;
+  for (let i = 2; i <= Math.sqrt(num); i++) {
+    if (num % i === 0) return false;
+  }
+  return true;
+}
+
+// 17. Función que elimina los elementos falsy de un array
+function eliminarFalsy(arr) {
+  return arr.filter(Boolean);
+}
+
+// 18. Función para ordenar un array de números de forma ascendente
+function ordenarAscendente(arr) {
+  return arr.slice().sort((a, b) => a - b);
+}
+
+// 19. Función que cuenta la cantidad de letras en una cadena
+function contarLetras(str) {
+  return str.replace(/[^a-záéíóúñ]/gi, '').length;
+}
+
+// 20. Función para generar una contraseña aleatoria
+function generarPassword() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let password = '';
+  for (let i = 0; i < 8; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
+}
+
+// 21. Función que calcula el promedio de un array de números
+function calcularPromedio(arr) {
+  return sumarArray(arr) / arr.length;
+}
+
+// 22. Función para encontrar la intersección de dos arrays
+function interseccionArrays(arr1, arr2) {
+  return arr1.filter(item => arr2.includes(item));
+}
+
+// 23. Función que repite una cadena n veces
+function repetirCadena(str, n) {
+  return str.repeat(n);
+}
+
+// 24. Función para calcular la potencia de un número
+function potencia(base, exp) {
+  return base ** exp;
+}
+
+// 25. Función que devuelve el tipo de dato de un valor
+function tipoDeDato(valor) {
+  return typeof valor;
+}
+
+// 26. Función para eliminar duplicados de un array
+function eliminarDuplicados(arr) {
+  return [...new Set(arr)];
+}
+
+// 27. Función que convierte una cadena a camelCase
+function aCamelCase(str) {
+  return str.replace(/[-_](.)/g, (_, c) => c.toUpperCase());
+}
+
+// 28. Función para obtener la fecha actual en formato dd/mm/aaaa
+function fechaActual() {
+  const fecha = new Date();
+  return `${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`;
+}
+
+// 29. Función que calcula la hipotenusa de un triángulo rectángulo
+function calcularHipotenusa(a, b) {
+  return Math.sqrt(a * a + b * b);
+}
+
+// 30. Función para verificar si un año es bisiesto
+function esBisiesto(year) {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+// 31. Función que encuentra el número de veces que aparece un elemento en un array
+function contarOcurrencias(arr, elemento) {
+  return arr.filter(item => item === elemento).length;
+}
+
+// 32. Función para reemplazar todos los espacios de una cadena por guiones
+function reemplazarEspacios(str) {
+  return str.replace(/\s/g, '-');
+}
+
+// 33. Función que calcula la media geométrica de un array de números
+function mediaGeometrica(arr) {
+  const producto = arr.reduce((acc, num) => acc * num, 1);
+  return Math.pow(producto, 1 / arr.length);
+}
+
+// 34. Función para obtener el nombre del mes a partir de un número
+function obtenerMes(num) {
+  const meses = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+  return meses[num - 1] || 'Número inválido';
+}
+
+// 35. Función que devuelve los primeros n números de Fibonacci
+function fibonacci(n) {
+  const secuencia = [0, 1];
+  for (let i = 2; i < n; i++) {
+    secuencia.push(secuencia[i - 1] + secuencia[i - 2]);
+  }
+  return secuencia.slice(0, n);
+}
+
+// 36. Función para calcular la diferencia absoluta entre dos números
+function diferenciaAbsoluta(a, b) {
+  return Math.abs(a - b);
+}
+
+// 37. Función que verifica si todas las letras de una cadena están en mayúsculas
+function estaEnMayusculas(str) {
+  return str === str.toUpperCase();
+}
+
+// 38. Función para calcular el descuento de un producto
+function calcularDescuento(precio, descuento) {
+  return precio - (precio * (descuento / 100));
+}
+
+// 39. Función que mezcla dos arrays alternando sus elementos
+function mezclarArrays(arr1, arr2) {
+  const resultado = [];
+  const longitud = Math.max(arr1.length, arr2.length);
+  for (let i = 0; i < longitud; i++) {
+    if (i < arr1.length) resultado.push(arr1[i]);
+    if (i < arr2.length) resultado.push(arr2[i]);
+  }
+  return resultado;
+}
+
+// 40. Función para calcular la suma de los dígitos de un número
+function sumarDigitos(num) {
+  return String(num).split('').reduce((suma, digito) => suma + parseInt(digito), 0);
+}
+```
+
+---
+
+Espero que estos ejercicios te sean útiles. ¡Practica con ellos y mejora tus habilidades en JavaScript! 😊

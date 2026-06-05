@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial de Lógica de Programación con JavaScript</title>
+    <style>
+        /* ====================
+           ESTILOS BASE (MISMOS QUE TU TUTORIAL)
+           ==================== */
+        :root {
+            --primary: #9b59b6; /* Morado para diferenciar */
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --border-radius: 15px;
+            --box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #1a237e, #4a148c, #1a237e);
+            background-attachment: fixed;
+            padding: 20px;
+            transition: font-size 0.3s ease;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 2px solid var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: #9b59b6;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: #bdc3c7;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: var(--transition);
+            font-weight: 600;
+            border: 2px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            background: #8e44ad;
+        }
+        
+        .concept-section {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            border-left: 5px solid var(--primary);
+            backdrop-filter: blur(5px);
+        }
+        
+        h2 {
+            color: var(--dark);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        h2::before {
+            content: "🧠";
+            margin-right: 15px;
+            color: var(--primary);
+        }
+        
+        .concept-description {
+            margin-bottom: 30px;
+            font-size: 1.15rem;
+            color: #2c3e50;
+            line-height: 1.8;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .examples-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .example {
+            background: #2c3e50;
+            border-radius: 12px;
+            padding: 25px;
+            position: relative;
+            border: 1px solid #3c4b5a;
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .example:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        .example-title {
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #9b59b6;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .example-title::before {
+            content: "💡";
+            color: var(--warning);
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        pre {
+            background: #1a252f;
+            color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            margin-bottom: 20px;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            border: 1px solid #34495e;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(155, 89, 182, 0.9);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .copy-btn:hover {
+            background: #8e44ad;
+            transform: scale(1.05);
+        }
+        
+        .explanation {
+            background: rgba(155, 89, 182, 0.1);
+            border-radius: 8px;
+            padding: 18px;
+            color: #2c3e50;
+            border: 1px dashed var(--primary);
+            margin-bottom: 25px;
+        }
+        
+        .tip-box {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 40px 0;
+            border-left: 5px solid var(--warning);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .tip-title {
+            color: #d35400;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tip-title::before {
+            content: "🚀";
+        }
+        
+        .tip-content {
+            color: #2d3436;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            font-size: 1.1rem;
+            margin-top: 40px;
+            background: rgba(44, 62, 80, 0.8);
+            border-radius: var(--border-radius);
+        }
+
+        /* Botones flotantes */
+        .floating-btn {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #9b59b6;
+            color: white;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+        
+        .floating-btn:hover {
+            transform: scale(1.1);
+            background: #8e44ad;
+        }
+        
+        .to-top {
+            bottom: 20px;
+            right: 20px;
+        }
+        
+        .to-home {
+            bottom: 90px;
+            right: 20px;
+        }
+        
+        /* Menú flotante */
+        .floating-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+        }
+
+        .menu-btn {
+            width: 50px;
+            height: 50px;
+            background: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            color: white;
+            font-size: 1.5em;
+        }
+
+        .menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: white;
+            min-width: 280px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            z-index: 1002;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 10px;
+            color: #2c3e50;
+            text-decoration: none;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .menu-item:hover {
+            background: #f5f5f5;
+            padding-left: 15px;
+        }
+
+        .submenu {
+            display: none;
+            padding-left: 15px;
+            background: #f9f9f9;
+            border-left: 3px solid #9b59b6;
+            margin: 5px 0;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .submenu a {
+            display: block;
+            padding: 8px 10px;
+            color: #9b59b6;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: var(--transition);
+        }
+
+        .submenu a:hover {
+            background: #f3e5f5;
+            color: #7d3c98;
+        }
+
+        .arrow::after {
+            content: "▼";
+            float: right;
+            font-size: 0.8em;
+            transition: transform 0.3s;
+        }
+
+        .arrow.open::after {
+            transform: rotate(180deg);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                padding: 8px;
+            }
+            
+            header {
+                padding: 20px 12px;
+                margin-bottom: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+                margin-bottom: 15px;
+            }
+            
+            .btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+            
+            .concept-section {
+                padding: 20px 15px;
+                margin-bottom: 25px;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+            }
+            
+            .concept-description {
+                font-size: 0.95rem;
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .examples-container {
+                grid-template-columns: minmax(250px, 1fr);
+                gap: 20px;
+            }
+            
+            .example {
+                padding: 18px;
+                width: 100%;
+            }
+            
+            .example-title {
+                font-size: 1.15rem;
+            }
+            
+            pre {
+                padding: 15px;
+                font-size: 0.85rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .copy-btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .tip-box {
+                padding: 20px 15px;
+            }
+            
+            .tip-title {
+                font-size: 1.25rem;
+            }
+            
+            .tip-content {
+                font-size: 0.95rem;
+            }
+            
+            footer {
+                padding: 20px 15px;
+                font-size: 0.95rem;
+                margin-top: 30px;
+            }
+            
+            .floating-btn {
+                width: 40px;
+                height: 40px;
+                line-height: 40px;
+                font-size: 16px;
+            }
+            
+            .to-home {
+                bottom: 70px;
+                right: 10px;
+            }
+            
+            .to-top {
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            .menu-content {
+                min-width: 250px;
+                max-height: 70vh;
+            }
+        }
+
+        /* Estilos para el sistema de tamaño de fuente */
+        .font-controls {
+            padding: 12px;
+            border-bottom: 2px solid #9b59b6;
+            background: #f8f9fa;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: 10px;
+        }
+
+        .font-label {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .font-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .font-btn {
+            padding: 6px 12px;
+            background: white;
+            border: 2px solid #9b59b6;
+            border-radius: 20px;
+            color: #9b59b6;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .font-btn:hover {
+            background: #f3e5f5;
+        }
+
+        .font-btn.active {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .font-indicator {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            margin-top: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧠 Lógica de Programación con JavaScript</h1>
+            <p class="subtitle">Domina los fundamentos del pensamiento algorítmico desde cero</p>
+            
+            <div class="btn-group">
+                <a href="#inicio" class="btn">Comenzar Tutorial</a>
+                <a href="#ejercicios" class="btn" style="background: #2ecc71;">Ejercicios Prácticos</a>
+            </div>
+        </header>
+
+        <!-- Menú flotante -->
+        <div class="floating-menu">
+            <div class="menu-btn" onclick="toggleMenu()">☰</div>
+            <div class="menu-content" id="menuContent"><a href="index.html" class="menu-item">← Volver al Editor</a>
+                <!-- Los controles de fuente se insertarán aquí automáticamente -->
+             <div class="menu-item arrow" onclick="toggleSubmenu(this)">Fundamentos</div>
+                <div class="submenu">
+                    <a href="#pensamiento">Pensamiento Algorítmico</a>
+                    <a href="#pseudocodigo">Pseudocódigo</a>
+                    <a href="#variables-logicas">Variables Lógicas</a>
+                </div>
+                
+                <div class="menu-item arrow" onclick="toggleSubmenu(this)">Estructuras de Control</div>
+                <div class="submenu">
+                    <a href="#condicionales">Condicionales</a>
+                    <a href="#bucles">Bucles/Loops</a>
+                    <a href="#switch">Switch</a>
+                </div>
+                
+                <div class="menu-item arrow" onclick="toggleSubmenu(this)">Lógica Booleana</div>
+                <div class="submenu">
+                    <a href="#operadores">Operadores Lógicos</a>
+                    <a href="#tablas-verdad">Tablas de Verdad</a>
+                    <a href="#de-morgan">Leyes de De Morgan</a>
+                </div>
+                
+                <div class="menu-item arrow" onclick="toggleSubmenu(this)">Algoritmos Básicos</div>
+                <div class="submenu">
+                    <a href="#busqueda">Búsqueda</a>
+                    <a href="#ordenamiento">Ordenamiento</a>
+                    <a href="#matematicos">Algoritmos Matemáticos</a>
+                </div>
+                
+                <div class="menu-item arrow" onclick="toggleSubmenu(this)">Patrones Comunes</div>
+                <div class="submenu">
+                    <a href="#acumuladores">Acumuladores</a>
+                    <a href="#contadores">Contadores</a>
+                    <a href="#banderas">Banderas/Flags</a>
+                </div>
+                
+                <a href="#ejercicios" class="menu-item">📝 Ejercicios Prácticos</a>
+                <a href="#desafios" class="menu-item">🏆 Desafíos Avanzados</a>
+            </div>
+        </div>
+
+        <!-- Sección: Fundamentos -->
+        <section id="pensamiento" class="concept-section">
+            <h2>Pensamiento Algorítmico</h2>
+            <div class="concept-description">
+                El pensamiento algorítmico es la capacidad de resolver problemas mediante una secuencia lógica de pasos. Es la base de toda programación.
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <div class="example-title">Problema: Sumar dos números</div>
+                    <pre><code>// Algoritmo en pseudocódigo
+1. INICIO
+2. LEER numero1
+3. LEER numero2
+4. resultado = numero1 + numero2
+5. MOSTRAR resultado
+6. FIN
+
+// Implementación en JavaScript
+function sumar(a, b) {
+    return a + b;
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                    <div class="explanation">
+                        <strong>Explicación:</strong> Todo algoritmo sigue una estructura básica: entrada, proceso, salida.
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">Problema: Determinar si un número es par</div>
+                    <pre><code>// Pseudocódigo
+1. INICIO
+2. LEER numero
+3. SI numero % 2 == 0 ENTONCES
+4.     MOSTRAR "Es par"
+5. SINO
+6.     MOSTRAR "Es impar"
+7. FIN SI
+8. FIN
+
+// JavaScript
+function esPar(numero) {
+    if (numero % 2 === 0) {
+        return true;
+    } else {
+        return false;
+    }
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                    <div class="explanation">
+                        <strong>Explicación:</strong> Usamos el operador módulo (%) para obtener el residuo de la división.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección: Lógica Booleana -->
+        <section id="operadores" class="concept-section">
+            <h2>Operadores Lógicos</h2>
+            <div class="concept-description">
+                Los operadores lógicos nos permiten combinar o modificar expresiones booleanas (verdaderas o falsas).
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <div class="example-title">AND (&&) - Conjunción</div>
+                    <pre><code>// Ambas condiciones deben ser verdaderas
+let edad = 25;
+let tieneLicencia = true;
+
+if (edad >= 18 && tieneLicencia) {
+    console.log("Puede conducir");
+} else {
+    console.log("No puede conducir");
+}
+
+// Tabla de verdad para AND
+// true && true = true
+// true && false = false
+// false && true = false
+// false && false = false</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">OR (||) - Disyunción</div>
+                    <pre><code>// Al menos una condición debe ser verdadera
+let esEstudiante = false;
+let esEmpleado = true;
+
+if (esEstudiante || esEmpleado) {
+    console.log("Tiene descuento");
+}
+
+// Tabla de verdad para OR
+// true || true = true
+// true || false = true
+// false || true = true
+// false || false = false</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">NOT (!) - Negación</div>
+                    <pre><code>// Invierte el valor booleano
+let llueve = true;
+
+if (!llueve) {
+    console.log("Puedo salir sin paraguas");
+} else {
+    console.log("Necesito paraguas");
+}
+
+// Tabla de verdad para NOT
+// !true = false
+// !false = true</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <div class="tip-box">
+                <div class="tip-title">💡 Consejo de Lógica</div>
+                <div class="tip-content">
+                    <strong>Leyes de De Morgan:</strong><br>
+                    1. !(A && B) = !A || !B<br>
+                    2. !(A || B) = !A && !B<br>
+                    Úsalas para simplificar expresiones lógicas complejas.
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección: Estructuras de Control -->
+        <section id="condicionales" class="concept-section">
+            <h2>Estructuras Condicionales</h2>
+            <div class="concept-description">
+                Permiten que el programa tome decisiones y ejecute diferentes bloques de código según condiciones.
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <div class="example-title">if - else if - else</div>
+                    <pre><code>// Sistema de calificaciones
+let puntaje = 85;
+
+if (puntaje >= 90) {
+    console.log("A - Excelente");
+} else if (puntaje >= 80) {
+    console.log("B - Bueno");
+} else if (puntaje >= 70) {
+    console.log("C - Regular");
+} else if (puntaje >= 60) {
+    console.log("D - Aprobado");
+} else {
+    console.log("F - Reprobado");
+}
+
+// Output: "B - Bueno"</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">Operador Ternario</div>
+                    <pre><code>// Sintaxis compacta para if-else simples
+let edad = 20;
+let mensaje = (edad >= 18) ? "Mayor de edad" : "Menor de edad";
+
+console.log(mensaje); // "Mayor de edad"
+
+// También se puede anidar
+let temperatura = 25;
+let estado = (temperatura > 30) ? "Caluroso" : 
+             (temperatura < 15) ? "Frío" : "Agradable";
+
+console.log(estado); // "Agradable"</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección: Bucles -->
+        <section id="bucles" class="concept-section">
+            <h2>Bucles (Loops)</h2>
+            <div class="concept-description">
+                Permiten ejecutar un bloque de código múltiples veces. Esenciales para procesar colecciones de datos.
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <div class="example-title">for - Bucle con contador</div>
+                    <pre><code>// Imprimir números del 1 al 5
+for (let i = 1; i <= 5; i++) {
+    console.log("Número:", i);
+}
+
+// Recorrer un array
+let frutas = ["Manzana", "Banana", "Naranja"];
+for (let i = 0; i < frutas.length; i++) {
+    console.log(frutas[i]);
+}
+
+// Output:
+// Número: 1
+// Número: 2
+// ...</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">while - Bucle con condición</div>
+                    <pre><code>// Mientras se cumpla la condición
+let contador = 0;
+
+while (contador < 5) {
+    console.log("Contador:", contador);
+    contador++; // Incrementar para evitar loop infinito
+}
+
+// Adivinar número secreto
+let numeroSecreto = 7;
+let intento = 0;
+
+while (intento !== numeroSecreto) {
+    intento = parseInt(prompt("Adivina el número (1-10):"));
+    
+    if (intento < numeroSecreto) {
+        console.log("Más alto");
+    } else if (intento > numeroSecreto) {
+        console.log("Más bajo");
+    }
+}
+
+console.log("¡Correcto!");</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección: Patrones Comunes -->
+        <section id="acumuladores" class="concept-section">
+            <h2>Patrones de Lógica Comunes</h2>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <div class="example-title">Patrón Acumulador</div>
+                    <pre><code>// Sumar todos los elementos de un array
+let numeros = [1, 2, 3, 4, 5];
+let suma = 0; // Acumulador
+
+for (let i = 0; i < numeros.length; i++) {
+    suma += numeros[i]; // Acumular
+}
+
+console.log("Suma total:", suma); // 15
+
+// Multiplicar todos los elementos
+let productos = [2, 3, 4];
+let productoTotal = 1; // Iniciar en 1 para multiplicación
+
+for (let num of productos) {
+    productoTotal *= num;
+}
+
+console.log("Producto total:", productoTotal); // 24</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">Patrón Contador</div>
+                    <pre><code>// Contar elementos que cumplen una condición
+let edades = [15, 22, 17, 30, 19, 16];
+let mayores = 0; // Contador
+
+for (let edad of edades) {
+    if (edad >= 18) {
+        mayores++; // Incrementar contador
+    }
+}
+
+console.log("Personas mayores de edad:", mayores);
+
+// Contar vocales en un string
+let texto = "JavaScript es genial";
+let vocales = 0;
+let textoLower = texto.toLowerCase();
+
+for (let letra of textoLower) {
+    if ('aeiouáéíóú'.includes(letra)) {
+        vocales++;
+    }
+}
+
+console.log("Número de vocales:", vocales);</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <div class="tip-box">
+                <div class="tip-title">🚀 Patrón Banderas/Flags</div>
+                <div class="tip-content">
+                    Las banderas son variables booleanas que indican si algo ha ocurrido o no. Útiles para validaciones.
+                    <pre><code>// Verificar si todos los números son positivos
+let numeros = [5, 2, 8, -1, 7];
+let todosPositivos = true; // Bandera
+
+for (let num of numeros) {
+    if (num < 0) {
+        todosPositivos = false;
+        break; // Salir del bucle temprano
+    }
+}
+
+console.log("¿Todos positivos?", todosPositivos); // false</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección: Ejercicios Prácticos -->
+        <section id="ejercicios" class="concept-section">
+            <h2>📝 Ejercicios Prácticos</h2>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <div class="example-title">Ejercicio 1: Encontrar el máximo</div>
+                    <pre><code>// Encuentra el número mayor en un array
+function encontrarMaximo(numeros) {
+    // Tu código aquí
+    let maximo = numeros[0];
+    
+    for (let i = 1; i < numeros.length; i++) {
+        if (numeros[i] > maximo) {
+            maximo = numeros[i];
+        }
+    }
+    
+    return maximo;
+}
+
+// Prueba
+console.log(encontrarMaximo([3, 8, 2, 9, 5])); // 9</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">Ejercicio 2: Palíndromo</div>
+                    <pre><code>// Determinar si una palabra es palíndromo
+function esPalindromo(palabra) {
+    // Tu código aquí
+    let invertida = "";
+    
+    for (let i = palabra.length - 1; i >= 0; i--) {
+        invertida += palabra[i];
+    }
+    
+    return palabra === invertida;
+}
+
+// Pruebas
+console.log(esPalindromo("reconocer")); // true
+console.log(esPalindromo("javascript")); // false</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>🎯 <strong>Lógica de Programación</strong> - Fundamentos esenciales para cualquier desarrollador</p>
+            <p>Práctica estos conceptos hasta que se conviertan en tu segunda naturaleza</p>
+        </footer>
+    </div>
+
+    <!-- Botones flotantes -->
+    <a href="index.html" class="floating-btn to-home" title="Ir al inicio">🏠</a>
+    <a href="#" class="floating-btn to-top" title="Ir arriba">↑</a>
+
+    <!-- JavaScript -->
+    <script>
+        // ====================
+        // FUNCIONES BÁSICAS
+        // ====================
+        
+        // Función para copiar código
+        function copyCode(button) {
+            const pre = button.previousElementSibling;
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code)
+                .then(() => {
+                    button.textContent = '✅ Copiado!';
+                    setTimeout(() => {
+                        button.textContent = '📋 Copiar';
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Error al copiar: ', err);
+                    button.textContent = '❌ Error';
+                    setTimeout(() => {
+                        button.textContent = '📋 Copiar';
+                    }, 2000);
+                });
+        }
+        
+        // Función para el menú flotante
+        function toggleMenu() {
+            const menu = document.getElementById('menuContent');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleSubmenu(element) {
+            const submenu = element.nextElementSibling;
+            submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+            element.classList.toggle('open');
+        }
+
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', (event) => {
+            const menuContent = document.getElementById('menuContent');
+            const menuBtn = document.querySelector('.menu-btn');
+            
+            if (menuContent && menuBtn) {
+                if (!menuContent.contains(event.target) && !menuBtn.contains(event.target)) {
+                    menuContent.style.display = 'none';
+                    // Cerrar todos los submenús
+                    document.querySelectorAll('.submenu').forEach(sub => {
+                        sub.style.display = 'none';
+                    });
+                    document.querySelectorAll('.arrow').forEach(arrow => {
+                        arrow.classList.remove('open');
+                    });
+                }
+            }
+        });
+
+        // ====================
+        // CONTROL DE TAMAÑO DE FUENTE
+        // ====================
+        
+        const fontSizes = {
+            small: '90%',
+            normal: '100%',
+            large: '115%',
+            xlarge: '130%'
+        };
+
+        let currentFontSize = 'normal';
+
+        function changeFontSize(size) {
+            const body = document.body;
+            currentFontSize = size;
+            
+            body.style.fontSize = fontSizes[size];
+            
+            // Actualizar botones activos
+            document.querySelectorAll('.font-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.size === size) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Actualizar indicador
+            updateFontSizeIndicator();
+            
+            // Guardar preferencia
+            localStorage.setItem('logicTutorialFontSize', size);
+        }
+
+        function updateFontSizeIndicator() {
+            const indicator = document.getElementById('fontSizeIndicator');
+            if (indicator) {
+                const sizes = {
+                    small: 'Pequeño',
+                    normal: 'Normal',
+                    large: 'Grande',
+                    xlarge: 'Muy Grande'
+                };
+                indicator.textContent = `Tamaño actual: ${sizes[currentFontSize]}`;
+            }
+        }
+
+        function createFontSizeControls() {
+            const menuContent = document.getElementById('menuContent');
+            if (!menuContent || document.getElementById('fontControls')) return;
+            
+            const controlsDiv = document.createElement('div');
+            controlsDiv.id = 'fontControls';
+            controlsDiv.className = 'font-controls';
+            
+            controlsDiv.innerHTML = `
+                <span class="font-label">Tamaño del texto:</span>
+                <div class="font-buttons">
+                    <button class="font-btn" data-size="small" onclick="changeFontSize('small')">A-</button>
+                    <button class="font-btn active" data-size="normal" onclick="changeFontSize('normal')">A</button>
+                    <button class="font-btn" data-size="large" onclick="changeFontSize('large')">A+</button>
+                    <button class="font-btn" data-size="xlarge" onclick="changeFontSize('xlarge')">A++</button>
+                </div>
+                <div id="fontSizeIndicator" class="font-indicator">Tamaño actual: Normal</div>
+            `;
+            
+            // Insertar al inicio del menú
+            menuContent.insertBefore(controlsDiv, menuContent.firstChild);
+        }
+
+        function initFontSize() {
+            const savedSize = localStorage.getItem('logicTutorialFontSize');
+            if (savedSize && fontSizes[savedSize]) {
+                changeFontSize(savedSize);
+            }
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            initFontSize();
+            createFontSizeControls();
+            
+            // Suavizar scroll para enlaces internos
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href !== '#') {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                            
+                            // Cerrar menú en móviles
+                            const menuContent = document.getElementById('menuContent');
+                            if (window.innerWidth <= 768) {
+                                menuContent.style.display = 'none';
+                            }
+                        }
+                    }
+                });
+            });
+        });
+
+        // Botón para ir arriba
+        document.querySelector('.to-top').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html>

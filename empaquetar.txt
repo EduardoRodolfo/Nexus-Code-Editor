@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 Nexus - Empaquetar Web</title>
+    <style>
+        /* Mismo estilo de nexus-ia-bridge */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0a0e1a; color: #e2e8f0; min-height: 100vh; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 900px; padding: 20px; }
+        h1 { color: #00d4aa; text-align: center; margin-bottom: 20px; }
+        .card { background: #111827; border: 1px solid #2a3a5c; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #8892b0; font-size: 0.85em; }
+        input, select { width: 100%; padding: 10px; background: #1a2235; border: 1px solid #2a3a5c; border-radius: 6px; color: #e2e8f0; font-size: 1em; margin-bottom: 15px; }
+        input:focus, select:focus { border-color: #00d4aa; outline: none; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1em; }
+        .btn-primary { background: linear-gradient(135deg, #00d4aa, #00b894); color: #000; }
+        .btn-primary:hover { filter: brightness(1.1); }
+        .btn-secondary { background: #2a3a5c; color: #e2e8f0; }
+        .btn-success { background: #22c55e; color: #000; }
+        .plataformas { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 15px 0; }
+        .plataforma { background: #1a2235; border: 2px solid #2a3a5c; border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .plataforma:hover { border-color: #00d4aa; }
+        .plataforma.seleccionada { border-color: #22c55e; background: rgba(34,197,94,0.1); }
+        .plataforma .icono { font-size: 2em; margin-bottom: 8px; }
+        .plataforma .nombre { font-size: 0.85em; font-weight: 600; }
+        .plataforma .bloqueado { color: #ef4444; font-size: 0.7em; margin-top: 5px; }
+        .log { background: #0a0e1a; border: 1px solid #2a3a5c; border-radius: 6px; padding: 10px; font-family: monospace; font-size: 0.8em; min-height: 100px; margin-top: 15px; color: #22c55e; overflow-y: auto; max-height: 200px; }
+        .footer { text-align: center; margin-top: 20px; color: #4a5568; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Nexus Packager</h1>
+        <p style="text-align:center; color:#8892b0; margin-bottom:20px;">
+            Convierte tu proyecto web en app para Android, Windows o Linux
+        </p>
+        
+        <!-- Licencia -->
+        <div class="card">
+            <label>🔑 Licencia (opcional para usuarios Pro/Enterprise)</label>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="inputLicencia" placeholder="NEXUS-XXXX-XXXX" style="margin-bottom:0;">
+                <button class="btn btn-secondary" onclick="verificarLicenciaPack()">Verificar</button>
+            </div>
+            <p id="estadoLicencia" style="font-size:0.8em; margin-top:8px; color:#8892b0;">
+                Sin licencia - Modo Free (solo vista previa)
+            </p>
+        </div>
+        
+        <!-- Información del proyecto -->
+        <div class="card">
+            <label>🌐 URL de tu proyecto web</label>
+            <input type="text" id="inputURL" placeholder="http://localhost/mi-proyecto o https://tusitio.com" value="http://localhost/nexus/nexus-ia-bridge.html">
+            
+            <label>📱 Nombre de la app</label>
+            <input type="text" id="inputNombre" placeholder="Mi App" value="Mi App Nexus">
+            
+            <label>🏢 Identificador único (ej: com.tudominio.app)</label>
+            <input type="text" id="inputID" placeholder="com.tudominio.app" value="com.nexus.miapp">
+        </div>
+        
+        <!-- Plataformas -->
+        <div class="card">
+            <label>🎯 Plataforma destino</label>
+            <div class="plataformas" id="plataformas">
+                <div class="plataforma" data-plataforma="android" onclick="seleccionarPlataforma('android')">
+                    <div class="icono">📱</div>
+                    <div class="nombre">Android</div>
+                    <div class="bloqueado" id="bloq-android">🔒 Pro</div>
+                </div>
+                <div class="plataforma" data-plataforma="windows" onclick="seleccionarPlataforma('windows')">
+                    <div class="icono">🪟</div>
+                    <div class="nombre">Windows</div>
+                    <div class="bloqueado" id="bloq-windows">🔒 Pro</div>
+                </div>
+                <div class="plataforma" data-plataforma="linux" onclick="seleccionarPlataforma('linux')">
+                    <div class="icono">🐧</div>
+                    <div class="nombre">Linux</div>
+                    <div class="bloqueado" id="bloq-linux">🔒 Enterprise</div>
+                </div>
+                <div class="plataforma" data-plataforma="macos" onclick="seleccionarPlataforma('macos')">
+                    <div class="icono">🍎</div>
+                    <div class="nombre">macOS</div>
+                    <div class="bloqueado" id="bloq-macos">🔒 Enterprise</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Acción -->
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button class="btn btn-primary" onclick="empaquetar()" id="btnEmpaquetar" disabled>
+                📦 Empaquetar
+            </button>
+            <button class="btn btn-secondary" onclick="vistaPrevia()">👁️ Vista Previa</button>
+        </div>
+        
+        <!-- Log -->
+        <div class="log" id="logOutput">
+            📦 Nexus Packager v1.0 listo.<br>
+            ⚡ Ingresa la URL de tu proyecto web y selecciona plataforma.
+        </div>
+        
+        <div class="footer">
+            <p>Nexus Code Editor &copy; 2026</p>
+        </div>
+    </div>
+    
+    <script>
+       // ============================================
+// RECIBIR LICENCIA DESDE URL (desde pagos.html)
+// ============================================
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const licenciaURL = urlParams.get('licencia');
+    const planURL = urlParams.get('plan');
+    
+    if (licenciaURL && planURL) {
+        document.getElementById('inputLicencia').value = licenciaURL;
+        planActual = planURL;
+        licencia = licenciaURL;
+        
+        // Desbloquear plataformas según plan
+        const disponibles = PLANES_LICENCIA[planActual] || [];
+        if (planActual === 'enterprise') {
+            // Todas disponibles
+            document.querySelectorAll('.plataforma').forEach(p => {
+                p.querySelector('.bloqueado').textContent = '✅ Disponible';
+                p.querySelector('.bloqueado').style.color = '#22c55e';
+            });
+        } else if (planActual === 'pro') {
+            document.querySelectorAll('.plataforma').forEach(p => {
+                const plat = p.dataset.plataforma;
+                if (disponibles.includes(plat)) {
+                    p.querySelector('.bloqueado').textContent = '✅ Disponible';
+                    p.querySelector('.bloqueado').style.color = '#22c55e';
+                } else {
+                    p.querySelector('.bloqueado').textContent = '🔒 Enterprise';
+                    p.querySelector('.bloqueado').style.color = '#ef4444';
+                }
+            });
+        }
+        
+        document.getElementById('btnEmpaquetar').disabled = false;
+        document.getElementById('estadoLicencia').innerHTML = 
+            '✅ <strong style="color:#22c55e;">' + planActual.toUpperCase() + '</strong> - Licencia: ' + licenciaURL;
+        document.getElementById('estadoLicencia').style.color = '#22c55e';
+        
+        mostrarLog('🎉 Licencia recibida desde pagos.html. Plan: ' + planActual, 'ok');
+        mostrarLog('✅ Plataformas desbloqueadas. ¡Selecciona una y empaqueta!', 'ok');
+    } else {
+        mostrarLog('💡 Ve a pagos.html para adquirir una licencia y desbloquear todas las funciones.', 'info');
+    }
+};
+
+
+        // ============================================
+        // ESTADO
+        // ============================================
+        let licencia = null;
+        let planActual = 'free';
+        let plataformaSeleccionada = null;
+        const PLANES_LICENCIA = {
+            'pro': ['android', 'windows'],
+            'enterprise': ['android', 'windows', 'linux', 'macos']
+        };
+        
+        // ============================================
+        // SELECCIONAR PLATAFORMA
+        // ============================================
+        function seleccionarPlataforma(plataforma) {
+            // Verificar si está disponible según licencia
+            const disponibles = PLANES_LICENCIA[planActual] || [];
+            
+            if (planActual === 'free' && plataforma !== 'android') {
+                mostrarLog('❌ ' + plataforma + ' no disponible en plan Free. Adquiere Pro o Enterprise.', 'error');
+                return;
+            }
+            
+            if (planActual === 'free') {
+                mostrarLog('⚠️ Modo Free: solo vista previa. Compra Pro para empaquetar.', 'info');
+            }
+            
+            if (!disponibles.includes(plataforma) && planActual !== 'free') {
+                mostrarLog('❌ ' + plataforma + ' no disponible en tu plan. Actualiza a Enterprise.', 'error');
+                return;
+            }
+            
+            plataformaSeleccionada = plataforma;
+            
+            // Actualizar UI
+            document.querySelectorAll('.plataforma').forEach(p => p.classList.remove('seleccionada'));
+            document.querySelector(`[data-plataforma="${plataforma}"]`).classList.add('seleccionada');
+            
+            document.getElementById('btnEmpaquetar').disabled = (planActual === 'free');
+            
+            mostrarLog('✅ Plataforma seleccionada: ' + plataforma, 'ok');
+        }
+        
+        // ============================================
+        // VERIFICAR LICENCIA
+        // ============================================
+        async function verificarLicenciaPack() {
+            const codigo = document.getElementById('inputLicencia').value.trim();
+            
+            if (!codigo) {
+                mostrarLog('⚠️ Ingresa un código de licencia.', 'info');
+                return;
+            }
+            
+            mostrarLog('🔍 Verificando licencia: ' + codigo + '...', 'info');
+            
+            try {
+                const res = await fetch('api-qvapay.php?action=verificar&licencia=' + encodeURIComponent(codigo));
+                const data = await res.json();
+                
+                if (data.valida) {
+                    licencia = data.licencia;
+                    planActual = data.plan;
+                    
+                    document.getElementById('estadoLicencia').innerHTML = 
+                        '✅ <strong style="color:#22c55e;">' + data.plan.toUpperCase() + '</strong> - Licencia: ' + data.licencia;
+                    document.getElementById('estadoLicencia').style.color = '#22c55e';
+                    
+                    // Desbloquear plataformas
+                    const disponibles = PLANES_LICENCIA[planActual] || [];
+                    document.querySelectorAll('.plataforma').forEach(p => {
+                        const plat = p.dataset.plataforma;
+                        const bloqueado = p.querySelector('.bloqueado');
+                        if (disponibles.includes(plat)) {
+                            bloqueado.textContent = '✅ Disponible';
+                            bloqueado.style.color = '#22c55e';
+                        } else if (planActual === 'enterprise') {
+                            bloqueado.textContent = '✅ Disponible';
+                            bloqueado.style.color = '#22c55e';
+                        }
+                    });
+                    
+                    document.getElementById('btnEmpaquetar').disabled = false;
+                    mostrarLog('🎉 Licencia ' + data.plan + ' activada. Plataformas desbloqueadas.', 'ok');
+                } else {
+                    mostrarLog('❌ Licencia no válida. Adquiere una en pagos.html', 'error');
+                }
+            } catch(e) {
+                mostrarLog('❌ Error al verificar licencia. ¿API funcionando?', 'error');
+            }
+        }
+        
+        // ============================================
+        // EMPAQUETAR
+        // ============================================
+        async function empaquetar() {
+            const url = document.getElementById('inputURL').value.trim();
+            const nombre = document.getElementById('inputNombre').value.trim();
+            const id = document.getElementById('inputID').value.trim();
+            
+            if (!url) { mostrarLog('❌ Ingresa una URL', 'error'); return; }
+            if (!nombre) { mostrarLog('❌ Ingresa un nombre', 'error'); return; }
+            if (!id) { mostrarLog('❌ Ingresa un identificador', 'error'); return; }
+            if (!plataformaSeleccionada) { mostrarLog('❌ Selecciona una plataforma', 'error'); return; }
+            
+            mostrarLog('📦 Empaquetando para ' + plataformaSeleccionada + '...', 'info');
+            mostrarLog('🌐 URL: ' + url, 'info');
+            mostrarLog('📱 Nombre: ' + nombre, 'info');
+            mostrarLog('🏢 ID: ' + id, 'info');
+            
+            // Simulación del empaquetado
+            mostrarLog('⚙️ Generando proyecto Tauri...', 'info');
+            await sleep(1500);
+            
+            mostrarLog('📥 Descargando dependencias...', 'info');
+            await sleep(2000);
+            
+            mostrarLog('🔧 Compilando para ' + plataformaSeleccionada + '...', 'info');
+            await sleep(3000);
+            
+            if (plataformaSeleccionada === 'android') {
+                mostrarLog('📱 Generando APK...', 'info');
+                await sleep(2000);
+                mostrarLog('✅ APK generado: ' + nombre + '.apk', 'ok');
+                mostrarLog('📁 Ruta: C:/xampp/htdocs/nexus/export/' + nombre + '.apk', 'ok');
+            } else if (plataformaSeleccionada === 'windows') {
+                mostrarLog('🪟 Generando instalador...', 'info');
+                await sleep(2000);
+                mostrarLog('✅ Instalador generado: ' + nombre + '-Setup.exe', 'ok');
+                mostrarLog('📁 Ruta: C:/xampp/htdocs/nexus/export/' + nombre + '-Setup.exe', 'ok');
+            } else if (plataformaSeleccionada === 'linux') {
+                mostrarLog('🐧 Generando AppImage...', 'info');
+                await sleep(2000);
+                mostrarLog('✅ AppImage generado: ' + nombre + '.AppImage', 'ok');
+            }
+            
+            mostrarLog('🎉 ¡Empaquetado completado!', 'ok');
+        }
+        
+        //=============================================
+        //EMPAQUETADO REAL
+        //=============================================
+
+        // ============================================
+// EMPAQUETAR (simulación actual)
+// ============================================
+async function empaquetar() {
+    // ... código existente ...
+}
+
+// ============================================
+// EMPAQUETAR REAL (NUEVO - pega aquí)
+// ============================================
+async function empaquetarReal(url, nombre, id, plataforma) {
+    mostrarLog('📦 Creando proyecto para ' + plataforma + '...');
+    
+    // 1. Crear proyecto Tauri temporal
+    const comando = `
+        cd C:/xampp/htdocs/nexus/export-templates
+        npx create-tauri-app ` + nombre + ` --template vanilla --manager npm
+    `;
+    
+    // 2. Configurar la URL
+    // 3. Compilar para la plataforma
+    // 4. Generar APK/EXE/AppImage
+}
+
+        // ============================================
+        // VISTA PREVIA
+        // ============================================
+        function vistaPrevia() {
+            const url = document.getElementById('inputURL').value.trim();
+            if (!url) { mostrarLog('❌ Ingresa una URL para vista previa', 'error'); return; }
+            
+            mostrarLog('👁️ Abriendo vista previa: ' + url, 'info');
+            window.open(url, '_blank');
+        }
+        
+        // ============================================
+        // LOG
+        // ============================================
+        function mostrarLog(mensaje, tipo) {
+            const log = document.getElementById('logOutput');
+            const color = tipo === 'ok' ? '#22c55e' : tipo === 'error' ? '#ef4444' : tipo === 'info' ? '#f59e0b' : '#e2e8f0';
+            log.innerHTML += '<span style="color:' + color + ';">' + mensaje + '</span><br>';
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+        
+        console.log('📦 Nexus Packager v1.0');
+    </script>
+</body>
+</html>

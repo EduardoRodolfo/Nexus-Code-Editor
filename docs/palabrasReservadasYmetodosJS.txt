@@ -1,0 +1,165 @@
+﻿¡Por supuesto! Vamos a desglosar toda la información de manera estructurada y clara.
+
+### Parte 1: Palabras Reservadas en JavaScript
+
+Las **palabras reservadas** (o keywords) son términos que tienen un significado especial para el lenguaje JavaScript. No puedes usarlas como nombres de variables, 
+funciones, etiquetas o identificadores.
+
+Se dividen en varias categorías:
+
+#### A. Palabras Reservadas Actuales (Usadas)
+Estas palabras forman parte activa de la sintaxis del lenguaje.
+
+*   **`break`**: Termina un bucle (`for`, `while`, `do...while`) o una sentencia `switch`.
+*   **`case`**: Define una condición dentro de una sentencia `switch`.
+*   **`catch`**: Se utiliza en bloques `try...catch` para manejar excepciones (errores) que ocurran en el bloque `try`.
+*   **`class`**: Declara una clase, una plantilla para crear objetos.
+*   **`const`**: Declara una constante (una variable cuyo valor no puede ser reasignado).
+*   **`continue`**: Omite el resto de la iteración actual de un bucle y continúa con la siguiente.
+*   **`debugger`**: Invoca cualquier funcionalidad de depuración disponible. Si no hay depurador, no tiene efecto.
+*   **`default`**: 1) Especifica el código a ejecutar en un `switch` si ningún `case` coincide. 2) Se usa en `export` para exportar un valor por defecto de un módulo.
+*   **`delete`**: Elimina una propiedad de un objeto o un elemento de un array.
+*   **`do`**: Parte del bucle `do...while`, que ejecuta un bloque de código al menos una vez antes de comprobar la condición.
+*   **`else`**: Ejecuta un bloque de código si la condición de la sentencia `if` es falsa.
+*   **`export`**: Se utiliza en módulos para exportar funciones, objetos o valores primitivos para que puedan ser usados por otros scripts con `import`.
+*   **`extends`**: Se usa en una declaración de clase para crear una clase hija (herencia).
+*   **`finally`**: Se utiliza en bloques `try...catch` para ejecutar código después del bloque, regardlesse de si hubo un error o no.
+*   **`for`**: Crea un bucle que consiste en tres expresiones opcionales dentro de paréntesis, seguidas de un bloque de código a ejecutar.
+*   **`function`**: Declara una función.
+*   **`if`**: Ejecuta un bloque de código si una condición especificada es verdadera.
+*   **`import`**: Se utiliza en módulos para importar bindings exportados desde otro módulo.
+*   **`in`**: Devuelve `true` si la propiedad especificada está en el objeto o en su cadena de prototipos.
+*   **`instanceof`**: Devuelve `true` si el objeto especificado es de el tipo de objeto especificado.
+*   **`new`**: Crea una instancia de un objeto definido por el usuario o de un tipo predefinido.
+*   **`return`**: Termina la ejecución de una función y especifica un valor para ser devuelto al llamador de esa función.
+*   **`super`**: Se usa para llamar a funciones del padre de un objeto, often en constructores de clases.
+*   **`switch`**: Evalúa una expresión y ejecuta el código asociado a el `case` que coincida.
+*   **`this`**: Se refiere al objeto desde el cual se llamó a una función o método. Su valor depende del contexto.
+*   **`throw`**: Lanza una excepción (error) definida por el usuario.
+*   **`try`**: Define un bloque de código para intentar ejecutar y del cual se pueden manejar posibles errores.
+*   **`typeof`**: Devuelve una cadena que indica el tipo del operando sin evaluarlo (ej: `"number"`, `"string"`, `"object"`).
+*   **`var`**: Declara una variable, con scope de función (obsoleta, prefiere `let` y `const`).
+*   **`void`**: Evalúa una expresión y luego devuelve `undefined`. Poco común.
+*   **`while`**: Crea un bucle que ejecuta un bloque de código mientras una condición sea verdadera.
+*   **`with`**: Extiende el chain de scope para una sentencia. **Está obsoleta y no debe usarse** por problemas de rendimiento y ambigüedad.
+
+#### B. Palabras Reservadas para Uso Futuro
+Estas palabras no tienen功能 actualmente, pero están reservadas para futuras versiones del lenguaje.
+
+*   `enum`
+
+#### C. Palabras Reservadas en Modo Estricto (`"use strict"`)
+Estas palabras están reservadas solo cuando se usa el modo estricto de ECMAScript 5.
+
+*   `implements`
+*   `interface`
+*   `let`
+*   `package`
+*   `private`
+*   `protected`
+*   `public`
+*   `static`
+*   `yield`
+
+#### D. Literales que son Palabras Reservadas
+Estos son valores, pero también están reservados.
+
+*   **`null`**: Representa la ausencia intencional de cualquier valor u objeto.
+*   **`true` / `false`**: Valores booleanos que representan verdadero y falso.
+*   **`undefined`**: Indica que una variable no ha sido asignada a un valor.
+
+---
+
+### Parte 2: Métodos Predefinidos en JavaScript
+
+#### ¿Qué es un Método?
+Un **método** es una función que es propiedad de un objeto. En JavaScript, casi todos los tipos de datos (como Strings, Arrays, Números, etc.) son objetos y, por lo tanto, tienen métodos predefinidos que puedes usar para realizar operaciones sobre ellos.
+
+**Sintaxis:** `objeto.metodo(argumentos)`
+
+Es imposible listar *todos* los métodos porque son cientos, pero aquí están los más importantes y comunes, agrupados por el tipo de objeto al que pertenecen.
+
+#### 1. Métodos de Array
+Operan sobre arrays (listas).
+
+*   **`.push(elemento1, ...)`**: Añade uno o más elementos al **final** de un array y devuelve la nueva longitud.
+    ```javascript
+    let frutas = ['manzana'];
+    frutas.push('naranja'); // frutas ahora es ['manzana', 'naranja']
+    ```
+
+*   **`.pop()`**: Elimina el **último** elemento de un array y lo devuelve.
+    ```javascript
+    let ultimaFruta = frutas.pop(); // ultimaFruta es 'naranja', frutas vuelve a ser ['manzana']
+    ```
+
+*   **`.shift()`**: Elimina el **primer** elemento de un array y lo devuelve.
+    ```javascript
+    let primeraFruta = frutas.shift(); // primeraFruta es 'manzana', frutas ahora es []
+    ```
+
+*   **`.unshift(elemento1, ...)`**: Añade uno o más elementos al **inicio** de un array y devuelve la nueva longitud.
+
+*   **`.map(funcionCallback)`**: Crea un **nuevo array** con los resultados de la llamada a la función proporcionada aplicada a cada uno de sus elementos. Es fundamental para transformar datos.
+    ```javascript
+    let numeros = [1, 2, 3];
+    let duplicados = numeros.map(num => num * 2); // duplicados es [2, 4, 6]
+    ```
+
+*   **`.filter(funcionCallback)`**: Crea un **nuevo array** con todos los elementos que pasen la prueba (la callback devuelve `true`) implementada por la función proporcionada.
+    ```javascript
+    let mayoresA1 = numeros.filter(num => num > 1); // mayoresA1 es [2, 3]
+    ```
+
+*   **`.find(funcionCallback)`**: Devuelve el **primer elemento** del array que cumpla con la condición de la función de prueba. Muy útil para buscar.
+
+*   **`.forEach(funcionCallback)`**: Ejecuta la función proporcionada una vez **por cada elemento** del array. Se usa para iterar, como un `for`.
+
+*   **`.includes(elemento)`**: Determina si un array incluye un determinado elemento, devuelve `true` o `false`.
+
+*   **`.some(funcionCallback)` / `.every(funcionCallback)`**: Comprueban si al menos uno (`some`) o todos (`every`) los elementos del array cumplen la condición.
+
+*   **`.reduce(funcionCallback, valorInicial)`**: Ejecuta una función reductora sobre cada elemento de un array, devolviendo como resultado un **único valor** (puede ser un número, string, objeto, etc.). Muy potente.
+    ```javascript
+    let suma = numeros.reduce((acumulador, num) => acumulador + num, 0); // suma es 6
+    ```
+
+#### 2. Métodos de String
+Operan sobre cadenas de texto.
+
+*   **`.length`**: (Es una propiedad, no un método) Devuelve la longitud de una cadena.
+*   **`.toUpperCase()` / `.toLowerCase()`**: Devuelven la cadena convertida a mayúsculas o minúsculas.
+*   **`.trim()`**: Elimina los espacios en blanco al **inicio y final** de una cadena.
+*   **`.split(separador)`**: Divide una cadena en un array de subcadenas basándose en un separador especificado.
+    ```javascript
+    let frase = "Hola mundo";
+    let palabras = frase.split(" "); // palabras es ['Hola', 'mundo']
+    ```
+*   **`.includes(cadena)`**: Determina si una cadena contiene otra cadena.
+*   **`.slice(inicio, fin)`**: Extrae una sección de una cadena y devuelve una nueva cadena.
+*   **`.replace(cadenaVieja, cadenaNueva)`**: Devuelve una nueva cadena reemplazando un patrón (que puede ser una cadena o una expresión regular) por otra cadena.
+
+#### 3. Métodos de Objeto (`Object`)
+Métodos estáticos que se llaman directamente sobre el objeto `Object`.
+
+*   **`Object.keys(objeto)`**: Devuelve un array con las **propiedades** (keys) enumerables de un objeto.
+    ```javascript
+    let usuario = { nombre: 'Ana', edad: 30 };
+    let propiedades = Object.keys(usuario); // propiedades es ['nombre', 'edad']
+    ```
+*   **`Object.values(objeto)`**: Devuelve un array con los **valores** de las propiedades enumerables de un objeto.
+*   **`Object.entries(objeto)`**: Devuelve un array de arrays, donde cada subarray es un par `[propiedad, valor]`.
+*   **`Object.assign(destino, origen)`**: Copia todas las propiedades enumerables de un objeto origen a un objeto destino. Se usa para fusionar objetos.
+
+#### 4. Métodos de Número (`Number`)
+*   **`Number.isInteger(num)`**: Determina si el valor pasado es un entero.
+*   **`toFixed(digitos)`**: (Método de instancia) Formatea un número usando notación de punto fijo (para decimales).
+
+#### 5. Métodos para Promesas
+*   **`.then(funcionExito, funcionFalla)`**: Anexa manejadores de resolución y rechazo a la promesa.
+*   **`.catch(funcionFalla)`**: Anexa un manejador de rechazo a la promesa. Es la forma preferida de manejar errores.
+*   **`.finally(funcion)`**: Anexa un manejador que se ejecuta cuando la promesa se resuelve (ya sea con éxito o con fallo). Útil para limpieza.
+
+### Conclusión
+Dominar las palabras reservadas te permite entender la estructura del lenguaje, mientras que conocer los métodos predefinidos te da el poder para manipular datos 
+de forma eficiente y elegante. La práctica constante es clave para internalizarlos.

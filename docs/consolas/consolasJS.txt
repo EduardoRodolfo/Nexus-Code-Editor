@@ -1,0 +1,802 @@
+﻿Veo el problema. Tu archivo ConsolaPrincipal está intentando inicializarse antes de que los elementos del DOM estén disponibles. Aquí está la solución:
+
+1. Archivo consola-principal.js (independiente)
+
+```javascript
+// ===== CONSOLA PRINCIPAL - MÁS AVANZADA =====
+class ConsolaPrincipal {
+    constructor() {
+        this.initializeElements();
+        this.setupEventListeners();
+        this.commandHistory = [];
+        this.historyIndex = -1;
+        this.isInitialized = false;
+    }
+
+    initializeElements() {
+        // Elementos de la consola principal
+        this.consoleOutput = document.getElementById('consoleOutput');
+        this.runButton = document.getElementById('runButton');
+        this.clearConsole = document.getElementById('clearConsole');
+        
+        if (!this.consoleOutput || !this.runButton) {
+            console.warn('Elementos de consola principal no encontrados');
+            return;
+        }
+        
+        this.isInitialized = true;
+        console.log('✅ ConsolaPrincipal inicializada correctamente');
+    }
+
+    setupEventListeners() {
+        if (!this.isInitialized) return;
+
+        // Botón ejecutar código del editor
+        this.runButton.addEventListener('click', () => {
+            this.executeEditorCode();
+        });
+
+        // Botón limpiar consola
+        this.clearConsole.addEventListener('click', () => {
+            this.clearConsoleOutput();
+        });
+
+        // Atajos de teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                this.executeEditorCode();
+            }
+            
+            if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                this.clearConsoleOutput();
+            }
+        });
+
+        console.log('✅ Event listeners de ConsolaPrincipal configurados');
+    }
+
+    executeEditorCode() {
+        if (!window.editor) {
+            this.addToConsole('❌ Editor no disponible', 'error');
+            return;
+        }
+
+        const code = window.editor.getValue().trim();
+        const language = document.getElementById('modeSelector')?.value || 'html';
+        
+        if (language !== "javascript") {
+            this.addToConsole("⚠️ La consola solo ejecuta código JavaScript\nCambia el lenguaje a JavaScript para ejecutar código", 'warning');
+            return;
+        }
+
+        if (!code) {
+            this.addToConsole('❌ No hay código para ejecutar', 'error');
+            return;
+        }
+
+        this.addToConsole('▶️ Ejecutando código del editor...', 'info');
+        this.executeJavaScriptCode(code);
+    }
+
+    async executeJavaScriptCode(code) {
+        try {
+            // Crear un contexto aislado más seguro
+            const sandbox = this.createSecureSandbox();
+            
+            // Función para ejecutar en el contexto aislado
+            const execute = () => {
+                'use strict';
+                return new Promise((resolve) => {
+                    const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+                    const fn = new AsyncFunction('sandbox', `
+                        with(sandbox) {
+                            try {
+                                ${code}
+                            } catch(e) {
+                                console.error('Error:', e.message);
+                            }
+                        }
+                    `);
+                    
+                    resolve(fn(sandbox));
+                });
+            };
+
+            // Ejecutar con timeout controlado
+            await Promise.race([
+                execute(),
+                new Promise((_, reject) => setTimeout(
+                    () => reject(new Error("⏰ Timeout excedido (10 segundos)")), 
+                    10000
+                ))
+            ]);
+            
+        } catch (error) {
+            this.addToConsole(`❌ Error de ejecución: ${error.message}`, 'error');
+        }
+    }
+
+    createSecureSandbox() {
+        const sandbox = {
+            // Console methods
+            console: {
+                log: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    this.addToConsole(message, 'log');
+                },
+                error: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    this.addToConsole(`❌ ${message}`, 'error');
+                },
+                warn: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    this.addToConsole(`⚠️ ${message}`, 'warning');
+                },
+                info: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    this.addToConsole(`ℹ️ ${message}`, 'info');
+                }
+            },
+            
+            // Safe globals
+            setTimeout: setTimeout,
+            setInterval: setInterval,
+            clearTimeout: clearTimeout,
+            clearInterval: clearInterval,
+            Promise: window.Promise,
+            Math: Math,
+            Date: Date,
+            JSON: JSON,
+            Number: Number,
+            String: String,
+            Boolean: Boolean,
+            Array: Array,
+            Object: Object,
+            
+            // Restricted access
+            window: undefined,
+            document: undefined,
+            eval: undefined
+        };
+
+        return new Proxy(sandbox, {
+            has: () => true,
+            get: (target, prop) => {
+                if (prop === Symbol.unscopables) return undefined;
+                if (prop in target) return target[prop];
+                return undefined; // Bloquear acceso a propiedades no permitidas
+            }
+        });
+    }
+
+    addToConsole(text, type = 'normal') {
+        if (!this.consoleOutput) return;
+        
+        const timestamp = new Date().toLocaleTimeString();
+        let formattedText = '';
+
+        switch (type) {
+            case 'error':
+                formattedText = `[${timestamp}] ❌ ${text}\n`;
+                break;
+            case 'warning':
+                formattedText = `[${timestamp}] ⚠️ ${text}\n`;
+                break;
+            case 'info':
+                formattedText = `[${timestamp}] ℹ️ ${text}\n`;
+                break;
+            case 'success':
+                formattedText = `[${timestamp}] ✅ ${text}\n`;
+                break;
+            case 'log':
+                formattedText = `[${timestamp}] ${text}\n`;
+                break;
+            default:
+                formattedText = `[${timestamp}] ${text}\n`;
+        }
+
+        this.consoleOutput.value += formattedText;
+        this.consoleOutput.scrollTop = this.consoleOutput.scrollHeight;
+    }
+
+    clearConsoleOutput() {
+        if (this.consoleOutput) {
+            this.consoleOutput.value = '';
+            this.addToConsole('🧹 Consola limpiada', 'info');
+        }
+    }
+}
+
+// Inicialización mejorada con verificación de elementos
+function initializeConsolaPrincipal() {
+    // Esperar a que los elementos estén disponibles
+    const checkElements = setInterval(() => {
+        const consoleOutput = document.getElementById('consoleOutput');
+        const runButton = document.getElementById('runButton');
+        
+        if (consoleOutput && runButton) {
+            clearInterval(checkElements);
+            console.log('🚀 Inicializando ConsolaPrincipal...');
+            window.consolaPrincipal = new ConsolaPrincipal();
+        }
+    }, 100);
+
+    // Timeout de seguridad
+    setTimeout(() => {
+        clearInterval(checkElements);
+        if (!window.consolaPrincipal) {
+            console.warn('No se pudo inicializar ConsolaPrincipal - elementos no encontrados');
+        }
+    }, 5000);
+}
+
+// Inicializar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeConsolaPrincipal);
+} else {
+    initializeConsolaPrincipal();
+}
+```
+
+2. Modificación en index.html
+
+Asegúrate de incluir el archivo después de los elementos de la consola:
+
+```html
+<!-- Al final del body, después de los elementos de la consola -->
+<script src="js/index.js"></script>
+<script src="js/consola-principal.js"></script>
+```
+
+3. Modificación en tu index.js actual
+
+ELIMINA estas secciones duplicadas de tu index.js:
+
+```javascript
+// ===== CONFIGURACIÓN DE LA CONSOLA =====
+// ELIMINAR desde aquí...
+const consoleOutput = document.getElementById('consoleOutput');
+const consoleInput = document.getElementById('consoleInput');
+
+// Limpiar consola
+document.getElementById('clearConsole').addEventListener('click', () => {
+    consoleOutput.value = '';
+});
+
+// Ejecutar código del editor
+document.getElementById('runButton').addEventListener('click', () => {
+    const language = document.getElementById('modeSelector').value;
+    if (language !== "javascript") {
+        addToConsole("La consola solo ejecuta código JavaScript\nCambia el lenguaje a JavaScript para ejecutar código", "error");
+        return;
+    }
+    executeJavaScriptCode(editor.getValue());
+});
+
+// ...hasta aquí
+
+// Y también elimina esta función:
+function initializeAlternateConsole() {
+    // ELIMINAR todo este contenido
+}
+```
+
+4. Verificación de elementos
+
+Para debuggear, puedes agregar esta verificación temporal:
+
+```javascript
+// En consola-principal.js, después del constructor
+console.log('Buscando elementos de consola:');
+console.log('consoleOutput:', document.getElementById('consoleOutput'));
+console.log('runButton:', document.getElementById('runButton'));
+console.log('clearConsole:', document.getElementById('clearConsole'));
+```
+
+Problemas comunes solucionados:
+
+1. Timing de inicialización: La nueva versión espera activamente a que los elementos estén disponibles
+2. Conflicto de event listeners: Al separar la consola, evitamos duplicar listeners
+3. Dependencias claras: ConsolaPrincipal depende de window.editor que se inicializa en index.js
+4. Manejo de errores: Mejor verificación de elementos antes de inicializar
+
+Estructura final recomendada:
+
+```
+index.html
+│
+├── js/
+│   ├── index.js (tu código actual, sin la consola)
+│   └── consola-principal.js (nuevo archivo independiente)
+│
+└── css/
+    └── styles.css
+```
+
+Con esta estructura, la consola se inicializará correctamente una vez que todos los elementos del DOM estén disponibles y el editor esté listo.
+
+____________________________________________________________________
+
+¡Excelente idea! Podemos crear una versión avanzada de la consola alterna usando la misma arquitectura. Aquí tienes el archivo alternate-console.js:
+
+1. Archivo alternate-console.js (Consola Alterna Avanzada)
+
+```javascript
+// ===== CONSOLA ALTERNA - VERSIÓN AVANZADA =====
+class ConsolaAlterna {
+    constructor() {
+        this.consoleId = 'alternate';
+        this.initializeElements();
+        this.setupEventListeners();
+        this.commandHistory = [];
+        this.historyIndex = -1;
+        this.isInitialized = false;
+        this.executionContext = this.createSecureSandbox();
+    }
+
+    initializeElements() {
+        // Elementos de la consola alterna
+        this.consoleInput = document.getElementById('alternateConsoleInput');
+        this.consoleOutput = document.getElementById('alternateConsoleOutput');
+        this.runButton = document.getElementById('runAlternateConsole');
+        this.clearInputButton = document.getElementById('clearAlternateInput');
+        this.clearOutputButton = document.getElementById('clearAlternateOutput');
+        
+        if (!this.consoleInput || !this.consoleOutput || !this.runButton) {
+            console.warn('Elementos de consola alterna no encontrados');
+            return;
+        }
+        
+        this.isInitialized = true;
+        console.log('✅ ConsolaAlterna inicializada correctamente');
+    }
+
+    setupEventListeners() {
+        if (!this.isInitialized) return;
+
+        // Botón ejecutar código
+        this.runButton.addEventListener('click', () => {
+            this.executeInputCode();
+        });
+
+        // Botón limpiar input
+        this.clearInputButton.addEventListener('click', () => {
+            this.clearInput();
+        });
+
+        // Botón limpiar output
+        this.clearOutputButton.addEventListener('click', () => {
+            this.clearOutput();
+        });
+
+        // Atajos de teclado específicos para consola alterna
+        this.consoleInput.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                this.executeInputCode();
+            }
+            
+            if (e.ctrlKey && e.key === 'l' && e.shiftKey) {
+                e.preventDefault();
+                this.clearOutput();
+            }
+            
+            // Navegación por historial (↑/↓)
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                this.navigateHistory(-1);
+            }
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                this.navigateHistory(1);
+            }
+        });
+
+        // Auto-expandir textarea del input
+        this.consoleInput.addEventListener('input', () => {
+            this.autoResizeTextarea();
+        });
+
+        console.log('✅ Event listeners de ConsolaAlterna configurados');
+    }
+
+    executeInputCode() {
+        const code = this.consoleInput.value.trim();
+        
+        if (!code) {
+            this.addToOutput('❌ No hay código para ejecutar', 'error');
+            return;
+        }
+
+        // Agregar al historial
+        this.addToHistory(code);
+        
+        this.addToOutput('> ' + code, 'input');
+        this.executeJavaScriptCode(code);
+    }
+
+    async executeJavaScriptCode(code) {
+        try {
+            // Crear contexto de ejecución
+            const sandbox = this.createSecureSandbox();
+            
+            // Función para ejecutar en el contexto aislado
+            const execute = () => {
+                'use strict';
+                return new Promise((resolve) => {
+                    const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+                    const fn = new AsyncFunction('sandbox', `
+                        with(sandbox) {
+                            try {
+                                return (function() {
+                                    ${code}
+                                })();
+                            } catch(e) {
+                                console.error('Error:', e.message);
+                                return undefined;
+                            }
+                        }
+                    `);
+                    
+                    resolve(fn(sandbox));
+                });
+            };
+
+            // Ejecutar con timeout controlado
+            const result = await Promise.race([
+                execute(),
+                new Promise((_, reject) => setTimeout(
+                    () => reject(new Error("⏰ Timeout excedido (10 segundos)")), 
+                    10000
+                ))
+            ]);
+
+            // Mostrar resultado si existe
+            if (result !== undefined) {
+                const formattedResult = typeof result === 'object' 
+                    ? JSON.stringify(result, null, 2)
+                    : String(result);
+                this.addToOutput(`📦 Resultado: ${formattedResult}`, 'success');
+            }
+            
+        } catch (error) {
+            this.addToOutput(`❌ Error de ejecución: ${error.message}`, 'error');
+        }
+    }
+
+    createSecureSandbox() {
+        const sandbox = {
+            // Console methods personalizados para consola alterna
+            console: {
+                log: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    this.addToOutput(message, 'log');
+                },
+                error: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    this.addToOutput(`❌ ${message}`, 'error');
+                },
+                warn: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    this.addToOutput(`⚠️ ${message}`, 'warning');
+                },
+                info: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    this.addToOutput(`ℹ️ ${message}`, 'info');
+                },
+                table: (data) => {
+                    if (Array.isArray(data) || (typeof data === 'object' && data !== null)) {
+                        try {
+                            const tableStr = this.formatAsTable(data);
+                            this.addToOutput(`📊 Tabla:\n${tableStr}`, 'log');
+                        } catch (e) {
+                            this.addToOutput(`📊 ${JSON.stringify(data, null, 2)}`, 'log');
+                        }
+                    } else {
+                        this.addToOutput(`📊 ${String(data)}`, 'log');
+                    }
+                },
+                clear: () => {
+                    this.clearOutput();
+                }
+            },
+            
+            // Funciones matemáticas y utilities
+            Math: Math,
+            JSON: JSON,
+            Date: Date,
+            Number: Number,
+            String: String,
+            Boolean: Boolean,
+            Array: Array,
+            Object: Object,
+            
+            // Funciones de tiempo
+            setTimeout: setTimeout,
+            setInterval: setInterval,
+            clearTimeout: clearTimeout,
+            clearInterval: clearInterval,
+            
+            // Promise
+            Promise: Promise,
+            
+            // Funciones personalizadas útiles
+            helpers: {
+                // Ejecutar código del editor principal
+                runEditorCode: () => {
+                    if (window.consolaPrincipal) {
+                        window.consolaPrincipal.executeEditorCode();
+                    }
+                },
+                // Limpiar ambas consolas
+                clearAll: () => {
+                    this.clearOutput();
+                    if (window.consolaPrincipal) {
+                        window.consolaPrincipal.clearConsoleOutput();
+                    }
+                },
+                // Obtener código del editor
+                getEditorCode: () => {
+                    return window.editor ? window.editor.getValue() : '';
+                }
+            },
+            
+            // Variables globales seguras
+            window: undefined,
+            document: undefined,
+            eval: undefined,
+            Function: undefined
+        };
+
+        return new Proxy(sandbox, {
+            has: () => true,
+            get: (target, prop) => {
+                if (prop === Symbol.unscopables) return undefined;
+                if (prop in target) return target[prop];
+                return undefined;
+            }
+        });
+    }
+
+    addToOutput(text, type = 'normal') {
+        if (!this.consoleOutput) return;
+        
+        const timestamp = new Date().toLocaleTimeString();
+        let formattedText = '';
+
+        switch (type) {
+            case 'error':
+                formattedText = `[${timestamp}] ❌ ${text}\n`;
+                break;
+            case 'warning':
+                formattedText = `[${timestamp}] ⚠️ ${text}\n`;
+                break;
+            case 'info':
+                formattedText = `[${timestamp}] ℹ️ ${text}\n`;
+                break;
+            case 'success':
+                formattedText = `[${timestamp}] ✅ ${text}\n`;
+                break;
+            case 'input':
+                formattedText = `[${timestamp}] > ${text}\n`;
+                break;
+            case 'log':
+                formattedText = `[${timestamp}] ${text}\n`;
+                break;
+            default:
+                formattedText = `[${timestamp}] ${text}\n`;
+        }
+
+        this.consoleOutput.value += formattedText;
+        this.consoleOutput.scrollTop = this.consoleOutput.scrollHeight;
+    }
+
+    clearInput() {
+        if (this.consoleInput) {
+            this.consoleInput.value = '';
+            this.autoResizeTextarea();
+        }
+    }
+
+    clearOutput() {
+        if (this.consoleOutput) {
+            this.consoleOutput.value = '';
+            this.addToOutput('🧹 Consola alterna limpiada', 'info');
+        }
+    }
+
+    autoResizeTextarea() {
+        if (this.consoleInput) {
+            this.consoleInput.style.height = 'auto';
+            this.consoleInput.style.height = Math.min(this.consoleInput.scrollHeight, 200) + 'px';
+        }
+    }
+
+    addToHistory(command) {
+        this.commandHistory.unshift(command);
+        if (this.commandHistory.length > 50) {
+            this.commandHistory.pop();
+        }
+        this.historyIndex = -1;
+    }
+
+    navigateHistory(direction) {
+        if (this.commandHistory.length === 0) return;
+        
+        this.historyIndex += direction;
+        
+        if (this.historyIndex < 0) {
+            this.historyIndex = -1;
+            this.consoleInput.value = '';
+        } else if (this.historyIndex >= this.commandHistory.length) {
+            this.historyIndex = this.commandHistory.length - 1;
+        } else {
+            this.consoleInput.value = this.commandHistory[this.historyIndex];
+        }
+    }
+
+    formatAsTable(data) {
+        if (Array.isArray(data)) {
+            if (data.length === 0) return '(array vacío)';
+            
+            // Para arrays simples
+            if (data.every(item => typeof item !== 'object')) {
+                return data.map((item, index) => `${index}: ${item}`).join('\n');
+            }
+            
+            // Para arrays de objetos
+            const headers = Object.keys(data[0] || {});
+            if (headers.length === 0) return '(sin propiedades)';
+            
+            let table = headers.join('\t');
+            table += '\n' + headers.map(() => '---').join('\t');
+            
+            data.forEach(item => {
+                const row = headers.map(header => 
+                    item[header] !== undefined ? String(item[header]) : ''
+                );
+                table += '\n' + row.join('\t');
+            });
+            
+            return table;
+        } else {
+            // Para objetos
+            return Object.entries(data)
+                .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+                .join('\n');
+        }
+    }
+
+    // Método para inyectar variables globales seguras
+    injectGlobal(name, value) {
+        if (this.executionContext) {
+            this.executionContext[name] = value;
+        }
+    }
+
+    // Método para ejecutar código de forma programática
+    async executeCode(code) {
+        this.consoleInput.value = code;
+        await this.executeInputCode();
+    }
+}
+
+// Inicialización mejorada para consola alterna
+function initializeConsolaAlterna() {
+    // Esperar a que los elementos estén disponibles
+    const checkElements = setInterval(() => {
+        const consoleInput = document.getElementById('alternateConsoleInput');
+        const consoleOutput = document.getElementById('alternateConsoleOutput');
+        const runButton = document.getElementById('runAlternateConsole');
+        
+        if (consoleInput && consoleOutput && runButton) {
+            clearInterval(checkElements);
+            console.log('🚀 Inicializando ConsolaAlterna...');
+            window.consolaAlterna = new ConsolaAlterna();
+            
+            // Agregar mensaje de bienvenida
+            window.consolaAlterna.addToOutput('🚀 Consola Alterna Avanzada Inicializada', 'success');
+            window.consolaAlterna.addToOutput('💡 Usa console.log(), console.table(), helpers.runEditorCode()', 'info');
+            window.consolaAlterna.addToOutput('⏰ Timeout: 10 segundos | 📦 Resultados automáticos', 'info');
+        }
+    }, 100);
+
+    // Timeout de seguridad
+    setTimeout(() => {
+        clearInterval(checkElements);
+        if (!window.consolaAlterna) {
+            console.warn('No se pudo inicializar ConsolaAlterna - elementos no encontrados');
+        }
+    }, 5000);
+}
+
+// Inicializar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeConsolaAlterna);
+} else {
+    initializeConsolaAlterna();
+}
+```
+
+2. Actualización en index.html
+
+```html
+<!-- Al final del body -->
+<script src="js/index.js"></script>
+<script src="js/consola-principal.js"></script>
+<script src="js/alternate-console.js"></script>
+```
+
+3. Características avanzadas de ConsolaAlterna:
+
+🆕 Funcionalidades exclusivas:
+
+· console.table() - Formatea objetos y arrays como tablas
+· helpers.runEditorCode() - Ejecuta código del editor principal
+· helpers.clearAll() - Limpia ambas consolas
+· helpers.getEditorCode() - Obtiene código del editor
+
+⌨️ Atajos mejorados:
+
+· Ctrl + Enter - Ejecutar código
+· Ctrl + Shift + L - Limpiar output
+· ↑/↓ - Navegar historial de comandos
+
+📊 Visualización avanzada:
+
+· Auto-expansión del textarea de input
+· Formateo de tablas para datos estructurados
+· Timestamps en todos los mensajes
+· Colores y emojis para diferentes tipos de mensaje
+
+🔧 API programática:
+
+```javascript
+// Desde la consola del navegador
+window.consolaAlterna.executeCode('console.log("Hola mundo")');
+window.consolaAlterna.injectGlobal('miVariable', 42);
+```
+
+🛡️ Seguridad mejorada:
+
+· Sandbox más restrictivo
+· Timeout de 10 segundos
+· Bloqueo de APIs peligrosas
+
+4. Ejemplos de uso:
+
+```javascript
+// En la consola alterna:
+console.log("Hola desde consola alterna");
+
+// Ejecutar código del editor principal
+helpers.runEditorCode();
+
+// Trabajar con datos
+const datos = [{nombre: "Ana", edad: 25}, {nombre: "Luis", edad: 30}];
+console.table(datos);
+
+// Limpiar todo
+helpers.clearAll();
+```
+
+Ahora tienes dos consolas avanzadas e independientes que pueden trabajar juntas o por separado, cada una con sus propias características y contexto de ejecución.

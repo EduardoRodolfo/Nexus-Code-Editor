@@ -1,0 +1,187 @@
+### **Problema 1: Calculadora de Factorial**  
+**Descripción**:  
+Crear una función que calcule el factorial de un número. El factorial de `n` (n!) es el producto de todos los enteros positivos desde 1 hasta `n`.
+
+```javascript
+function calcularFactorial(n) {
+    // Tu código aquí
+}
+
+console.log(calcularFactorial(5)); // Debe retornar 120 (5x4x3x2x1)
+```
+
+#### **Soluciones**:
+**Opción 1: Bucle `for`**  
+```javascript
+function calcularFactorial(n) {
+    let resultado = 1;
+    for (let i = 1; i <= n; i++) {
+        resultado *= i;
+    }
+    return resultado;
+}
+```
+
+**Opción 2: Bucle `while`**  
+```javascript
+function calcularFactorial(n) {
+    let resultado = 1;
+    let i = 1;
+    while (i <= n) {
+        resultado *= i;
+        i++;
+    }
+    return resultado;
+}
+```
+
+**Opción 3: Bucle `for` decreciente**  
+```javascript
+function calcularFactorial(n) {
+    let resultado = 1;
+    for (let i = n; i >= 1; i--) {
+        resultado *= i;
+    }
+    return resultado;
+}
+```
+
+**Explicación**:  
+- Todas las soluciones usan una variable acumuladora (`resultado`).  
+- El bucle `for` es más conciso para rangos fijos.  
+- El `while` ofrece flexibilidad si la condición cambia dinámicamente.  
+
+---
+
+### **Problema 2: Validar Palíndromos**  
+**Descripción**:  
+Crear una función que determine si una palabra es palíndromo (se lee igual al derecho y al revés).
+
+```javascript
+function esPalindromo(palabra) {
+    // Tu código aquí
+}
+
+console.log(esPalindromo("reconocer")); // true
+console.log(esPalindromo("javascript")); // false
+```
+
+#### **Soluciones**:
+**Opción 1: Bucle `for` con índices**  
+```javascript
+function esPalindromo(palabra) {
+    for (let i = 0; i < Math.floor(palabra.length / 2); i++) {
+        if (palabra[i] !== palabra[palabra.length - 1 - i]) {
+            return false;
+        }
+    }
+    return true;
+}
+```
+
+**Opción 2: Usar `reverse()` (sin bucles explícitos)**  
+```javascript
+function esPalindromo(palabra) {
+    return palabra === palabra.split('').reverse().join('');
+}
+```
+
+**Opción 3: Bucle `while` con dos punteros**  
+```javascript
+function esPalindromo(palabra) {
+    let izquierda = 0;
+    let derecha = palabra.length - 1;
+    while (izquierda < derecha) {
+        if (palabra[izquierda] !== palabra[derecha]) return false;
+        izquierda++;
+        derecha--;
+    }
+    return true;
+}
+```
+
+**Explicación**:  
+- La primera opción es eficiente en memoria (no crea nuevos arrays).  
+- La segunda es más legible pero menos eficiente para palabras largas.  
+- La tercera es óptima para casos donde se pueda abortar temprano.  
+
+---
+
+### **Problema 3: Generador de Secuencia Fibonacci**  
+**Descripción**:  
+Crear una función que retorne un array con los primeros `n` números de la secuencia Fibonacci.
+
+```javascript
+function fibonacci(n) {
+    // Tu código aquí
+}
+
+console.log(fibonacci(6)); // [0, 1, 1, 2, 3, 5]
+```
+
+#### **Soluciones**:
+**Opción 1: Bucle `for` con array**  
+```javascript
+function fibonacci(n) {
+    const secuencia = [0, 1];
+    for (let i = 2; i < n; i++) {
+        secuencia.push(secuencia[i-1] + secuencia[i-2]);
+    }
+    return secuencia.slice(0, n);
+}
+```
+
+**Opción 2: Bucle `for` sin array (solo últimos dos valores)**  
+```javascript
+function fibonacci(n) {
+    if (n <= 0) return [];
+    if (n === 1) return [0];
+    
+    let a = 0, b = 1;
+    const resultado = [a, b];
+    
+    for (let i = 2; i < n; i++) {
+        const siguiente = a + b;
+        resultado.push(siguiente);
+        a = b;
+        b = siguiente;
+    }
+    return resultado;
+}
+```
+
+**Opción 3: Bucle `while`**  
+```javascript
+function fibonacci(n) {
+    const secuencia = [];
+    let a = 0, b = 1, contador = 0;
+    
+    while (contador < n) {
+        secuencia.push(a);
+        const temp = a + b;
+        a = b;
+        b = temp;
+        contador++;
+    }
+    return secuencia;
+}
+```
+
+**Explicación**:  
+- La primera opción es la más intuitiva para principiantes.  
+- La segunda es más eficiente en memoria para `n` grandes.  
+- La tercera demuestra cómo reutilizar variables para evitar arrays intermedios.  
+
+---
+
+### **Consejos para tus estudiantes**:
+1. **Elección de bucles**:  
+   - Usar `for` cuando se conozca el número de iteraciones.  
+   - Preferir `while` cuando la condición de parada sea compleja.  
+   - Considerar legibilidad vs. optimización.
+
+2. **Alternativas funcionales**:  
+   En problemas reales, métodos como `map`, `filter` o `reduce` pueden reemplazar bucles, pero primero deben dominar los fundamentos.
+
+3. **Pruebas de estrés**:  
+   Probar los algoritmos con valores extremos (ej: `n = 0`, `n = 1000`).

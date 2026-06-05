@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Code Editor 1.0</title>
+
+  <link rel="stylesheet" href="css/index.css">
+  <!-- XTerm.js Terminal -->
+  <link rel="stylesheet" href="js/xterm/xterm.css">
+
+  <!-- Ace Editor -->
+  <script src="ace/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="ace/src-noconflict/ext-language_tools.js"></script>
+  
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="imagenes/nexus-code-editor.gif" alt="logo-tipo del proyecto" id="logo">
+      <h1>Nexus Code Editor 1.0</h1>
+      <p>Sube y edita tus archivos HTML, CSS y JavaScript fácilmente</p>
+    </header>
+
+    <div class="ace-controls">
+      <div class="control-group">
+        <label for="themeSelector">Tema:</label>
+        <select id="themeSelector">
+          <option value="dreamweaver">Dreamweaver</option>
+          <option value="github">GitHub</option>
+          <option value="twilight">Twilight</option>
+          <option value="solarized_dark">Solarized Dark</option>
+          <option value="solarized_light">Solarized Light</option>
+          <option value="monokai">Monokai</option>
+          <option value="eclipse">Eclipse</option>
+          <option value="crimson_editor">Crimson Editor</option>
+          <option value="clouds">Clouds</option>
+          <option value="cloud9_day">Cloud9 Day</option>
+          <option value="clouds_midnight">Clouds Midnight</option>
+          <option value="cobalt">Cobalt</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="modeSelector">Lenguaje:</label>
+        <select id="modeSelector">
+  <!-- Lenguajes principales -->
+  <option value="html">HTML</option>
+  <option value="css">CSS</option>
+  <option value="javascript">JavaScript</option>
+  <option value="python">Python</option>
+  <option value="java">Java</option>
+  <option value="c_cpp">C/C++</option>
+  <option value="php">PHP</option>
+  <option value="ruby">Ruby</option>
+  <option value="go">Go</option>
+  <option value="rust">Rust</option>
+  
+  <!-- Web Development -->
+  <option value="jsx">JSX (React)</option>
+  <option value="typescript">TypeScript</option>
+  <option value="vue">Vue.js</option>
+  <option value="sass">SASS</option>
+  <option value="less">LESS</option>
+  <option value="stylus">Stylus</option>
+  <option value="markdown">Markdown</option>
+  <option value="json">JSON</option>
+  <option value="xml">XML</option>
+  <option value="yaml">YAML</option>
+  
+  <!-- Scripting -->
+  <option value="bash">Bash/Shell</option>
+  <option value="powershell">PowerShell</option>
+  <option value="batchfile">Batch</option>
+  <option value="perl">Perl</option>
+  <option value="lua">Lua</option>
+  
+  <!-- Databases -->
+  <option value="sql">SQL</option>
+  <option value="mysql">MySQL</option>
+  <option value="pgsql">PostgreSQL</option>
+  <option value="plsql">PL/SQL</option>
+  
+  <!-- Config Files -->
+  <option value="ini">INI</option>
+  <option value="dockerfile">Dockerfile</option>
+  <option value="makefile">Makefile</option>
+  <option value="nginx">Nginx</option>
+  <option value="apache_conf">Apache Config</option>
+  
+  <!-- Otros lenguajes populares -->
+  <option value="swift">Swift</option>
+  <option value="kotlin">Kotlin</option>
+  <option value="scala">Scala</option>
+  <option value="dart">Dart</option>
+  <option value="elixir">Elixir</option>
+  <option value="clojure">Clojure</option>
+  <option value="haskell">Haskell</option>
+  <option value="erlang">Erlang</option>
+  <option value="ocaml">OCaml</option>
+  <option value="fsharp">F#</option>
+  
+  <!-- Texto plano -->
+  <option value="plain_text">Texto Plano</option>
+</select>
+      </div>
+
+      <div class="control-group">
+        <label><input type="checkbox" id="lineNumbers" checked> Números de línea</label>
+        <label><input type="checkbox" id="wrapMode" checked> Ajuste de línea</label>
+      </div>
+
+      <div class="control-group">
+        <label for="fontSize">Tamaño fuente:</label>
+        <input type="number" id="fontSize" min="10" max="24" value="14">
+      </div>
+    </div>
+    
+      <nav id="nav-bar">
+      <ul class="menu">
+        <li class="menu-item dropdown tutorial-dropdown">
+          <a href="#"><span class="menu-icon">📚</span> Tutoriales ▾</a>
+          <div class="dropdown-content tutorial-dropdown-content">
+            <a href="tutorial-logica-prog.html">📖 Lógica de Programación</a>
+            <a href="tutorial-javascript.html">📖 JavaScript</a>
+            <a href="tutorial-d-html.html">📖 HTML</a>
+            <a href="tutorial-css.html">📖 CSS</a>
+            <a href="tutorial-js.html">📖 JavaScript Nivel Medio</a>
+          </div>
+        </li>
+        <li class="menu-item dropdown">
+          <a href="#"><span class="menu-icon">≡</span> Archivo</a>
+          <div class="dropdown-content">
+            <a id="abrir-documento" href="#"><span class="menu-icon">📂</span> Abrir documento</a>
+            <a id="guardar" href="#"><span class="menu-icon">💾</span> Guardar</a>
+            <a id="guardar-como" href="#"><span class="menu-icon">🔄</span> Guardar como</a>
+            <a id="nuevo-documento" href="#"><span class="menu-icon">📄</span> Nuevo documento</a>
+            <a id="nuevo-proyecto" href="#"><span class="menu-icon">🆕</span> Nuevo Proyecto</a>
+            <a id="abrir-proyecto" href="#"><span class="menu-icon">📂</span> Abrir Proyecto</a>
+            <a id="limpiar-editor" href="#"><span class="menu-icon">🧹</span> Limpiar Editor</a>
+            <a id="" href="#terminal-container"><span class="menu-icon">🌐</span>Terminal</a>
+            <a id="open-filemanager" href="../tinyfilemanager/tinyfilemanager.php" target="_blank"><span class="menu-icon">📁</span> Gestor de Archivos</a>
+            <a id="getbootstrap" href="http://getbootstrap.com" target="_blank" rel="noopener"><span class="menu-icon"></span>getbootstrap.com</a>
+          </div>
+        </li>
+        <li class="menu-item">
+          <a href="labs.html" target="_blank">
+            <span class="menu-icon">🔬</span> Laboratorios
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="laboratorio-linux.html" target="_blank">
+            <span class="menu-icon">🐧</span> Linux Lab
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="#" id="toggle-sidebar">
+            <span class="menu-icon">📁</span> Explorador
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="api-deep.html" target="_blank">
+    <span class="menu-icon">🤖</span> API Deep
+         </a>
+       </li>
+      </ul>
+    </nav>
+     
+     <!-- Sidebar de proyecto -->
+    <div id="project-sidebar" class="project-sidebar">
+    <div class="sidebar-header">
+        <h3>Explorador de Proyecto</h3>
+        <button id="close-sidebar">×</button>
+    </div>
+    <div id="file-explorer" class="file-explorer"></div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div id="main-content" class="main-content">
+      <div class="editor-container" id="editor-container">
+        <div id="editor"></div>
+      </div>
+      
+      <div class="console-container">
+        <h2>Consola JavaScript</h2>
+        <textarea id="consoleOutput" readonly title="Salida de la consola JavaScript" placeholder="Resultados de la ejecución de código..."></textarea>
+        <div class="console-buttons">
+          <button id="runButton" class="button">Ejecutar Código</button>
+          <button id="clearConsole" class="button">Limpiar Consola</button>
+        </div>
+      </div>
+
+      <!-- Canal alterno para la consola JS -->
+      <div class="alternate-console-container">
+        <h2>Canal Alterno Consola JS</h2>
+        <div class="alternate-console-input">
+          <textarea id="alternateConsoleInput" rows="6" placeholder="Escribe código JavaScript aquí..."></textarea>
+        </div>
+        <div class="alternate-console-buttons">
+          <button id="runAlternateConsole" class="alt-button run-alt">▶ Ejecutar</button>
+          <button id="clearAlternateInput" class="alt-button clear-alt">🗑️ Limpiar Código</button>
+          <button id="clearAlternateOutput" class="alt-button output-alt">🧹 Limpiar Respuesta</button>
+        </div>
+        <div class="alternate-console-output">
+          <textarea id="alternateConsoleOutput" readonly placeholder="Aquí aparecerán los resultados..." title="Resultados del canal alterno de consola"></textarea>
+        </div>
+      </div>
+      
+      <div id="preview-container" class="preview-container">
+        <h2>Previsualización en Tiempo Real</h2>
+        <iframe id="preview" title="Previsualización en tiempo real del código HTML"></iframe>
+      </div>
+
+      <!-- Terminal Linux -->
+      <div id="terminal-container" class="terminal-container">
+        <h2>Terminal Linux</h2>
+        <div id="terminal"></div>
+        <div class="terminal-controls">
+          <button id="clear-terminal" class="button">Limpiar Terminal</button>
+          <button id="terminal-help" class="button">Ayuda</button>
+          <button id="terminal-example" class="button">Ejemplos</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Botones flotantes CORREGIDOS -->
+<div class="floating-buttons">
+    <button onclick="scrollToSection('editor')" title="Ir al editor">🧑‍💻</button>
+    <button onclick="scrollToSection('consoleOutput')" title="Ir a la Consola JS">🖥️</button>
+    <button onclick="scrollToSection('preview-container')" title="Ir al Previsualizador">🌐</button>
+    <button onclick="abrirEnNavegador()" title="Abrir en Navegador">🚀</button>
+    <button onclick="openTinyManager()" title="Abrir TinyManager">📁</button>
+    <button onclick="openLabs()" title="Abrir Laboratorios">🔬</button>
+</div>
+
+<script>
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function abrirEnNavegador() {
+      const editor = ace.edit("editor");
+      const contenido = editor.getValue();
+      const nuevaVentana = window.open("", "_blank");
+      if (nuevaVentana) {
+        nuevaVentana.document.open();
+        nuevaVentana.document.write(contenido);
+        nuevaVentana.document.close();
+      } else {
+        alert("No se pudo abrir una nueva ventana. Verifica que el navegador no esté bloqueando ventanas emergentes.");
+      }
+    }
+
+    document.getElementById('go-to-terminal').addEventListener('click', function(e) {
+      e.preventDefault();
+      window.open('deep-terminal-pro/index.html', '_blank');
+    });
+
+    function openTinyManager() {
+      window.open('../tinyfilemanager/tinyfilemanager.php', '_blank');
+    }
+
+    function openLabs() {
+      window.open('labs.html', '_blank');
+    }
+
+    // Dropdown menus en el nav - funcionalidad con click
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.menu-item.dropdown > a').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          var li = this.parentElement;
+          li.classList.toggle('active');
+
+          // Cerrar los otros dropdowns abiertos
+          document.querySelectorAll('.menu-item.dropdown.active').forEach(function(d) {
+            if (d !== li) d.classList.remove('active');
+          });
+        });
+      });
+
+      // Cerrar dropdowns al hacer click fuera
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.menu-item.dropdown')) {
+          document.querySelectorAll('.menu-item.dropdown.active').forEach(function(d) {
+            d.classList.remove('active');
+          });
+        }
+      });
+    });
+</script>
+
+  <script src="js/xterm/xterm.min.js"></script>
+  <script src="js/terminal.js"></script>
+  <script src="js/index.js"></script>
+  <script src="js/alternate-console.js"></script>
+</body>
+</html>

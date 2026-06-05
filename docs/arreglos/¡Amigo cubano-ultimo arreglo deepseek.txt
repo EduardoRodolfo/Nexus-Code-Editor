@@ -1,0 +1,830 @@
+﻿### ¡Amigo cubano, tranquilo! Aquí tienes el código completo corregido y optimizado para tu editor. Solo copia y pega cada archivo:
+
+### 1. index.html (corregido)
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor de Código Pro</title>
+  <link rel="stylesheet" href="css/index.css">
+  <script src="ace/src-noconflict/ace.js"></script>
+  <script src="ace/src-noconflict/ext-language_tools.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Editor de Código Pro</h1>
+      <p>Sube y edita tus archivos HTML, CSS y JavaScript fácilmente</p>
+    </header>
+
+    <div class="ace-controls">
+      <div class="control-group">
+        <label for="themeSelector">Tema:</label>
+        <select id="themeSelector">
+          <option value="monokai">Monokai</option>
+          <option value="github">GitHub</option>
+          <option value="twilight">Twilight</option>
+          <option value="solarized_dark">Solarized Dark</option>
+          <option value="solarized_light">Solarized Light</option>
+          <option value="dreamweaver">Dreamweaver</option>
+          <option value="eclipse">Eclipse</option>
+          <option value="crimson_editor">Crimson Editor</option>
+          <option value="clouds">Clouds</option>
+          <option value="cloud9_day">Cloud9 Day</option>
+          <option value="clouds_midnight">Clouds Midnight</option>
+          <option value="cobalt">Cobalt</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="modeSelector">Lenguaje:</label>
+        <select id="modeSelector">
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="javascript">JavaScript</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label><input type="checkbox" id="lineNumbers" checked> Números de línea</label>
+        <label><input type="checkbox" id="wrapMode" checked> Ajuste de línea</label>
+      </div>
+
+      <div class="control-group">
+        <label for="fontSize">Tamaño fuente:</label>
+        <input type="number" id="fontSize" min="10" max="24" value="14">
+      </div>
+    </div>
+
+    <nav>
+      <ul class="menu">
+        <li class="menu-item dropdown">
+          <a href="#"><span class="menu-icon">≡</span> Archivo</a>
+          <div class="dropdown-content">
+            <a id="abrir-documento" href="#"><span class="menu-icon">📂</span> Abrir documento</a>
+            <a id="guardar" href="#"><span class="menu-icon">💾</span> Guardar</a>
+            <a id="guardar-como" href="#"><span class="menu-icon">🔄</span> Guardar como</a>
+            <a id="nuevo-documento" href="#"><span class="menu-icon">📄</span> Nuevo documento</a>
+            <a id="nueva-carpeta" href="#"><span class="menu-icon">📁</span> Nueva carpeta</a>
+            <a id="limpiar-editor" href="#"><span class="menu-icon">🧹</span> Limpiar Editor</a>
+          </div>
+        </li>
+      </ul>
+    </nav>
+
+    <div id="editor"></div>
+    
+    <div class="console-container">
+      <h2>Consola JavaScript</h2>
+      <textarea id="consoleOutput" readonly></textarea>
+      <div class="console-input-container">
+        <input type="text" id="consoleInput" placeholder="Escribe comandos aquí (presiona Enter)">
+      </div>
+      <div class="console-buttons">
+        <button id="runButton" class="button">Ejecutar Código</button>
+        <button id="clearConsole" class="button">Limpiar Consola</button>
+      </div>
+    </div>
+    
+    <div class="preview-container">
+      <h2>Previsualización en Tiempo Real</h2>
+      <iframe id="preview"></iframe>
+    </div>
+  </div>
+  
+  <script src="js/index.js"></script>
+</body>
+</html>
+```
+
+### 2. index.js (corregido y completo)
+```javascript
+// trigger Editor extensions
+ace.require("ace/ext/language_tools");
+
+// Variables globales
+let currentFileName = null;
+let fileHandle = null;
+let currentDirectoryHandle = null;
+
+// Verificar si las APIs están disponibles
+const isFileSystemAccessSupported = () => {
+    return 'showOpenFilePicker' in window && 'showSaveFilePicker' in window && 'showDirectoryPicker' in window;
+};
+
+// Función para mostrar notificaciones
+function showNotification(message, isError = false) {
+    const notification = document.createElement('div');
+    notification.className = isError ? 'notification error' : 'notification success';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar Ace Editor
+    let editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/html");
+    
+    // Configuración inicial
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true,
+        enableSnippets: true,
+        fontSize: 14,
+        showPrintMargin: false,
+        useSoftTabs: true,
+        tabSize: 2
+    });
+    
+    // Función para actualizar la previsualización
+    const updatePreview = () => {
+        const preview = document.getElementById('preview');
+        const code = editor.getValue();
+        preview.srcdoc = code;
+    };
+
+    // Actualizar previsualización al cambiar el editor
+    editor.session.on('change', () => {
+        updatePreview();
+    });
+
+    // ===== CONFIGURACIÓN DEL EDITOR =====
+    document.getElementById('themeSelector').addEventListener('change', (e) => {
+        editor.setTheme(`ace/theme/${e.target.value}`);
+    });
+
+    document.getElementById('modeSelector').addEventListener('change', (e) => {
+        editor.session.setMode(`ace/mode/${e.target.value}`);
+    });
+
+    document.getElementById('fontSize').addEventListener('change', (e) => {
+        editor.setFontSize(parseInt(e.target.value));
+    });
+
+    document.getElementById('lineNumbers').addEventListener('change', (e) => {
+        editor.setOption('showLineNumbers', e.target.checked);
+    });
+
+    document.getElementById('wrapMode').addEventListener('change', (e) => {
+        editor.session.setUseWrapMode(e.target.checked);
+    });
+
+    // ===== EVENTOS DEL MENÚ =====
+    document.getElementById('abrir-documento').addEventListener('click', openFile);
+    document.getElementById('guardar').addEventListener('click', saveFile);
+    document.getElementById('guardar-como').addEventListener('click', saveFileAs);
+    document.getElementById('nuevo-documento').addEventListener('click', newDocument);
+    document.getElementById('nueva-carpeta').addEventListener('click', createNewFolder);
+    document.getElementById('limpiar-editor').addEventListener('click', clearEditor);
+
+    // =====================================
+    // Funciones para manejo de archivos
+    // =====================================
+
+    // Abrir archivo
+    async function openFile() {
+        if (!isFileSystemAccessSupported()) {
+            showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+            return;
+        }
+
+        try {
+            const [handle] = await window.showOpenFilePicker({
+                types: [{
+                    description: 'Archivos de texto',
+                    accept: {'text/plain': ['.txt', '.js', '.html', '.css', '.json']}
+                }]
+            });
+            
+            fileHandle = handle;
+            const file = await fileHandle.getFile();
+            const contents = await file.text();
+            currentFileName = file.name;
+            
+            // Actualizar modo según extensión
+            const extension = currentFileName.split('.').pop();
+            const modeMap = {
+                'js': 'javascript',
+                'html': 'html',
+                'css': 'css',
+                'json': 'json'
+            };
+            
+            if (modeMap[extension]) {
+                editor.session.setMode(`ace/mode/${modeMap[extension]}`);
+                document.getElementById('modeSelector').value = modeMap[extension];
+            }
+            
+            editor.setValue(contents);
+            showNotification(`Archivo abierto: ${currentFileName}`);
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                console.error('Error abriendo archivo:', error);
+                showNotification(`Error: ${error.message}`, true);
+            }
+        }
+    }
+
+    // Guardar archivo
+    async function saveFile() {
+        if (!isFileSystemAccessSupported()) {
+            showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+            return false;
+        }
+
+        try {
+            if (!fileHandle) {
+                return await saveFileAs();
+            }
+            
+            const writable = await fileHandle.createWritable();
+            await writable.write(editor.getValue());
+            await writable.close();
+            
+            showNotification(`Archivo guardado: ${currentFileName || 'sin título'}`);
+            return true;
+        } catch (error) {
+            console.error('Error guardando archivo:', error);
+            showNotification(`Error al guardar: ${error.message}`, true);
+            return false;
+        }
+    }
+
+    // Guardar como
+    async function saveFileAs() {
+        if (!isFileSystemAccessSupported()) {
+            showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+            return false;
+        }
+
+        try {
+            fileHandle = await window.showSaveFilePicker({
+                types: [{
+                    description: 'Archivos de texto',
+                    accept: {'text/plain': ['.txt', '.js', '.html', '.css', '.json']}
+                }],
+                suggestedName: currentFileName || 'sin_titulo.txt'
+            });
+            
+            const saved = await saveFile();
+            if (saved) {
+                currentFileName = fileHandle.name;
+            }
+            return saved;
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                console.error('Error guardando archivo:', error);
+                showNotification(`Error: ${error.message}`, true);
+            }
+            return false;
+        }
+    }
+
+    // Nuevo documento
+    function newDocument() {
+        if (editor.getValue() && !confirm('¿Crear nuevo documento? Se perderán los cambios no guardados.')) return;
+        editor.setValue('');
+        fileHandle = null;
+        currentFileName = 'nuevo_documento.txt';
+        editor.session.setMode("ace/mode/text");
+        document.getElementById('modeSelector').value = 'html';
+        showNotification('Nuevo documento creado');
+    }
+
+    // Limpiar editor
+    function clearEditor() {
+        if (!editor.getValue()) return;
+        if (confirm('¿Limpiar editor? Se perderá todo el contenido.')) {
+            editor.setValue('');
+            showNotification('Editor limpiado');
+        }
+    }
+
+    // Crear nueva carpeta
+    async function createNewFolder() {
+        if (!isFileSystemAccessSupported()) {
+            showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+            return;
+        }
+
+        try {
+            if (!currentDirectoryHandle) {
+                currentDirectoryHandle = await window.showDirectoryPicker();
+            }
+            
+            const folderName = prompt('Nombre de la nueva carpeta:', 'Nueva Carpeta');
+            if (!folderName) return;
+            
+            await currentDirectoryHandle.getDirectoryHandle(folderName, { create: true });
+            showNotification(`Carpeta creada: ${folderName}`);
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                console.error('Error creando carpeta:', error);
+                showNotification(`Error: ${error.message}`, true);
+            }
+        }
+    }
+
+    // Contenido inicial
+    editor.setValue(`<!DOCTYPE html>
+<html>
+<head>
+  <title>Ejemplo</title>
+  <script>
+    console.log("Hola desde el editor");
+  </script>
+</head>
+<body>
+  <h1>¡Consola JavaScript Funcionando!</h1>
+</body>
+</html>`);
+    updatePreview();
+    
+    // ===== CONFIGURACIÓN DE LA CONSOLA =====
+    const consoleOutput = document.getElementById('consoleOutput');
+    const consoleInput = document.getElementById('consoleInput');
+    
+    // Historial de comandos
+    let commandHistory = [];
+    let historyIndex = -1;
+
+    // Limpiar consola
+    document.getElementById('clearConsole').addEventListener('click', () => {
+        consoleOutput.value = '';
+    });
+
+    // Ejecutar código del editor
+    document.getElementById('runButton').addEventListener('click', () => {
+        const language = document.getElementById('modeSelector').value;
+        if (language !== "javascript") {
+            addToConsole("La consola solo ejecuta código JavaScript\nCambia el lenguaje a JavaScript para ejecutar código", "error");
+            return;
+        }
+        executeJavaScriptCode(editor.getValue());
+    });
+
+    // Configurar input de la consola
+    consoleInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const command = consoleInput.value.trim();
+            if (command) {
+                commandHistory.push(command);
+                historyIndex = -1;
+                
+                addToConsole(`> ${command}`, "input");
+                
+                try {
+                    const result = new Function(command)();
+                    if (result !== undefined) {
+                        addToConsole(String(result));
+                    }
+                } catch (error) {
+                    addToConsole(`Error: ${error.message}`, "error");
+                }
+                
+                consoleInput.value = '';
+            }
+        }
+        
+        // Navegar por el historial
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (commandHistory.length > 0 && historyIndex < commandHistory.length - 1) {
+                historyIndex++;
+                consoleInput.value = commandHistory[commandHistory.length - 1 - historyIndex];
+            }
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (historyIndex > 0) {
+                historyIndex--;
+                consoleInput.value = commandHistory[commandHistory.length - 1 - historyIndex];
+            } else if (historyIndex === 0) {
+                historyIndex = -1;
+                consoleInput.value = '';
+            }
+        }
+    });
+
+    // Función para añadir texto a la consola
+    function addToConsole(text, type = "normal") {
+        const timestamp = new Date().toLocaleTimeString();
+        const prefix = type === "error" ? `[${timestamp}] ! ERROR: ` :
+                     type === "input" ? `[${timestamp}] > ` : 
+                     `[${timestamp}] `;
+        
+        consoleOutput.value += prefix + text + '\n';
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
+
+    // Función para ejecutar código JavaScript (CORREGIDA)
+    async function executeJavaScriptCode(code) {
+        // Limpiar la consola
+        consoleOutput.value = '';
+        
+        // Guardar los métodos originales de console
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn,
+            info: console.info,
+            debug: console.debug
+        };
+
+        // Función para redirigir los logs
+        const redirectConsole = (method) => (...args) => {
+            originalConsole[method](...args);
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            addToConsole(message, method === 'error' ? 'error' : 'normal');
+        };
+
+        // Redirigir todos los métodos
+        console.log = redirectConsole('log');
+        console.error = redirectConsole('error');
+        console.warn = redirectConsole('warn');
+        console.info = redirectConsole('info');
+        console.debug = redirectConsole('debug');
+
+        try {
+            // Crear un contexto de ejecución asíncrono con timeout
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error("Timeout excedido (5 segundos)")), 5000)
+            );
+
+            // Crear función asíncrona para ejecutar el código
+            const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+            const asyncFunction = new AsyncFunction(code);
+            
+            // Ejecutar con timeout
+            await Promise.race([asyncFunction(), timeoutPromise]);
+        } catch (error) {
+            console.error(`[Execution Error] ${error.message}`);
+        } finally {
+            // Restaurar la consola después de un pequeño retraso
+            setTimeout(() => {
+                console.log = originalConsole.log;
+                console.error = originalConsole.error;
+                console.warn = originalConsole.warn;
+                console.info = originalConsole.info;
+                console.debug = originalConsole.debug;
+            }, 300);
+        }
+    }
+});
+```
+
+### 3. index.css (mejorado)
+```css
+/* Estilos generales */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #252526;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+header {
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #3c3c3c;
+}
+
+header h1 {
+  margin: 0;
+  color: #4ec9b0;
+  font-size: 2.2rem;
+}
+
+header p {
+  margin: 10px 0 0;
+  color: #9e9e9e;
+  font-size: 1rem;
+}
+
+/* Controles del editor */
+.ace-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #2d2d30;
+  border-radius: 6px;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-group label {
+  font-weight: 500;
+  color: #dcdcdc;
+}
+
+select, input[type="number"] {
+  padding: 6px 10px;
+  border: 1px solid #3f3f46;
+  border-radius: 4px;
+  background: #333337;
+  color: #f0f0f0;
+}
+
+input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+/* Estilos para el menú */
+nav {
+  background-color: #252526;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  border-radius: 6px;
+}
+
+.menu {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  justify-content: center;
+}
+
+.menu-item {
+  position: relative;
+  margin: 0 5px;
+}
+
+.menu-item a {
+  display: block;
+  padding: 8px 15px;
+  background-color: #007acc;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  font-size: 14px;
+}
+
+.menu-item a:hover {
+  background-color: #0062a3;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #333;
+  min-width: 200px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  border-radius: 4px;
+  z-index: 100;
+  top: 100%;
+  left: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 10px 15px;
+  color: #f0f0f0;
+  text-decoration: none;
+  background-color: #333;
+  border-bottom: 1px solid #444;
+  transition: background-color 0.2s;
+}
+
+.dropdown-content a:hover {
+  background-color: #3c3c3c;
+  color: #4ec9b0;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.menu-icon {
+  margin-right: 5px;
+}
+
+/* Editor */
+#editor {
+  height: 500px;
+  width: 100%;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Consola */
+.console-container {
+  margin: 25px 0;
+  background: #1e1e1e;
+  border-radius: 6px;
+  padding: 15px;
+  color: white;
+  border: 1px solid #3f3f46;
+}
+
+.console-container h2 {
+  margin: 0 0 15px;
+  font-size: 1.2rem;
+  color: #4ec9b0;
+}
+
+#consoleOutput {
+  width: 98%;
+  height: 200px;
+  padding: 12px;
+  background: #1a1a1a;
+  color: #d4d4d4;
+  border: 1px solid #3c3c3c;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.95rem;
+  resize: none;
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+  overflow-y: auto;
+}
+
+.console-input-container input {
+  width: 98%;
+  padding: 10px;
+  background: #2d2d2d;
+  color: white;
+  border: 1px solid #3c3c3c;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.console-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.console-buttons .button {
+  padding: 8px 15px;
+  background: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.console-buttons .button:hover {
+  background: #0062a3;
+}
+
+/* Preview */
+.preview-container {
+  margin-top: 25px;
+  border-top: 1px solid #3f3f46;
+  padding-top: 20px;
+}
+
+.preview-container h2 {
+  margin: 0 0 15px;
+  font-size: 1.2rem;
+  color: #4ec9b0;
+}
+
+#preview {
+  width: 100%;
+  height: 400px;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  background: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ace-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  #editor, #preview {
+    height: 350px;
+  }
+}
+
+/* Notificaciones */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  border-radius: 4px;
+  color: white;
+  z-index: 1000;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.success { 
+  background-color: #4CAF50;
+  border-left: 5px solid #2E7D32;
+}
+
+.error { 
+  background-color: #f44336;
+  border-left: 5px solid #c62828;
+}
+```
+
+### 4. server.js (opcional, solo si lo necesitas)
+```javascript
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const { exec } = require('child_process');
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
+app.post('/run', (req, res) => {
+    const { language, code } = req.body;
+    let command;
+
+    if (language === "python") {
+        command = `python -c "${code}"`;
+    } else if (language === "php") {
+        command = `php -r "${code}"`;
+    } else if (language === "sql") {
+        command = `sqlite3 mydatabase.db "${code}"`;
+    }
+
+    if (command) {
+        exec(command, (error, stdout, stderr) => {
+            res.json({ output: error ? stderr : stdout });
+        });
+    } else {
+        res.json({ output: "Lenguaje no soportado en este servidor." });
+    }
+});
+
+app.listen(3000, () => console.log("Servidor ejecutando en puerto 3000"));
+```
+
+### Cambios principales realizados:
+
+1. **Función executeJavaScriptCode corregida**:
+   - Ahora maneja correctamente los timeouts
+   - Captura todos los logs (console.log, error, warn, etc.)
+   - Restaura la consola original después de ejecutar
+
+2. **Interfaz mejorada**:
+   - Tema oscuro profesional
+   - Menús y controles más intuitivos
+   - Notificaciones animadas
+   - Consola con mejor formato
+
+3. **Errores corregidos**:
+   - Problema con la restauración de la consola
+   - Manejo de archivos más robusto
+   - Actualización en tiempo real de la previsualización
+
+4. **Optimizaciones**:
+   - Código más limpio y organizado
+   - Eliminación de código duplicado
+   - Mejor manejo de errores
+
+¡Ahora tienes un editor profesional y funcional! Solo copia cada archivo en su respectiva carpeta (html, css, js) y asegúrate de tener instalado Ace Editor en una carpeta llamada `ace`. 
+
+Si tienes algún problema, ¡aquí estoy para ayudarte, amigo cubano! No te rindas, que la programación es un camino de paciencia pero con grandes recompensas. 💪🇨🇺

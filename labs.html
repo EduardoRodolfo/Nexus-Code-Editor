@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Laboratorios Virtuales</title>
+    <link rel="stylesheet" href="css/index.css">
+    <style>
+        /* Estilos específicos para Laboratorios */
+        .labs-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .labs-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #0f1724 0%, #15233a 100%);
+            border-radius: 15px;
+            color: white;
+        }
+        
+        .labs-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .labs-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .labs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .lab-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .lab-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+        
+        .lab-card-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .lab-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lab-card-content {
+            padding: 25px;
+        }
+        
+        .lab-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #0f1724;
+        }
+        
+        .lab-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .lab-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        
+        .lab-features li {
+            padding: 8px 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .lab-features li:before {
+            content: "✓";
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .lab-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #0b3b66;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .lab-button:hover {
+            background: #0a2e4d;
+            transform: translateY(-2px);
+        }
+        
+        .lab-button.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .lab-button.primary:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        }
+        
+        .labs-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 40px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .labs-info h3 {
+            color: #0f1724;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .labs-info p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: #0b3b66;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #0a2e4d;
+            transform: translateX(-5px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .labs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .labs-header {
+                padding: 20px;
+            }
+            
+            .labs-header h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .labs-container {
+                padding: 15px;
+            }
+            
+            .lab-card-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .lab-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="imagenes/nexus-code-editor.gif" alt="Nexus Logo">
+            <div>
+                <h1>Nexus - Laboratorios Virtuales</h1>
+                <p>Explora, aprende y experimenta con entornos virtuales</p>
+            </div>
+        </header>
+
+        <div class="labs-container">
+            <div class="labs-header">
+                <h1>🔬 Laboratorios Virtuales</h1>
+                <p>Accede a entornos completos de desarrollo y aprendizaje directamente desde tu navegador. Sin instalación, sin configuración.</p>
+            </div>
+
+            <div class="labs-grid">
+                <!-- Laboratorio 1: JS Linux -->
+                <div class="lab-card" id="jslinux-lab">
+                    <div class="lab-card-header">
+                        <div class="lab-icon">🐧</div>
+                        <div>
+                            <h3>JS Linux</h3>
+                            <p>Linux completo en tu navegador</p>
+                        </div>
+                    </div>
+                    <div class="lab-card-content">
+                        <p>Un sistema Linux real que se ejecuta completamente en JavaScript. Creado por Fabrice Bellard.</p>
+                        <ul class="lab-features">
+                            <li>Kernel Linux 2.6.20 real</li>
+                            <li>Compilador GCC incluido</li>
+                            <li>Python y Lua preinstalados</li>
+                            <li>Terminal Bash completa</li>
+                            <li>Sin instalación requerida</li>
+                        </ul>
+                        <button class="lab-button primary" onclick="openJSLinux()">
+                            🚀 Abrir JS Linux
+                        </button>
+                    </div>
+                </div>
+
+                                <!-- Laboratorio 2: Laboratorio Linux (Nexus) -->
+                <div class="lab-card" id="linux-lab">
+                    <div class="lab-card-header">
+                        <div class="lab-icon">📚</div>
+                        <div>
+                            <h3>Laboratorio Linux</h3>
+                            <p>Tutoriales interactivos de Linux</p>
+                        </div>
+                    </div>
+                    <div class="lab-card-content">
+                        <p>7 tutoriales completos para aprender Linux desde cero. Todo en un solo archivo HTML.</p>
+                        <ul class="lab-features">
+                            <li>7 tutoriales prácticos</li>
+                            <li>Ejemplos de código copiables</li>
+                            <li>Modo oscuro/claro</li>
+                            <li>Seguimiento de progreso</li>
+                            <li>Sin conexión a internet</li>
+                        </ul>
+                        <button class="lab-button" onclick="openLinuxLab()" style="background: linear-gradient(135deg, #38b2ac 0%, #319795 100%);">
+                            🐧 Abrir Laboratorio Linux
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Laboratorio 2: StackBlitz -->
+                <div class="lab-card" id="stackblitz-lab">
+                    <div class="lab-card-header">
+                        <div class="lab-icon">💻</div>
+                        <div>
+                            <h3>StackBlitz</h3>
+                            <p>VS Code completo en navegador</p>
+                        </div>
+                    </div>
+                    <div class="lab-card-content">
+                        <p>VS Code Web completo ejecutándose en tu navegador. Sin instalación, sin autenticación requerida.</p>
+                        <ul class="lab-features">
+                            <li>VS Code Web completo</li>
+                            <li>Terminal Node.js integrada</li>
+                            <li>NPM packages preinstalados</li>
+                            <li>Sin autenticación necesaria</li>
+                            <li>GitHub integration opcional</li>
+                        </ul>
+                        <button class="lab-button" onclick="openStackBlitz()">
+                            ⚡ Abrir StackBlitz
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Laboratorio 3: CodeSandbox -->
+                <div class="lab-card" id="codesandbox-lab">
+                    <div class="lab-card-header">
+                        <div class="lab-icon">📦</div>
+                        <div>
+                            <h3>CodeSandbox</h3>
+                            <p>Desarrollo web instantáneo</p>
+                        </div>
+                    </div>
+                    <div class="lab-card-content">
+                        <p>Editor de código online especializado en desarrollo web. Perfecto para prototipado rápido.</p>
+                        <ul class="lab-features">
+                            <li>Editor web especializado</li>
+                            <li>Previsualización en vivo</li>
+                            <li>Templates preconfigurados</li>
+                            <li>NPM packages integrados</li>
+                            <li>Compartición instantánea</li>
+                        </ul>
+                        <button class="lab-button" onclick="openCodeSandbox()">
+                            ⚡ Abrir CodeSandbox
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Laboratorio 4: Observable HQ -->
+                <div class="lab-card" id="observable-lab">
+                    <div class="lab-card-header">
+                        <div class="lab-icon">📊</div>
+                        <div>
+                            <h3>Observable HQ</h3>
+                            <p>Notebooks JavaScript interactivos</p>
+                        </div>
+                    </div>
+                    <div class="lab-card-content">
+                        <p>Plataforma para crear y compartir notebooks interactivos con JavaScript, ideal para visualización de datos.</p>
+                        <ul class="lab-features">
+                            <li>Notebooks interactivos</li>
+                            <li>Visualización de datos</li>
+                            <li>JavaScript en tiempo real</li>
+                            <li>Bibliotecas D3.js integradas</li>
+                            <li>Comunidad activa</li>
+                        </ul>
+                        <button class="lab-button" onclick="openObservable()">
+                            📈 Abrir Observable
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Laboratorio 5: PICO-8 -->
+                <div class="lab-card" id="pico8-lab">
+                    <div class="lab-card-header">
+                        <div class="lab-icon">🎮</div>
+                        <div>
+                            <h3>PICO-8</h3>
+                            <p>Consola virtual para juegos</p>
+                        </div>
+                    </div>
+                    <div class="lab-card-content">
+                        <p>Consola de fantasía para crear, compartir y jugar pequeños juegos y otros programas.</p>
+                        <ul class="lab-features">
+                            <li>Editor de código integrado</li>
+                            <li>Sprite editor</li>
+                            <li>Editor de mapas</li>
+                            <li>SFX y música</li>
+                            <li>Comunidad de creadores</li>
+                        </ul>
+                        <button class="lab-button" onclick="openPICO8()">
+                            👾 Abrir PICO-8
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Laboratorio 6: Replit -->
+                <div class="lab-card" id="replit-lab">
+                    <div class="lab-card-header">
+                        <div class="lab-icon">🚀</div>
+                        <div>
+                            <h3>Replit</h3>
+                            <p>IDE completo en navegador</p>
+                        </div>
+                    </div>
+                    <div class="lab-card-content">
+                        <p>IDE poderoso con soporte para 50+ lenguajes, terminal real y colaboración en tiempo real.</p>
+                        <ul class="lab-features">
+                            <li>50+ lenguajes de programación</li>
+                            <li>Terminal Linux real</li>
+                            <li>Packages y extensiones</li>
+                            <li>Colaboración en tiempo real</li>
+                            <li>Comunidad de 20M+ desarrolladores</li>
+                        </ul>
+                        <button class="lab-button" onclick="openReplit()">
+                            🚀 Abrir Replit
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Laboratorio 7: WebAssembly Studio -->
+                <div class="lab-card" id="wasm-lab">
+                    <div class="lab-card-header">
+                        <div class="lab-icon">⚡</div>
+                        <div>
+                            <h3>WebAssembly Studio</h3>
+                            <p>Desarrollo con WebAssembly</p>
+                        </div>
+                    </div>
+                    <div class="lab-card-content">
+                        <p>IDE online para desarrollar, desplegar y aprender WebAssembly. Creado por Mozilla.</p>
+                        <ul class="lab-features">
+                            <li>IDE WebAssembly completo</li>
+                            <li>C, C++, Rust support</li>
+                            <li>Debugging integrado</li>
+                            <li>Ejemplos y templates</li>
+                            <li>Por Mozilla</li>
+                        </ul>
+                        <button class="lab-button" onclick="openWasmStudio()">
+                            🏗️ Abrir WASM Studio
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Laboratorio 8: VS Code Personalizable -->
+                <div class="lab-card" id="vscode-personalizable-lab">
+                    <div class="lab-card-header">
+                        <div class="lab-icon">⚙️</div>
+                        <div>
+                            <h3>VS Code Personalizable</h3>
+                            <p>VS Code completo con extensiones</p>
+                        </div>
+                    </div>
+                    <div class="lab-card-content">
+                        <p>Opciones para tener VS Code COMPLETO en navegador con todas las extensiones.</p>
+                        
+                        <div class="option-buttons" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                            <button class="lab-button" onclick="openCodeServerGuide()" style="background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);">
+                                🖥️ Guía Code-Server (Auto-hospedado)
+                            </button>
+                            <button class="lab-button" onclick="openGitHubCodespaces()" style="background: linear-gradient(135deg, #24292e 0%, #0d1117 100%);">
+                                🌐 GitHub Codespaces (Requiere cuenta)
+                            </button>
+                            <button class="lab-button" onclick="openStackBlitzPro()" style="background: linear-gradient(135deg, #1389FD 0%, #0B5D9E 100%);">
+                                ⚡ StackBlitz Pro (Extensiones limitadas)
+                            </button>
+                        </div>
+                        
+                        <div class="lab-features">
+                            <li><strong>Code-Server:</strong> VS Code completo, necesita servidor</li>
+                            <li><strong>GitHub Codespaces:</strong> VS Code en cloud, requiere GitHub</li>
+                            <li><strong>StackBlitz Pro:</strong> Extensiones seleccionadas</li>
+                        </div>
+                        
+                        <p style="color: #666; font-size: 0.9rem; margin-top: 15px; padding: 10px; background: #f0f7ff; border-radius: 6px;">
+                            <strong>💡 Recomendación:</strong> Para desarrollo serio, instala 
+                            <strong>VS Code localmente</strong> y usa Nexus como complemento educativo.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="labs-info">
+                <h3>📚 ¿Cómo usar los Laboratorios Virtuales?</h3>
+                <p>1. <strong>Haz clic</strong> en cualquier laboratorio para abrirlo en una nueva pestaña</p>
+                <p>2. <strong>Explora</strong> las funcionalidades sin necesidad de instalación</p>
+                <p>3. <strong>Aprende</strong> con los ejemplos y documentación incluida</p>
+                <p>4. <strong>Experimenta</strong> sin miedo a romper tu sistema</p>
+                <p>5. <strong>Vuelve</strong> a Nexus para continuar con tu desarrollo</p>
+                
+                <p><strong>💡 Tip:</strong> También puedes acceder desde la terminal de Nexus con el comando <code>labs</code></p>
+            </div>
+
+            <button class="back-button" onclick="goBackToNexus()">
+                ← Volver a Nexus Editor
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Funciones para abrir los laboratorios
+        function openJSLinux() {
+            window.open('https://bellard.org/jslinux/', '_blank');
+            showNotification('🚀 Abriendo JS Linux...');
+        }
+
+         // AGREGAR ESTA FUNCIÓN
+        function openLinuxLab() {
+            window.open('laboratorio-linux.html', '_blank');
+            showNotification('🐧 Abriendo Laboratorio Linux...');
+        }
+        
+        function openStackBlitz() {
+            window.open('https://stackblitz.com', '_blank');
+            showNotification('⚡ Abriendo StackBlitz...');
+        }
+        
+        function openCodeSandbox() {
+            window.open('https://codesandbox.io', '_blank');
+            showNotification('📦 Abriendo CodeSandbox...');
+        }
+        
+        function openObservable() {
+            window.open('https://observablehq.com', '_blank');
+            showNotification('📊 Abriendo Observable HQ...');
+        }
+        
+        function openPICO8() {
+            window.open('https://www.lexaloffle.com/pico-8.php', '_blank');
+            showNotification('🎮 Abriendo PICO-8...');
+        }
+        
+        function openReplit() {
+            window.open('https://replit.com', '_blank');
+            showNotification('🚀 Abriendo Replit...');
+        }
+        
+        function openWasmStudio() {
+            window.open('https://webassembly.studio', '_blank');
+            showNotification('⚡ Abriendo WebAssembly Studio...');
+        }
+        
+        function openCodeServerGuide() {
+            window.open('https://github.com/coder/code-server', '_blank');
+            showNotification('📚 Abriendo guía de Code-Server...');
+        }
+        
+        function openGitHubCodespaces() {
+            window.open('https://github.com/features/codespaces', '_blank');
+            showNotification('🌐 Abriendo GitHub Codespaces...');
+        }
+        
+        function openStackBlitzPro() {
+            window.open('https://stackblitz.com/features', '_blank');
+            showNotification('⚡ Abriendo StackBlitz Pro...');
+        }
+        
+        function goBackToNexus() {
+            window.location.href = 'index.html';
+        }
+        
+        function showNotification(message) {
+            // Crear notificación temporal
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+                font-weight: 500;
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Agregar estilos de animación
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Efectos interactivos para las tarjetas
+        document.querySelectorAll('.lab-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+            
+            // Hacer toda la tarjeta clickeable (excepto botones)
+            card.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('lab-button')) {
+                    const button = card.querySelector('.lab-button');
+                    if (button) button.click();
+                }
+            });
+        });
+        
+        console.log('Laboratorios Virtuales cargados correctamente');
+    </script>
+</body>
+</html>

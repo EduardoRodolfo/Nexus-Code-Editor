@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial Completo de CSS3 - Estilizando la Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ====================
+           VARIABLES CSS
+           ==================== */
+        :root {
+            --primary: #264de4; /* Azul CSS3 */
+            --secondary: #2965f1;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #3498db;
+            --purple: #9b59b6;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            --transition: all 0.3s ease;
+            /* Variable de escala de fuente */
+            --font-scale: 1;
+        }
+        
+        /* ====================
+           ESTILOS BASE
+           ==================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 95vh;
+        }
+        
+        /* ====================
+           HEADER
+           ==================== */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            font-size: calc(3rem * var(--font-scale));
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: calc(1.4rem * var(--font-scale));
+            margin-bottom: 25px;
+            opacity: 0.9;
+            font-weight: 300;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .css-logo {
+            font-size: calc(5rem * var(--font-scale));
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        /* ====================
+           SISTEMA DE CONTROL DE FUENTE
+           ==================== */
+        .font-controls-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin: 20px auto;
+            max-width: 800px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .font-label {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+            font-size: calc(1.1rem * var(--font-scale));
+            text-align: center;
+        }
+        
+        .font-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .font-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .font-btn {
+            padding: 12px 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: calc(1rem * var(--font-scale));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .font-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        .font-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .font-indicator {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: calc(0.9rem * var(--font-scale));
+            text-align: center;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        /* ====================
+           LAYOUT PRINCIPAL
+           ==================== */
+        .main-content {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* ====================
+           SIDEBAR DE NAVEGACIÓN
+           ==================== */
+        .sidebar {
+            width: 280px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            padding: 25px 0;
+            overflow-y: auto;
+        }
+        
+        .sidebar-title {
+            padding: 0 20px 15px;
+            color: var(--dark);
+            font-size: calc(1.3rem * var(--font-scale));
+            font-weight: 700;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-item {
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: calc(1rem * var(--font-scale));
+        }
+        
+        .nav-link:hover {
+            background: rgba(38, 77, 228, 0.05);
+            color: var(--primary);
+            padding-left: 25px;
+        }
+        
+        .nav-link.active {
+            background: rgba(38, 77, 228, 0.1);
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+            font-weight: 600;
+        }
+        
+        .nav-icon {
+            width: 24px;
+            text-align: center;
+            font-size: calc(1.1rem * var(--font-scale));
+        }
+        
+        /* ====================
+           CONTENIDO PRINCIPAL
+           ==================== */
+        .content-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid rgba(38, 77, 228, 0.2);
+            font-size: calc(2.2rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        h3 {
+            color: var(--dark);
+            margin: 25px 0 15px;
+            font-size: calc(1.6rem * var(--font-scale));
+        }
+        
+        p {
+            margin-bottom: 20px;
+            font-size: calc(1.1rem * var(--font-scale));
+            line-height: 1.7;
+            color: #444;
+        }
+        
+        /* ====================
+           DEMOSTRACIONES VISUALES CSS
+           ==================== */
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        @media (max-width: 992px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .demo-code {
+            background: #1e1e1e;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .demo-preview {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 2px dashed #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+        }
+        
+        .code-header {
+            background: #2d2d2d;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3d3d3d;
+        }
+        
+        .code-title {
+            color: #ccc;
+            font-weight: 600;
+            font-size: calc(1rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: calc(0.9rem * var(--font-scale));
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .copy-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .copy-btn.copied {
+            background: var(--success);
+        }
+        
+        pre {
+            margin: 0;
+            padding: 25px;
+            overflow-x: auto;
+            font-size: calc(0.95rem * var(--font-scale));
+            line-height: 1.5;
+        }
+        
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+        
+        /* Colores para código CSS */
+        .css-selector { color: #569cd6; }
+        .css-property { color: #9cdcfe; }
+        .css-value { color: #ce9178; }
+        .css-comment { color: #6a9955; }
+        .css-punctuation { color: #d4d4d4; }
+        .css-unit { color: #b5cea8; }
+        
+        /* ====================
+           EJEMPLOS INTERACTIVOS
+           ==================== */
+        .interactive-demo {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid var(--primary);
+        }
+        
+        .demo-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 150px;
+        }
+        
+        .control-label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: calc(1rem * var(--font-scale));
+        }
+        
+        .control-input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: calc(1rem * var(--font-scale));
+            transition: var(--transition);
+        }
+        
+        .control-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(38, 77, 228, 0.1);
+        }
+        
+        .demo-output {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            border: 2px solid #eee;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* ====================
+           TARJETAS DE PROPIEDADES
+           ==================== */
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .property-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
+            transition: var(--transition);
+        }
+        
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .property-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: calc(1.3rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .property-desc {
+            color: #666;
+            font-size: calc(1rem * var(--font-scale));
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .property-example {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Consolas', monospace;
+            font-size: calc(0.9rem * var(--font-scale));
+            color: var(--dark);
+            border-left: 3px solid var(--primary);
+        }
+        
+        /* ====================
+           CONSEJOS Y NOTAS
+           ==================== */
+        .tip-box {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid var(--success);
+        }
+        
+        .tip-title {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-size: calc(1.3rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid var(--warning);
+        }
+        
+        .warning-title {
+            color: #ef6c00;
+            margin-bottom: 15px;
+            font-size: calc(1.3rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* ====================
+           FOOTER
+           ==================== */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .footer-title {
+            font-size: calc(1.8rem * var(--font-scale));
+            margin-bottom: 20px;
+            color: #ecf0f1;
+        }
+        
+        .footer-text {
+            font-size: calc(1.1rem * var(--font-scale));
+            opacity: 0.8;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            transition: var(--transition);
+            font-size: calc(1rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* ====================
+           RESPONSIVE
+           ==================== */
+        @media (max-width: 992px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+                padding: 15px 0;
+            }
+            
+            .nav-menu {
+                display: flex;
+                overflow-x: auto;
+                padding: 0 15px;
+            }
+            
+            .nav-item {
+                border-bottom: none;
+                border-right: 1px solid #e9ecef;
+            }
+            
+            .nav-link {
+                white-space: nowrap;
+                padding: 10px 15px;
+            }
+            
+            .nav-link:hover {
+                padding-left: 15px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                margin: 5px;
+                border-radius: 10px;
+            }
+            
+            header {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: calc(2.2rem * var(--font-scale));
+            }
+            
+            .subtitle {
+                font-size: calc(1.1rem * var(--font-scale));
+            }
+            
+            .css-logo {
+                font-size: calc(3.5rem * var(--font-scale));
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: calc(1.8rem * var(--font-scale));
+            }
+            
+            h3 {
+                font-size: calc(1.3rem * var(--font-scale));
+            }
+            
+            .font-controls-container {
+                padding: 12px;
+            }
+        }
+        
+        /* ====================
+           NOTIFICACIÓN TEMPORAL
+           ==================== */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="css-logo">
+                    <i class="fab fa-css3-alt"></i>
+                </div>
+                <h1>Tutorial Completo de CSS3</h1>
+                <p class="subtitle">Domina el arte de estilizar la web - Selectores, propiedades, layouts y efectos visuales</p>
+                
+                <!-- Sistema de Control de Tamaño de Fuente -->
+                <div class="font-controls-container">
+                    <span class="font-label">
+                        <i class="fas fa-text-height"></i> Tamaño del texto:
+                    </span>
+                    <div class="font-buttons">
+                        <button class="font-btn" data-size="small" onclick="changeFontSize('small')">
+                            <i class="fas fa-search-minus"></i>
+                            <span>A-</span>
+                        </button>
+                        <button class="font-btn active" data-size="normal" onclick="changeFontSize('normal')">
+                            <i class="fas fa-font"></i>
+                            <span>Normal</span>
+                        </button>
+                        <button class="font-btn" data-size="large" onclick="changeFontSize('large')">
+                            <i class="fas fa-search-plus"></i>
+                            <span>A+</span>
+                        </button>
+                        <button class="font-btn" data-size="xlarge" onclick="changeFontSize('xlarge')">
+                            <i class="fas fa-expand-alt"></i>
+                            <span>A++</span>
+                        </button>
+                    </div>
+                    <div id="fontSizeIndicator" class="font-indicator">
+                        Tamaño actual: Normal (100%)
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <!-- Sidebar de Navegación -->
+            <nav class="sidebar">
+                <div class="sidebar-title">
+                    <i class="fas fa-sitemap"></i> Contenido
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#introduccion" class="nav-link active" onclick="showSection('introduccion')">
+                            <span class="nav-icon"><i class="fas fa-info-circle"></i></span>
+                            <span>Introducción</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#selectores" class="nav-link" onclick="showSection('selectores')">
+                            <span class="nav-icon"><i class="fas fa-mouse-pointer"></i></span>
+                            <span>Selectores CSS</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#propiedades" class="nav-link" onclick="showSection('propiedades')">
+                            <span class="nav-icon"><i class="fas fa-palette"></i></span>
+                            <span>Propiedades Básicas</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#box-model" class="nav-link" onclick="showSection('box-model')">
+                            <span class="nav-icon"><i class="fas fa-square"></i></span>
+                            <span>Box Model</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#flexbox" class="nav-link" onclick="showSection('flexbox')">
+                            <span class="nav-icon"><i class="fas fa-th-large"></i></span>
+                            <span>Flexbox</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#grid" class="nav-link" onclick="showSection('grid')">
+                            <span class="nav-icon"><i class="fas fa-th"></i></span>
+                            <span>CSS Grid</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#responsive" class="nav-link" onclick="showSection('responsive')">
+                            <span class="nav-icon"><i class="fas fa-mobile-alt"></i></span>
+                            <span>Diseño Responsive</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#animaciones" class="nav-link" onclick="showSection('animaciones')">
+                            <span class="nav-icon"><i class="fas fa-magic"></i></span>
+                            <span>Animaciones</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#ejercicios" class="nav-link" onclick="showSection('ejercicios')">
+                            <span class="nav-icon"><i class="fas fa-laptop-code"></i></span>
+                            <span>Ejercicios Prácticos</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Área de Contenido -->
+            <main class="content-area">
+                <!-- Sección: Introducción -->
+                <section id="introduccion" class="content-section active">
+                    <h2><i class="fas fa-info-circle"></i> Introducción a CSS3</h2>
+                    
+                    <p><strong>CSS (Cascading Style Sheets)</strong> es el lenguaje de estilos utilizado para describir la presentación de documentos HTML. Controla el diseño, colores, fuentes y otros aspectos visuales de una página web.</p>
+                    
+                    <div class="tip-box">
+                        <div class="tip-title">
+                            <i class="fas fa-lightbulb"></i> ¿Sabías que?
+                        </div>
+                        <p>CSS3 es la última versión de CSS e introduce nuevas características como bordes redondeados, sombras, gradientes, transiciones, animaciones y layout más avanzados con Flexbox y Grid.</p>
+                    </div>
+                    
+                    <h3>¿Cómo funciona CSS?</h3>
+                    <p>CSS funciona mediante un sistema de reglas. Cada regla consta de un selector y un bloque de declaraciones que contienen propiedades y valores:</p>
+                    
+                    <div class="demo-container">
+                        <div class="demo-code">
+                            <div class="code-header">
+                                <div class="code-title">
+                                    <i class="fas fa-code"></i> Estructura de una Regla CSS
+                                </div>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="far fa-copy"></i> Copiar
+                                </button>
+                            </div>
+                            <pre><code><span class="css-selector">selector</span> <span class="css-punctuation">{</span>
+    <span class="css-property">propiedad</span><span class="css-punctuation">:</span> <span class="css-value">valor</span><span class="css-punctuation">;</span>
+    <span class="css-property">otra-propiedad</span><span class="css-punctuation">:</span> <span class="css-value">otro-valor</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span>
+
+<span class="css-comment">/* Ejemplo concreto */</span>
+<span class="css-selector">h1</span> <span class="css-punctuation">{</span>
+    <span class="css-property">color</span><span class="css-punctuation">:</span> <span class="css-value">blue</span><span class="css-punctuation">;</span>
+    <span class="css-property">font-size</span><span class="css-punctuation">:</span> <span class="css-value">2rem</span><span class="css-punctuation">;</span>
+    <span class="css-property">text-align</span><span class="css-punctuation">:</span> <span class="css-value">center</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span></code></pre>
+                        </div>
+                        <div class="demo-preview">
+                            <div style="text-align: center;">
+                                <h1 style="color: #264de4; font-size: 2rem; margin: 0;">Texto Estilizado con CSS</h1>
+                                <p style="color: #666; margin-top: 15px;">Este es el resultado visual de aplicar CSS</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3>Formas de Aplicar CSS</h3>
+                    <div class="properties-grid">
+                        <div class="property-card">
+                            <div class="property-title">
+                                <i class="fas fa-file-code"></i> CSS Interno
+                            </div>
+                            <div class="property-desc">
+                                Se define dentro de la etiqueta &lt;style&gt; en el head del documento HTML.
+                            </div>
+                            <div class="property-example">
+                                &lt;style&gt;<br>
+                                &nbsp;&nbsp;body { background: #f0f0f0; }<br>
+                                &lt;/style&gt;
+                            </div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <div class="property-title">
+                                <i class="fas fa-external-link-alt"></i> CSS Externo
+                            </div>
+                            <div class="property-desc">
+                                Se escribe en un archivo separado (.css) y se enlaza con &lt;link&gt; en el HTML.
+                            </div>
+                            <div class="property-example">
+                                &lt;link rel="stylesheet" href="estilos.css"&gt;
+                            </div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <div class="property-title">
+                                <i class="fas fa-code"></i> CSS en Línea
+                            </div>
+                            <div class="property-desc">
+                                Se aplica directamente a un elemento HTML usando el atributo style.
+                            </div>
+                            <div class="property-example">
+                                &lt;p style="color: red;"&gt;Texto rojo&lt;/p&gt;
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Sección: Selectores -->
+                <section id="selectores" class="content-section">
+                    <h2><i class="fas fa-mouse-pointer"></i> Selectores CSS</h2>
+                    
+                    <p>Los selectores definen a qué elementos HTML se aplicarán los estilos. CSS tiene una amplia variedad de selectores que permiten un control preciso.</p>
+                    
+                    <div class="interactive-demo">
+                        <div class="demo-controls">
+                            <div class="control-group">
+                                <label class="control-label">Tipo de Selector:</label>
+                                <select id="selectorType" class="control-input" onchange="updateSelectorDemo()">
+                                    <option value="element">Por Elemento</option>
+                                    <option value="class">Por Clase</option>
+                                    <option value="id">Por ID</option>
+                                    <option value="attribute">Por Atributo</option>
+                                    <option value="pseudo">Pseudo-clase</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="demo-container">
+                            <div class="demo-code">
+                                <div class="code-header">
+                                    <div class="code-title">
+                                        <i class="fas fa-code"></i> Código CSS
+                                    </div>
+                                    <button class="copy-btn" onclick="copyCode(this)">
+                                        <i class="far fa-copy"></i> Copiar
+                                    </button>
+                                </div>
+                                <pre id="selectorCode"><code><span class="css-selector">p</span> <span class="css-punctuation">{</span>
+    <span class="css-property">color</span><span class="css-punctuation">:</span> <span class="css-value">#264de4</span><span class="css-punctuation">;</span>
+    <span class="css-property">font-weight</span><span class="css-punctuation">:</span> <span class="css-value">bold</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span></code></pre>
+                            </div>
+                            <div class="demo-preview" id="selectorPreview">
+                                <p>Este párrafo está seleccionado por elemento</p>
+                                <p class="destacado">Este párrafo tiene clase "destacado"</p>
+                                <p id="especial">Este párrafo tiene ID "especial"</p>
+                                <p data-tipo="importante">Este párrafo tiene atributo data-tipo</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3>Tipos de Selectores Comunes</h3>
+                    <table class="info-table">
+                        <thead>
+                            <tr>
+                                <th>Selector</th>
+                                <th>Ejemplo</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>elemento</code></td>
+                                <td><code>p { color: blue; }</code></td>
+                                <td>Selecciona todos los elementos &lt;p&gt;</td>
+                            </tr>
+                            <tr>
+                                <td><code>.clase</code></td>
+                                <td><code>.destacado { background: yellow; }</code></td>
+                                <td>Selecciona elementos con class="destacado"</td>
+                            </tr>
+                            <tr>
+                                <td><code>#id</code></td>
+                                <td><code>#header { height: 100px; }</code></td>
+                                <td>Selecciona el elemento con id="header"</td>
+                            </tr>
+                            <tr>
+                                <td><code>[atributo]</code></td>
+                                <td><code>[target] { border: 1px solid; }</code></td>
+                                <td>Selecciona elementos con el atributo especificado</td>
+                            </tr>
+                            <tr>
+                                <td><code>:pseudo-clase</code></td>
+                                <td><code>a:hover { color: red; }</code></td>
+                                <td>Selecciona elementos en un estado específico</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                
+                <!-- Sección: Propiedades Básicas -->
+                <section id="propiedades" class="content-section">
+                    <h2><i class="fas fa-palette"></i> Propiedades CSS Básicas</h2>
+                    
+                    <p>Las propiedades CSS definen cómo se ven los elementos. Estas son algunas de las más utilizadas:</p>
+                    
+                    <div class="interactive-demo">
+                        <div class="demo-controls">
+                            <div class="control-group">
+                                <label class="control-label">Color de Fondo:</label>
+                                <input type="color" id="bgColor" class="control-input" value="#264de4" oninput="updatePropertiesDemo()">
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Color de Texto:</label>
+                                <input type="color" id="textColor" class="control-input" value="#ffffff" oninput="updatePropertiesDemo()">
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Tamaño de Fuente:</label>
+                                <input type="range" id="fontSize" class="control-input" min="14" max="32" value="18" oninput="updatePropertiesDemo()">
+                                <span id="fontSizeValue">18px</span>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Borde Redondeado:</label>
+                                <input type="range" id="borderRadius" class="control-input" min="0" max="50" value="10" oninput="updatePropertiesDemo()">
+                                <span id="borderRadiusValue">10px</span>
+                            </div>
+                        </div>
+                        
+                        <div class="demo-container">
+                            <div class="demo-code">
+                                <div class="code-header">
+                                    <div class="code-title">
+                                        <i class="fas fa-code"></i> CSS Generado
+                                    </div>
+                                    <button class="copy-btn" onclick="copyCode(this)">
+                                        <i class="far fa-copy"></i> Copiar
+                                    </button>
+                                </div>
+                                <pre id="propertiesCode"><code><span class="css-selector">.elemento</span> <span class="css-punctuation">{</span>
+    <span class="css-property">background-color</span><span class="css-punctuation">:</span> <span class="css-value">#264de4</span><span class="css-punctuation">;</span>
+    <span class="css-property">color</span><span class="css-punctuation">:</span> <span class="css-value">#ffffff</span><span class="css-punctuation">;</span>
+    <span class="css-property">font-size</span><span class="css-punctuation">:</span> <span class="css-value">18px</span><span class="css-punctuation">;</span>
+    <span class="css-property">border-radius</span><span class="css-punctuation">:</span> <span class="css-value">10px</span><span class="css-punctuation">;</span>
+    <span class="css-property">padding</span><span class="css-punctuation">:</span> <span class="css-value">20px</span><span class="css-punctuation">;</span>
+    <span class="css-property">margin</span><span class="css-punctuation">:</span> <span class="css-value">10px</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span></code></pre>
+                            </div>
+                            <div class="demo-preview">
+                                <div id="propertiesPreview" style="background-color: #264de4; color: #ffffff; font-size: 18px; border-radius: 10px; padding: 20px; margin: 10px; transition: all 0.3s ease;">
+                                    <h3 style="margin-top: 0;">Elemento Estilizado</h3>
+                                    <p>Este elemento muestra las propiedades CSS aplicadas en tiempo real.</p>
+                                    <p>Puedes ajustar los controles para ver cómo cambian los estilos.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Sección: Box Model -->
+                <section id="box-model" class="content-section">
+                    <h2><i class="fas fa-square"></i> Box Model de CSS</h2>
+                    
+                    <p>El Box Model es un concepto fundamental en CSS. Todos los elementos HTML son tratados como "cajas" que constan de:</p>
+                    
+                    <div class="demo-preview" style="min-height: 300px; position: relative; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                        <div id="boxModelDemo" style="width: 200px; height: 150px; background: #264de4; color: white; padding: 20px; border: 10px solid #9b59b6; margin: 30px; position: relative; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-weight: bold;">CONTENIDO</div>
+                            <div style="font-size: 0.8em; margin-top: 5px;">200x150px</div>
+                            
+                            <!-- Líneas para padding -->
+                            <div style="position: absolute; top: -20px; left: 0; right: 0; border-top: 1px dashed red; text-align: center;">
+                                <span style="background: white; color: red; padding: 0 5px; font-size: 0.7em;">padding: 20px</span>
+                            </div>
+                            <div style="position: absolute; bottom: -20px; left: 0; right: 0; border-bottom: 1px dashed red;"></div>
+                            <div style="position: absolute; left: -20px; top: 0; bottom: 0; border-left: 1px dashed red;"></div>
+                            <div style="position: absolute; right: -20px; top: 0; bottom: 0; border-right: 1px dashed red;"></div>
+                            
+                            <!-- Líneas para border -->
+                            <div style="position: absolute; top: -30px; left: -10px; right: -10px; border-top: 1px dashed orange; text-align: center;">
+                                <span style="background: white; color: orange; padding: 0 5px; font-size: 0.7em;">border: 10px</span>
+                            </div>
+                            <div style="position: absolute; bottom: -30px; left: -10px; right: -10px; border-bottom: 1px dashed orange;"></div>
+                            <div style="position: absolute; left: -30px; top: -10px; bottom: -10px; border-left: 1px dashed orange;"></div>
+                            <div style="position: absolute; right: -30px; top: -10px; bottom: -10px; border-right: 1px dashed orange;"></div>
+                            
+                            <!-- Líneas para margin -->
+                            <div style="position: absolute; top: -60px; left: -40px; right: -40px; border-top: 1px dashed green; text-align: center;">
+                                <span style="background: white; color: green; padding: 0 5px; font-size: 0.7em;">margin: 30px</span>
+                            </div>
+                            <div style="position: absolute; bottom: -60px; left: -40px; right: -40px; border-bottom: 1px dashed green;"></div>
+                            <div style="position: absolute; left: -60px; top: -40px; bottom: -40px; border-left: 1px dashed green;"></div>
+                            <div style="position: absolute; right: -60px; top: -40px; bottom: -40px; border-right: 1px dashed green;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="properties-grid">
+                        <div class="property-card">
+                            <div class="property-title">
+                                <i class="fas fa-arrows-alt"></i> Contenido (Content)
+                            </div>
+                            <div class="property-desc">
+                                El área donde se muestra el contenido (texto, imágenes, etc.). Su tamaño se define con width y height.
+                            </div>
+                            <div class="property-example">
+                                width: 200px;<br>
+                                height: 150px;
+                            </div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <div class="property-title">
+                                <i class="fas fa-expand-alt"></i> Relleno (Padding)
+                            </div>
+                            <div class="property-desc">
+                                Espacio entre el contenido y el borde. Es transparente.
+                            </div>
+                            <div class="property-example">
+                                padding: 20px;<br>
+                                padding-top: 10px;
+                            </div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <div class="property-title">
+                                <i class="fas fa-square-full"></i> Borde (Border)
+                            </div>
+                            <div class="property-desc">
+                                Bordes que rodean el padding (y el contenido). Puede tener color, estilo y grosor.
+                            </div>
+                            <div class="property-example">
+                                border: 2px solid #000;<br>
+                                border-radius: 10px;
+                            </div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <div class="property-title">
+                                <i class="fas fa-expand-arrows-alt"></i> Margen (Margin)
+                            </div>
+                            <div class="property-desc">
+                                Espacio fuera del borde, que separa el elemento de otros elementos.
+                            </div>
+                            <div class="property-example">
+                                margin: 30px;<br>
+                                margin-bottom: 20px;
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="warning-box">
+                        <div class="warning-title">
+                            <i class="fas fa-exclamation-triangle"></i> Importante
+                        </div>
+                        <p>Por defecto, el width y height especificados en CSS solo incluyen el contenido. Si agregas padding y border, el tamaño total del elemento será mayor. Puedes cambiar esto con <code>box-sizing: border-box</code> para que width y height incluyan padding y border.</p>
+                    </div>
+                </section>
+                
+                <!-- Sección: Ejercicios -->
+                <section id="ejercicios" class="content-section">
+                    <h2><i class="fas fa-laptop-code"></i> Ejercicios Prácticos de CSS</h2>
+                    
+                    <p>Ahora es tu turno de practicar. Aquí tienes algunos ejercicios para aplicar lo aprendido:</p>
+                    
+                    <div class="tip-box">
+                        <div class="tip-title">
+                            <i class="fas fa-graduation-cap"></i> Consejo para Practicar
+                        </div>
+                        <p>Crea un archivo HTML y otro CSS para cada ejercicio. Usa un editor de código como Visual Studio Code que te ayude con autocompletado y validación de sintaxis.</p>
+                    </div>
+                    
+                    <h3>Ejercicio 1: Tarjeta de Presentación</h3>
+                    <div class="demo-container">
+                        <div class="demo-code">
+                            <div class="code-header">
+                                <div class="code-title">
+                                    <i class="fas fa-id-card"></i> Instrucciones
+                                </div>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="far fa-copy"></i> Ver Solución
+                                </button>
+                            </div>
+                            <pre><code><span class="css-comment">/* 
+EJERCICIO: Crea una tarjeta de presentación con:
+
+1. Un contenedor de 300px de ancho con sombra y bordes redondeados
+2. Una imagen de perfil circular (100x100px)
+3. Un título con tu nombre
+4. Un subtítulo con tu profesión
+5. Una breve descripción
+6. Un botón de contacto con hover effect
+
+Colores sugeridos:
+- Fondo: #ffffff
+- Color principal: #264de4
+- Sombra: rgba(0,0,0,0.1)
+
+Usa las propiedades:
+- border-radius, box-shadow, padding, margin
+- text-align, font-weight, color
+- transition, transform (para el hover)
+*/</span></code></pre>
+                        </div>
+                        <div class="demo-preview">
+                            <div style="width: 300px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); padding: 25px; text-align: center; margin: 0 auto;">
+                                <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #264de4, #2965f1); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h3 style="color: #264de4; margin: 0 0 10px;">María González</h3>
+                                <p style="color: #666; margin: 0 0 15px; font-style: italic;">Desarrolladora Frontend</p>
+                                <p style="color: #444; line-height: 1.5; margin-bottom: 20px;">Apasionada por crear interfaces web hermosas y funcionales con HTML, CSS y JavaScript.</p>
+                                <button style="background: #264de4; color: white; border: none; padding: 10px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;">
+                                    Contactar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3>Ejercicio 2: Grid de Productos</h3>
+                    <div class="interactive-demo">
+                        <div class="demo-controls">
+                            <div class="control-group">
+                                <label class="control-label">Número de Columnas:</label>
+                                <input type="range" id="gridCols" class="control-input" min="1" max="4" value="3" oninput="updateGridExercise()">
+                                <span id="gridColsValue">3</span>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Espaciado:</label>
+                                <input type="range" id="gridGap" class="control-input" min="0" max="40" value="20" oninput="updateGridExercise()">
+                                <span id="gridGapValue">20px</span>
+                            </div>
+                        </div>
+                        
+                        <div class="demo-container">
+                            <div class="demo-code">
+                                <div class="code-header">
+                                    <div class="code-title">
+                                        <i class="fas fa-code"></i> CSS del Grid
+                                    </div>
+                                    <button class="copy-btn" onclick="copyCode(this)">
+                                        <i class="far fa-copy"></i> Copiar
+                                    </button>
+                                </div>
+                                <pre id="gridCode"><code><span class="css-selector">.grid-contenedor</span> <span class="css-punctuation">{</span>
+    <span class="css-property">display</span><span class="css-punctuation">:</span> <span class="css-value">grid</span><span class="css-punctuation">;</span>
+    <span class="css-property">grid-template-columns</span><span class="css-punctuation">:</span> <span class="css-value">repeat(3, 1fr)</span><span class="css-punctuation">;</span>
+    <span class="css-property">gap</span><span class="css-punctuation">:</span> <span class="css-value">20px</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span>
+
+<span class="css-selector">.producto</span> <span class="css-punctuation">{</span>
+    <span class="css-property">background</span><span class="css-punctuation">:</span> <span class="css-value">white</span><span class="css-punctuation">;</span>
+    <span class="css-property">border-radius</span><span class="css-punctuation">:</span> <span class="css-value">10px</span><span class="css-punctuation">;</span>
+    <span class="css-property">padding</span><span class="css-punctuation">:</span> <span class="css-value">20px</span><span class="css-punctuation">;</span>
+    <span class="css-property">box-shadow</span><span class="css-punctuation">:</span> <span class="css-value">0 5px 15px rgba(0,0,0,0.1)</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span></code></pre>
+                            </div>
+                            <div class="demo-preview">
+                                <div id="gridPreview" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                                    <div class="producto" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                                        <h4 style="margin: 0 0 10px; color: #264de4;">Producto 1</h4>
+                                        <p style="margin: 0; color: #666;">Descripción del producto</p>
+                                    </div>
+                                    <div class="producto" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                                        <h4 style="margin: 0 0 10px; color: #264de4;">Producto 2</h4>
+                                        <p style="margin: 0; color: #666;">Descripción del producto</p>
+                                    </div>
+                                    <div class="producto" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                                        <h4 style="margin: 0 0 10px; color: #264de4;">Producto 3</h4>
+                                        <p style="margin: 0; color: #666;">Descripción del producto</p>
+                                    </div>
+                                    <div class="producto" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                                        <h4 style="margin: 0 0 10px; color: #264de4;">Producto 4</h4>
+                                        <p style="margin: 0; color: #666;">Descripción del producto</p>
+                                    </div>
+                                    <div class="producto" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                                        <h4 style="margin: 0 0 10px; color: #264de4;">Producto 5</h4>
+                                        <p style="margin: 0; color: #666;">Descripción del producto</p>
+                                    </div>
+                                    <div class="producto" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                                        <h4 style="margin: 0 0 10px; color: #264de4;">Producto 6</h4>
+                                        <p style="margin: 0; color: #666;">Descripción del producto</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+        
+        <footer>
+            <div class="footer-content">
+                <div class="footer-title">
+                    <i class="fab fa-css3-alt"></i> Tutorial de CSS3
+                </div>
+                <p class="footer-text">
+                    Has completado este tutorial introductorio de CSS3. Continúa practicando y explorando las increíbles posibilidades que ofrece CSS para crear experiencias web únicas.
+                </p>
+                <div class="footer-links">
+                    <a href="index.html" class="footer-link">
+                        <i class="fas fa-arrow-left"></i> Ir a HTML
+                    </a>
+                    <a href="#" class="footer-link" onclick="changeFontSize('normal')">
+                        <i class="fas fa-font"></i> Resetear Tamaño
+                    </a>
+                    <a href="#introduccion" class="footer-link" onclick="showSection('introduccion')">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Notificación Temporal -->
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Texto copiado al portapapeles</span>
+    </div>
+    
+    <script>
+        // ====================
+        // SISTEMA DE CONTROL DE TAMAÑO DE FUENTE
+        // ====================
+        const fontConfig = {
+            small: { 
+                scale: 0.85, 
+                label: 'Pequeño (85%)',
+                icon: 'fa-search-minus'
+            },
+            normal: { 
+                scale: 1, 
+                label: 'Normal (100%)',
+                icon: 'fa-font'
+            },
+            large: { 
+                scale: 1.15, 
+                label: 'Grande (115%)',
+                icon: 'fa-search-plus'
+            },
+            xlarge: { 
+                scale: 1.3, 
+                label: 'Muy Grande (130%)',
+                icon: 'fa-expand-alt'
+            }
+        };
+        
+        let currentFontSize = 'normal';
+        
+        function changeFontSize(size) {
+            if (!fontConfig[size]) return;
+            
+            // Aplicar escala
+            document.documentElement.style.setProperty('--font-scale', fontConfig[size].scale);
+            
+            // Actualizar estado
+            currentFontSize = size;
+            
+            // Actualizar botones activos
+            document.querySelectorAll('.font-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.size === size) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Actualizar indicador
+            document.getElementById('fontSizeIndicator').textContent = 
+                `Tamaño actual: ${fontConfig[size].label}`;
+            
+            // Guardar preferencia
+            localStorage.setItem('cssTutorialFontSize', size);
+            
+            // Mostrar notificación
+            showNotification(`Tamaño de texto cambiado a: ${fontConfig[size].label}`);
+        }
+        
+        // ====================
+        // NAVEGACIÓN ENTRE SECCIONES
+        // ====================
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Mostrar sección seleccionada
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Actualizar enlaces activos
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${sectionId}`) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Scroll suave al inicio de la sección
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        // ====================
+        // DEMOS INTERACTIVAS
+        // ====================
+        function updateSelectorDemo() {
+            const selectorType = document.getElementById('selectorType').value;
+            let selectorCode = '';
+            let previewStyle = '';
+            
+            switch(selectorType) {
+                case 'element':
+                    selectorCode = `<span class="css-selector">p</span> <span class="css-punctuation">{</span>
+    <span class="css-property">color</span><span class="css-punctuation">:</span> <span class="css-value">#264de4</span><span class="css-punctuation">;</span>
+    <span class="css-property">font-weight</span><span class="css-punctuation">:</span> <span class="css-value">bold</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span>`;
+                    previewStyle = `p { color: #264de4; font-weight: bold; }`;
+                    break;
+                    
+                case 'class':
+                    selectorCode = `<span class="css-selector">.destacado</span> <span class="css-punctuation">{</span>
+    <span class="css-property">background-color</span><span class="css-punctuation">:</span> <span class="css-value">#ffeb3b</span><span class="css-punctuation">;</span>
+    <span class="css-property">padding</span><span class="css-punctuation">:</span> <span class="css-value">10px</span><span class="css-punctuation">;</span>
+    <span class="css-property">border-radius</span><span class="css-punctuation">:</span> <span class="css-value">5px</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span>`;
+                    previewStyle = `.destacado { background-color: #ffeb3b; padding: 10px; border-radius: 5px; }`;
+                    break;
+                    
+                case 'id':
+                    selectorCode = `<span class="css-selector">#especial</span> <span class="css-punctuation">{</span>
+    <span class="css-property">color</span><span class="css-punctuation">:</span> <span class="css-value">#e74c3c</span><span class="css-punctuation">;</span>
+    <span class="css-property">border</span><span class="css-punctuation">:</span> <span class="css-value">2px solid #e74c3c</span><span class="css-punctuation">;</span>
+    <span class="css-property">padding</span><span class="css-punctuation">:</span> <span class="css-value">10px</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span>`;
+                    previewStyle = `#especial { color: #e74c3c; border: 2px solid #e74c3c; padding: 10px; }`;
+                    break;
+                    
+                case 'attribute':
+                    selectorCode = `<span class="css-selector">[data-tipo="importante"]</span> <span class="css-punctuation">{</span>
+    <span class="css-property">font-size</span><span class="css-punctuation">:</span> <span class="css-value">1.2em</span><span class="css-punctuation">;</span>
+    <span class="css-property">font-style</span><span class="css-punctuation">:</span> <span class="css-value">italic</span><span class="css-punctuation">;</span>
+    <span class="css-property">color</span><span class="css-punctuation">:</span> <span class="css-value">#27ae60</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span>`;
+                    previewStyle = `[data-tipo="importante"] { font-size: 1.2em; font-style: italic; color: #27ae60; }`;
+                    break;
+                    
+                case 'pseudo':
+                    selectorCode = `<span class="css-selector">p:hover</span> <span class="css-punctuation">{</span>
+    <span class="css-property">transform</span><span class="css-punctuation">:</span> <span class="css-value">scale(1.05)</span><span class="css-punctuation">;</span>
+    <span class="css-property">transition</span><span class="css-punctuation">:</span> <span class="css-value">transform 0.3s ease</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span>`;
+                    previewStyle = `p:hover { transform: scale(1.05); transition: transform 0.3s ease; }`;
+                    break;
+            }
+            
+            document.getElementById('selectorCode').innerHTML = `<code>${selectorCode}</code>`;
+            
+            // Aplicar estilos al preview
+            const preview = document.getElementById('selectorPreview');
+            const style = document.createElement('style');
+            style.id = 'previewStyle';
+            style.innerHTML = previewStyle;
+            
+            // Remover estilo anterior si existe
+            const oldStyle = document.getElementById('previewStyle');
+            if (oldStyle) oldStyle.remove();
+            
+            document.head.appendChild(style);
+        }
+        
+        function updatePropertiesDemo() {
+            const bgColor = document.getElementById('bgColor').value;
+            const textColor = document.getElementById('textColor').value;
+            const fontSize = document.getElementById('fontSize').value;
+            const borderRadius = document.getElementById('borderRadius').value;
+            
+            // Actualizar valores mostrados
+            document.getElementById('fontSizeValue').textContent = fontSize + 'px';
+            document.getElementById('borderRadiusValue').textContent = borderRadius + 'px';
+            
+            // Actualizar código
+            const code = `<span class="css-selector">.elemento</span> <span class="css-punctuation">{</span>
+    <span class="css-property">background-color</span><span class="css-punctuation">:</span> <span class="css-value">${bgColor}</span><span class="css-punctuation">;</span>
+    <span class="css-property">color</span><span class="css-punctuation">:</span> <span class="css-value">${textColor}</span><span class="css-punctuation">;</span>
+    <span class="css-property">font-size</span><span class="css-punctuation">:</span> <span class="css-value">${fontSize}px</span><span class="css-punctuation">;</span>
+    <span class="css-property">border-radius</span><span class="css-punctuation">:</span> <span class="css-value">${borderRadius}px</span><span class="css-punctuation">;</span>
+    <span class="css-property">padding</span><span class="css-punctuation">:</span> <span class="css-value">20px</span><span class="css-punctuation">;</span>
+    <span class="css-property">margin</span><span class="css-punctuation">:</span> <span class="css-value">10px</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span>`;
+            
+            document.getElementById('propertiesCode').innerHTML = `<code>${code}</code>`;
+            
+            // Actualizar preview
+            const preview = document.getElementById('propertiesPreview');
+            preview.style.backgroundColor = bgColor;
+            preview.style.color = textColor;
+            preview.style.fontSize = fontSize + 'px';
+            preview.style.borderRadius = borderRadius + 'px';
+        }
+        
+        function updateGridExercise() {
+            const gridCols = document.getElementById('gridCols').value;
+            const gridGap = document.getElementById('gridGap').value;
+            
+            // Actualizar valores mostrados
+            document.getElementById('gridColsValue').textContent = gridCols;
+            document.getElementById('gridGapValue').textContent = gridGap + 'px';
+            
+            // Actualizar código
+            const code = `<span class="css-selector">.grid-contenedor</span> <span class="css-punctuation">{</span>
+    <span class="css-property">display</span><span class="css-punctuation">:</span> <span class="css-value">grid</span><span class="css-punctuation">;</span>
+    <span class="css-property">grid-template-columns</span><span class="css-punctuation">:</span> <span class="css-value">repeat(${gridCols}, 1fr)</span><span class="css-punctuation">;</span>
+    <span class="css-property">gap</span><span class="css-punctuation">:</span> <span class="css-value">${gridGap}px</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span>
+
+<span class="css-selector">.producto</span> <span class="css-punctuation">{</span>
+    <span class="css-property">background</span><span class="css-punctuation">:</span> <span class="css-value">white</span><span class="css-punctuation">;</span>
+    <span class="css-property">border-radius</span><span class="css-punctuation">:</span> <span class="css-value">10px</span><span class="css-punctuation">;</span>
+    <span class="css-property">padding</span><span class="css-punctuation">:</span> <span class="css-value">20px</span><span class="css-punctuation">;</span>
+    <span class="css-property">box-shadow</span><span class="css-punctuation">:</span> <span class="css-value">0 5px 15px rgba(0,0,0,0.1)</span><span class="css-punctuation">;</span>
+<span class="css-punctuation">}</span>`;
+            
+            document.getElementById('gridCode').innerHTML = `<code>${code}</code>`;
+            
+            // Actualizar preview
+            const preview = document.getElementById('gridPreview');
+            preview.style.gridTemplateColumns = `repeat(${gridCols}, 1fr)`;
+            preview.style.gap = gridGap + 'px';
+        }
+        
+        // ====================
+        // COPIAR CÓDIGO
+        // ====================
+        function copyCode(button) {
+            const codeElement = button.closest('.demo-code').querySelector('code');
+            const codeText = codeElement.textContent;
+            
+            // Usar Clipboard API
+            navigator.clipboard.writeText(codeText).then(() => {
+                // Cambiar texto del botón temporalmente
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                button.classList.add('copied');
+                
+                // Mostrar notificación
+                showNotification('Código copiado al portapapeles');
+                
+                // Restaurar botón después de 2 segundos
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+                showNotification('Error al copiar el código', 'error');
+            });
+        }
+        
+        // ====================
+        // MOSTRAR NOTIFICACIÓN
+        // ====================
+        
+                function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            // Cambiar color según tipo
+            if (type === 'error') {
+                notification.style.background = 'var(--danger)';
+            } else if (type === 'warning') {
+                notification.style.background = 'var(--warning)';
+            } else {
+                notification.style.background = 'var(--success)';
+            }
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            // Ocultar después de 3 segundos
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // ====================
+        // INICIALIZACIÓN
+        // ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar tamaño de fuente guardado
+            const savedSize = localStorage.getItem('cssTutorialFontSize');
+            if (savedSize && fontConfig[savedSize]) {
+                changeFontSize(savedSize);
+            } else {
+                changeFontSize('normal');
+            }
+            
+            // Inicializar demos
+            updateSelectorDemo();
+            updatePropertiesDemo();
+            updateGridExercise();
+            
+            // Configurar eventos para los controles de demos
+            document.getElementById('fontSize').addEventListener('input', function() {
+                document.getElementById('fontSizeValue').textContent = this.value + 'px';
+                updatePropertiesDemo();
+            });
+            
+            document.getElementById('borderRadius').addEventListener('input', function() {
+                document.getElementById('borderRadiusValue').textContent = this.value + 'px';
+                updatePropertiesDemo();
+            });
+            
+            document.getElementById('gridCols').addEventListener('input', function() {
+                document.getElementById('gridColsValue').textContent = this.value;
+                updateGridExercise();
+            });
+            
+            document.getElementById('gridGap').addEventListener('input', function() {
+                document.getElementById('gridGapValue').textContent = this.value + 'px';
+                updateGridExercise();
+            });
+            
+            // Configurar atajos de teclado para tamaño de fuente
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + Shift + + para aumentar
+                if (e.ctrlKey && e.shiftKey && (e.key === '=' || e.key === '+')) {
+                    e.preventDefault();
+                    const sizes = Object.keys(fontConfig);
+                    const currentIndex = sizes.indexOf(currentFontSize);
+                    if (currentIndex < sizes.length - 1) {
+                        changeFontSize(sizes[currentIndex + 1]);
+                    }
+                }
+                
+                // Ctrl + Shift + - para disminuir
+                if (e.ctrlKey && e.shiftKey && e.key === '-') {
+                    e.preventDefault();
+                    const sizes = Object.keys(fontConfig);
+                    const currentIndex = sizes.indexOf(currentFontSize);
+                    if (currentIndex > 0) {
+                        changeFontSize(sizes[currentIndex - 1]);
+                    }
+                }
+                
+                // Ctrl + Shift + 0 para resetear
+                if (e.ctrlKey && e.shiftKey && e.key === '0') {
+                    e.preventDefault();
+                    changeFontSize('normal');
+                }
+            });
+            
+            // Mostrar información de atajos
+            console.log('Atajos de teclado disponibles:');
+            console.log('- Ctrl + Shift + + : Aumentar tamaño de texto');
+            console.log('- Ctrl + Shift + - : Disminuir tamaño de texto');
+            console.log('- Ctrl + Shift + 0 : Tamaño normal');
+        });
+    </script>
+</body>
+</html>

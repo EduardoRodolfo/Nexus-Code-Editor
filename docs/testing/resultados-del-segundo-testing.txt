@@ -1,0 +1,9 @@
+DeepSeek cerrar el sidebar es ocultarlo; cuando este oculto; el boton de explorador tiene un icono de un ojito cerrado y cuando el explorador
+del sidebar este abierto el boton del explorador tiene el ojito abierto.
+
+el primer boton flotante debe apuntar al id="nav-bar"
+el segundo boton debe apuntar al id="consoleOutput"
+el tercer boton debe apuntar al id="preview-container"
+en el menu de archivo nueva carpeta no hace falta(borrar de la aplicacion)
+hay un problma en el responsivo de la consola alternativa en el text-area que rebasa su contenedor y el previsualizador en tiempo real se monta 
+arriba de el text-area de la consoa alternativa.

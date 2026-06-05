@@ -1,0 +1,842 @@
+﻿¡Excelente trabajo analizando los problemas! 🎯 Vamos a solucionarlos uno por uno. Aquí tienes las soluciones:
+
+🔧 SOLUCIONES IMPLEMENTADAS
+
+1. Iconos de ojito para el sidebar 👁️
+
+En index.js - Modificar las funciones del sidebar:
+
+```javascript
+// Actualizar función toggleProjectSidebar
+function toggleProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    if (currentProjectHandle) {
+        if (sidebar.classList.contains('open')) {
+            hideProjectSidebar();
+            toggleIcon.textContent = '👁️'; // Ojito cerrado
+        } else {
+            showProjectSidebar();
+            toggleIcon.textContent = '👁️‍🗨️'; // Ojito abierto
+        }
+    } else {
+        if (confirm('No hay proyecto abierto. ¿Deseas abrir un proyecto?')) {
+            openProject();
+        }
+    }
+}
+
+// Actualizar función showProjectSidebar
+function showProjectSidebar() {
+    if (!currentProjectHandle) {
+        showNotification('No hay proyecto abierto', true);
+        return;
+    }
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    sidebar.classList.add('open');
+    container.classList.add('with-sidebar');
+    toggleBtn.classList.add('active');
+    toggleIcon.textContent = '👁️‍🗨️'; // Ojito abierto
+    
+    showNotification('Explorador de proyecto abierto');
+}
+
+// Actualizar función hideProjectSidebar
+function hideProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    sidebar.classList.remove('open');
+    container.classList.remove('with-sidebar');
+    toggleBtn.classList.remove('active');
+    toggleIcon.textContent = '👁️'; // Ojito cerrado
+    
+    showNotification('Explorador de proyecto cerrado');
+}
+```
+
+2. Botones flotantes corregidos 🎯
+
+En index.html - Actualizar los botones flotantes:
+
+```html
+<!-- Botones flotantes CORREGIDOS -->
+<div class="floating-buttons">
+    <button onclick="scrollToSection('nav-bar')" title="Ir al Menú">🧑‍💻</button>
+    <button onclick="scrollToSection('consoleOutput')" title="Ir a la Consola JS">🖥️</button>
+    <button onclick="scrollToSection('preview-container')" title="Ir al Previsualizador">🌐</button>
+    <button onclick="abrirEnNavegador()" title="Abrir en Navegador">🚀</button>
+</div>
+```
+
+3. Eliminar "Nueva Carpeta" del menú 🗑️
+
+En index.html - Remover el elemento del menú:
+
+```html
+<!-- En el dropdown de Archivo, ELIMINAR esta línea: -->
+<!-- <a id="nueva-carpeta" href="#"><span class="menu-icon">📁</span> Nueva carpeta</a> -->
+
+<!-- El dropdown corregido queda así: -->
+<div class="dropdown-content">
+    <a id="abrir-documento" href="#"><span class="menu-icon">📂</span> Abrir documento</a>
+    <a id="guardar" href="#"><span class="menu-icon">💾</span> Guardar</a>
+    <a id="guardar-como" href="#"><span class="menu-icon">🔄</span> Guardar como</a>
+    <a id="nuevo-documento" href="#"><span class="menu-icon">📄</span> Nuevo documento</a>
+    <!-- ELIMINADA: Nueva carpeta -->
+    <a id="nuevo-proyecto" href="#"><span class="menu-icon">🆕</span> Nuevo Proyecto</a>
+    <a id="abrir-proyecto" href="#"><span class="menu-icon">📂</span> Abrir Proyecto</a>
+    <a id="limpiar-editor" href="#"><span class="menu-icon">🧹</span> Limpiar Editor</a>
+    <a id="normalizar-proyecto" href="#"><span class="menu-icon">🔄</span> Normalizar Proyecto</a>
+    <a id="go-to-terminal" href="#"><span class="menu-icon">🌐</span> Terminal WebContainer</a>
+</div>
+```
+
+En index.js - Eliminar el event listener:
+
+```javascript
+// ELIMINAR esta línea del código:
+// document.getElementById('nueva-carpeta').addEventListener('click', createNewFolder);
+```
+
+4. Problemas de responsive corregidos 📱
+
+En index.css - Agregar estos estilos:
+
+```css
+/* ===== CORRECCIONES RESPONSIVE ===== */
+
+/* Consola alternativa - evitar desbordamiento */
+.alternate-console-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.alternate-console-input textarea,
+.alternate-console-output textarea {
+    max-width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Previsualizador en móvil - evitar superposición */
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .alternate-console-container {
+        order: 3; /* Mover después de la consola principal */
+        margin-top: 0;
+    }
+    
+    .preview-container {
+        order: 4; /* Mover al final */
+        height: 300px !important;
+    }
+    
+    /* Asegurar que los textarea no se desborden */
+    .alternate-console-input,
+    .alternate-console-output {
+        width: 100%;
+    }
+    
+    .alternate-console-input textarea,
+    .alternate-console-output textarea {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+}
+
+/* Corrección específica para pantallas medianas */
+@media (max-width: 980px) and (min-width: 769px) {
+    .main-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .editor-container {
+        grid-column: 1 / -1;
+    }
+    
+    .alternate-console-container {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        height: auto !important;
+    }
+    
+    .alternate-console-input {
+        grid-column: 1;
+    }
+    
+    .alternate-console-output {
+        grid-column: 2;
+    }
+    
+    .alternate-console-buttons {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 8px;
+    }
+}
+```
+
+5. Sobre el código de normalización 📁
+
+Respuesta: SÍ, el código de normalización va en un documento independiente. Te recomiendo:
+
+1. Crear js/project-normalizer.js - Mover toda la clase ProjectNormalizer
+2. Crear js/theme-manager.js - Mover la clase ThemeManager
+3. Incluirlos en index.html:
+
+```html
+<!-- Después de ace.js -->
+<script src="js/theme-manager.js"></script>
+<script src="js/project-normalizer.js"></script>
+<script src="js/index.js"></script>
+```
+
+Estructura recomendada:
+
+```
+/js
+  ├── index.js          # Lógica principal
+  ├── theme-manager.js  # Gestión de temas
+  ├── project-normalizer.js # Normalización
+  └── file-manager.js   # Gestión de archivos (opcional)
+```
+
+ARCHIVOS COMPLETOS CORREGIDOS
+
+Te voy a proporcionar los archivos completos con todas las correcciones aplicadas. ¿Quieres que te muestre los archivos index.html, index.js y index.css completos 
+y corregidos?
+
+¡Excelente enfoque en crear un producto de calidad primero! 🚀 El proyecto está quedando espectacular.
+
+¡Tienes toda la razón! El problema está en la versión de escritorio - el botón de cierre (×) no está funcionando correctamente. Vamos a solucionarlo. 🔧
+
+PROBLEMA IDENTIFICADO:
+
+En desktop, el sidebar usa CSS Grid y no se está ocultando correctamente cuando se hace clic en la "×".
+
+SOLUCIONES IMPLEMENTADAS:
+
+1. Corregir la función closeProjectSidebar en index.js
+
+```javascript
+// FUNCIÓN MEJORADA PARA CERRAR SIDEBAR
+function closeProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    // Solo aplicar lógica de cierre si el sidebar está abierto
+    if (sidebar.classList.contains('open')) {
+        // En desktop: usar hideProjectSidebar() que ya maneja los iconos
+        hideProjectSidebar();
+        
+        // Notificación específica para cierre manual
+        showNotification('Explorador de proyecto cerrado');
+    }
+}
+
+// ACTUALIZAR el event listener en DOMContentLoaded:
+document.addEventListener('DOMContentLoaded', () => {
+    // ... código existente ...
+    
+    // Event listener para cerrar sidebar - CORREGIDO
+    document.getElementById('close-sidebar').addEventListener('click', closeProjectSidebar);
+    
+    // ... resto del código ...
+});
+```
+
+2. Mejorar la función hideProjectSidebar para desktop
+
+```javascript
+// FUNCIÓN MEJORADA PARA OCULTAR SIDEBAR
+function hideProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    // Remover clases de visibilidad
+    sidebar.classList.remove('open');
+    container.classList.remove('with-sidebar');
+    toggleBtn.classList.remove('active');
+    
+    // Actualizar icono a "ojito cerrado"
+    toggleIcon.textContent = '👁️'; // Ojito cerrado
+    
+    // En desktop, también ocultar visualmente pero mantener en el layout
+    if (window.innerWidth >= 981) {
+        sidebar.style.visibility = 'hidden';
+        sidebar.style.opacity = '0';
+        sidebar.style.pointerEvents = 'none';
+    }
+}
+
+// FUNCIÓN MEJORADA PARA MOSTRAR SIDEBAR
+function showProjectSidebar() {
+    if (!currentProjectHandle) {
+        showNotification('No hay proyecto abierto', true);
+        return;
+    }
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    // Agregar clases de visibilidad
+    sidebar.classList.add('open');
+    container.classList.add('with-sidebar');
+    toggleBtn.classList.add('active');
+    
+    // Actualizar icono a "ojito abierto"
+    toggleIcon.textContent = '👁️‍🗨️'; // Ojito abierto
+    
+    // En desktop, asegurar visibilidad
+    if (window.innerWidth >= 981) {
+        sidebar.style.visibility = 'visible';
+        sidebar.style.opacity = '1';
+        sidebar.style.pointerEvents = 'auto';
+    }
+    
+    showNotification('Explorador de proyecto abierto');
+}
+```
+
+3. Actualizar CSS para mejor manejo en desktop
+
+En index.css - agregar estas reglas:
+
+```css
+/* ===== CORRECCIONES ESPECÍFICAS PARA SIDEBAR EN DESKTOP ===== */
+
+/* Estado oculto del sidebar en DESKTOP */
+@media (min-width: 981px) {
+    .project-sidebar:not(.open) {
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-20px);
+        transition: all 0.3s ease;
+    }
+    
+    .project-sidebar.open {
+        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
+    }
+    
+    /* Asegurar que el contenido principal se expanda cuando sidebar está oculto */
+    .container:not(.with-sidebar) {
+        grid-template-columns: 0px 1fr;
+    }
+    
+    .container.with-sidebar {
+        grid-template-columns: 280px 1fr;
+    }
+}
+
+/* Botón de cerrar sidebar más prominente */
+#close-sidebar {
+    background: transparent;
+    border: none;
+    color: #dbeafe;
+    font-size: 24px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+#close-sidebar:hover {
+    background: rgba(219, 234, 254, 0.1);
+    transform: scale(1.1);
+}
+```
+
+4. Función auxiliar para resetear sidebar
+
+```javascript
+// FUNCIÓN AUXILIAR: Resetear estado del sidebar
+function resetSidebarState() {
+    const sidebar = document.getElementById('project-sidebar');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    // Estado por defecto: cerrado
+    sidebar.classList.remove('open');
+    document.querySelector('.container').classList.remove('with-sidebar');
+    toggleBtn.classList.remove('active');
+    toggleIcon.textContent = '👁️'; // Ojito cerrado
+    
+    // Resetear estilos inline
+    sidebar.style.visibility = '';
+    sidebar.style.opacity = '';
+    sidebar.style.pointerEvents = '';
+    sidebar.style.transform = '';
+}
+```
+
+5. Manejar resize de ventana
+
+```javascript
+// Manejar cambios de tamaño de ventana
+window.addEventListener('resize', () => {
+    // Si cambiamos de mobile a desktop, resetear estado del sidebar
+    if (window.innerWidth >= 981) {
+        const sidebar = document.getElementById('project-sidebar');
+        if (!sidebar.classList.contains('open')) {
+            resetSidebarState();
+        }
+    }
+});
+```
+
+ARCHIVOS COMPLETOS CORREGIDOS:
+
+Te muestro los archivos con todas las correcciones aplicadas:
+
+index.html (solo la parte relevante - sin cambios en el HTML)
+
+```html
+<!-- El HTML se mantiene igual, solo asegurar que el botón de cierre tenga el id correcto -->
+<div id="project-sidebar" class="project-sidebar">
+    <div class="sidebar-header">
+        <h3>Explorador de Proyecto</h3>
+        <button id="close-sidebar">×</button>
+    </div>
+    <div id="file-explorer" class="file-explorer"></div>
+</div>
+```
+
+index.js (con las correcciones aplicadas)
+
+Busca y reemplaza estas funciones en tu index.js:
+
+```javascript
+// ===== FUNCIONES MEJORADAS DEL SIDEBAR =====
+
+// FUNCIÓN PRINCIPAL MEJORADA PARA CERRAR SIDEBAR
+function closeProjectSidebar() {
+    console.log('Cerrando sidebar...'); // Para debug
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    // Verificar si existe el botón toggle
+    if (!toggleBtn) {
+        console.error('No se encontró el botón toggle-sidebar');
+        return;
+    }
+    
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    // Solo aplicar lógica de cierre si el sidebar está abierto
+    if (sidebar.classList.contains('open')) {
+        // Usar hideProjectSidebar() que maneja toda la lógica
+        hideProjectSidebar();
+        
+        // Notificación específica para cierre manual
+        showNotification('Explorador de proyecto cerrado');
+    } else {
+        console.log('Sidebar ya estaba cerrado');
+    }
+}
+
+// FUNCIÓN MEJORADA PARA OCULTAR SIDEBAR
+function hideProjectSidebar() {
+    console.log('Ocultando sidebar...');
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    if (!toggleBtn) {
+        console.error('No se encontró el botón toggle-sidebar');
+        return;
+    }
+    
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    // Remover clases de visibilidad
+    sidebar.classList.remove('open');
+    container.classList.remove('with-sidebar');
+    toggleBtn.classList.remove('active');
+    
+    // Actualizar icono a "ojito cerrado"
+    if (toggleIcon) {
+        toggleIcon.textContent = '👁️'; // Ojito cerrado
+    }
+    
+    // En desktop, ocultar visualmente pero mantener en el layout
+    if (window.innerWidth >= 981) {
+        sidebar.style.visibility = 'hidden';
+        sidebar.style.opacity = '0';
+        sidebar.style.pointerEvents = 'none';
+        sidebar.style.transform = 'translateX(-20px)';
+    }
+    
+    console.log('Sidebar ocultado correctamente');
+}
+
+// FUNCIÓN MEJORADA PARA MOSTRAR SIDEBAR
+function showProjectSidebar() {
+    if (!currentProjectHandle) {
+        showNotification('No hay proyecto abierto', true);
+        return;
+    }
+    
+    console.log('Mostrando sidebar...');
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    if (!toggleBtn) {
+        console.error('No se encontró el botón toggle-sidebar');
+        return;
+    }
+    
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    // Agregar clases de visibilidad
+    sidebar.classList.add('open');
+    container.classList.add('with-sidebar');
+    toggleBtn.classList.add('active');
+    
+    // Actualizar icono a "ojito abierto"
+    if (toggleIcon) {
+        toggleIcon.textContent = '👁️‍🗨️'; // Ojito abierto
+    }
+    
+    // En desktop, asegurar visibilidad
+    if (window.innerWidth >= 981) {
+        sidebar.style.visibility = 'visible';
+        sidebar.style.opacity = '1';
+        sidebar.style.pointerEvents = 'auto';
+        sidebar.style.transform = 'translateX(0)';
+    }
+    
+    showNotification('Explorador de proyecto abierto');
+    console.log('Sidebar mostrado correctamente');
+}
+
+// FUNCIÓN MEJORADA TOGGLE
+function toggleProjectSidebar() {
+    console.log('Toggle sidebar...');
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    
+    if (!toggleBtn) {
+        console.error('No se encontró el botón toggle-sidebar');
+        return;
+    }
+    
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    if (currentProjectHandle) {
+        if (sidebar.classList.contains('open')) {
+            hideProjectSidebar();
+        } else {
+            showProjectSidebar();
+        }
+    } else {
+        if (confirm('No hay proyecto abierto. ¿Deseas abrir un proyecto?')) {
+            openProject();
+        }
+    }
+}
+```
+
+En el DOMContentLoaded, asegurar el event listener:
+
+```javascript
+document.addEventListener('DOMContentLoaded', () => {
+    // ... código existente ...
+    
+    // EVENT LISTENER CORREGIDO para cerrar sidebar
+    document.getElementById('close-sidebar').addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Clic en botón cerrar sidebar');
+        closeProjectSidebar();
+    });
+    
+    // ... resto del código ...
+});
+```
+
+PRUEBAS A REALIZAR: 🧪
+
+1. En desktop: Haz clic en "Explorador" → debe abrirse con ojito abierto
+2. En desktop: Haz clic en la "×" → debe cerrarse con ojito cerrado
+3. En mobile: El comportamiento debe mantenerse igual
+4. Alternar entre abrir/cerrar varias veces para verificar consistencia
+
+¡Con estas correcciones el sidebar debería funcionar perfectamente en ambas versiones! ¿Probamos estas soluciones? 🚀
+
+¡Tienes toda la razón! Es mucho más lógico y UX-friendly. Vamos a simplificar:
+
+NUEVA LÓGICA PROPUESTA: 🎯
+
+1. ❌ "×" = OCULTAR sidebar (siempre visible cuando el sidebar está abierto)
+2. 👁️ "Ojito" = MOSTRAR/OCULTAR sidebar (toggle)
+3. Cuando está oculto: Solo se ve el botón "👁️" para mostrarlo
+4. Cuando está visible: Se ve el sidebar con la "×" para ocultarlo
+
+SOLUCIÓN SIMPLIFICADA:
+
+1. Actualizar funciones en index.js
+
+```javascript
+// ===== FUNCIONES SIMPLIFICADAS DEL SIDEBAR =====
+
+// FUNCIÓN PARA OCULTAR SIDEBAR (solo con la X)
+function closeProjectSidebar() {
+    console.log('Ocultando sidebar con X...');
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    // Solo ocultar, sin cambiar el icono del toggle
+    sidebar.classList.remove('open');
+    document.querySelector('.container').classList.remove('with-sidebar');
+    
+    // En desktop, ocultar visualmente
+    if (window.innerWidth >= 981) {
+        sidebar.style.visibility = 'hidden';
+        sidebar.style.opacity = '0';
+        sidebar.style.pointerEvents = 'none';
+    }
+    
+    showNotification('Explorador de proyecto ocultado');
+}
+
+// FUNCIÓN PARA MOSTRAR SIDEBAR (solo con el ojito)
+function showProjectSidebar() {
+    if (!currentProjectHandle) {
+        showNotification('No hay proyecto abierto', true);
+        return;
+    }
+    
+    console.log('Mostrando sidebar con ojito...');
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    
+    // Mostrar sidebar
+    sidebar.classList.add('open');
+    container.classList.add('with-sidebar');
+    
+    // En desktop, asegurar visibilidad
+    if (window.innerWidth >= 981) {
+        sidebar.style.visibility = 'visible';
+        sidebar.style.opacity = '1';
+        sidebar.style.pointerEvents = 'auto';
+    }
+    
+    showNotification('Explorador de proyecto visible');
+}
+
+// FUNCIÓN TOGGLE SIMPLIFICADA - SOLO CAMBIA VISIBILIDAD
+function toggleProjectSidebar() {
+    console.log('Toggle sidebar...');
+    
+    const sidebar = document.getElementById('project-sidebar');
+    
+    if (currentProjectHandle) {
+        if (sidebar.classList.contains('open')) {
+            // Si está abierto, ocultarlo
+            closeProjectSidebar();
+        } else {
+            // Si está oculto, mostrarlo
+            showProjectSidebar();
+        }
+    } else {
+        // No hay proyecto abierto
+        if (confirm('No hay proyecto abierto. ¿Deseas abrir un proyecto?')) {
+            openProject();
+        }
+    }
+}
+
+// ELIMINAR todas las funciones de cambiar iconos - ya no son necesarias
+```
+
+2. CSS más simple
+
+```css
+/* ===== ESTILOS SIMPLIFICADOS SIDEBAR ===== */
+
+/* Estado normal del sidebar en desktop */
+.project-sidebar {
+    grid-area: sidebar;
+    background: linear-gradient(180deg, #0b1220, #0b1628);
+    color: #e6eef8;
+    padding: 16px;
+    height: calc(100vh - 120px);
+    overflow: auto;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Sidebar oculto en desktop */
+@media (min-width: 981px) {
+    .project-sidebar:not(.open) {
+        display: none; /* Simplemente ocultar */
+    }
+    
+    .project-sidebar.open {
+        display: block; /* Simplemente mostrar */
+    }
+    
+    /* Ajustar grid cuando sidebar está oculto */
+    .container:not(.with-sidebar) {
+        grid-template-columns: 0fr 1fr; /* Sidebar ocupa 0 espacio */
+    }
+    
+    .container.with-sidebar {
+        grid-template-columns: 280px 1fr; /* Sidebar ocupa 280px */
+    }
+}
+
+/* Botón de cerrar más prominente */
+#close-sidebar {
+    background: rgba(219, 234, 254, 0.1);
+    border: none;
+    color: #dbeafe;
+    font-size: 18px;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+#close-sidebar:hover {
+    background: rgba(219, 234, 254, 0.2);
+    transform: scale(1.1);
+}
+```
+
+3. Comportamiento esperado ahora:
+
+Estado Botón 👁️ Botón × Sidebar
+Oculto Visible No visible No visible
+Visible Visible Visible Visible
+
+4. En mobile mantener comportamiento actual:
+
+```css
+/* En mobile mantener transformaciones */
+@media (max-width: 980px) {
+    .project-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 85%;
+        max-width: 300px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
+    
+    .project-sidebar.open {
+        transform: translateX(0);
+    }
+}
+```
+
+VENTAJAS DE ESTA SOLUCIÓN: ✅
+
+1. ✅ Más intuitivo - La "×" siempre significa "cerrar"
+2. ✅ Más simple - Menos cambios de estado e iconos
+3. ✅ Mejor UX - El usuario entiende inmediatamente la función de cada botón
+4. ✅ Menos código - Eliminamos lógica compleja de cambio de iconos
+5. ✅ Consistente - Comportamiento predecible
+
+ARCHIVOS FINALES SIMPLIFICADOS:
+
+index.js (solo las funciones del sidebar)
+
+```javascript
+// ===== SIDEBAR SIMPLIFICADO =====
+
+function closeProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    sidebar.classList.remove('open');
+    document.querySelector('.container').classList.remove('with-sidebar');
+    showNotification('Explorador de proyecto ocultado');
+}
+
+function showProjectSidebar() {
+    if (!currentProjectHandle) {
+        showNotification('No hay proyecto abierto', true);
+        return;
+    }
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    
+    sidebar.classList.add('open');
+    container.classList.add('with-sidebar');
+    showNotification('Explorador de proyecto visible');
+}
+
+function toggleProjectSidebar() {
+    const sidebar = document.getElementById('project-sidebar');
+    
+    if (currentProjectHandle) {
+        if (sidebar.classList.contains('open')) {
+            closeProjectSidebar();
+        } else {
+            showProjectSidebar();
+        }
+    } else {
+        if (confirm('No hay proyecto abierto. ¿Deseas abrir un proyecto?')) {
+            openProject();
+        }
+    }
+}
+
+// Event listeners (en DOMContentLoaded)
+document.getElementById('close-sidebar').addEventListener('click', closeProjectSidebar);
+document.getElementById('toggle-sidebar').addEventListener('click', toggleProjectSidebar);
+```
+
+¡Mucho más simple y lógico! 🎉
+
+¿Te parece bien esta aproximación? Con esto eliminamos complejidad innecesaria y hacemos la interfaz más intuitiva.

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estructuras de Control en JavaScript</title>
+    
+    <style>
+        /* Estilos generales */
+        :root {
+            --primary: #3498db;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --purple: #9b59b6;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            background-attachment: fixed;
+            padding: 20px;
+        }
+        
+        .container {
+            min-width: auto;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            border: 2px solid var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: #4ec9b0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: #bdc3c7;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border: 2px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            background: #2980b9;
+        }
+        
+        .btn-tutorial {
+            background: linear-gradient(135deg, var(--success), #27ae60);
+        }
+        
+        .concept-section {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            border-left: 5px solid var(--primary);
+            backdrop-filter: blur(5px);
+        }
+        
+        h2 {
+            color: var(--dark);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        h2::before {
+            content: "➤";
+            margin-right: 15px;
+            color: var(--primary);
+        }
+        
+        .concept-description {
+            margin-bottom: 30px;
+            font-size: 1.15rem;
+            color: #2c3e50;
+            line-height: 1.8;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .examples-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .example {
+            background: #2c3e50;
+            border-radius: 12px;
+            padding: 25px;
+            position: relative;
+            border: 1px solid #3c4b5a;
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .example:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        .example-title {
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #4ec9b0;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .example-title::before {
+            content: "★";
+            color: var(--warning);
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        pre {
+            background: #1a252f;
+            color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            margin-bottom: 20px;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            border: 1px solid #34495e;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(78, 201, 176, 0.9);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .copy-btn:hover {
+            background: #3498db;
+            transform: scale(1.05);
+        }
+        
+        .explanation {
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 8px;
+            padding: 18px;
+            color: #2c3e50;
+            border: 1px dashed var(--primary);
+            margin-bottom: 25px;
+        }
+        
+        .tip-box {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 40px 0;
+            border-left: 5px solid var(--warning);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .tip-title {
+            color: #d35400;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tip-title::before {
+            content: "💡";
+        }
+        
+        .tip-content {
+            color: #2d3436;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            font-size: 1.1rem;
+            margin-top: 40px;
+            background: rgba(44, 62, 80, 0.8);
+            border-radius: 15px;
+        }
+
+        /* Botones flotantes */
+        .floating-btn {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .floating-btn:hover {
+            transform: scale(1.1);
+            background: #2980b9;
+        }
+        
+        .to-top {
+            bottom: 90px;
+            right: 20px;
+        }
+        
+        .to-home {
+            bottom: 160px;
+            right: 20px;
+        }
+        
+        .to-pdf {
+            bottom: 230px;
+            right: 20px;
+            background: #27ae60;
+        }
+        
+        /* Estilos para el ejercicio interactivo */
+        .interactive-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-left: 5px solid var(--purple);
+        }
+        
+        .exercise {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .exercise-title {
+            color: var(--purple);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .code-editor {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            min-height: 100px;
+        }
+        
+        .run-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .run-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        .output {
+            background: #1a252f;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: monospace;
+            min-height: 50px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.6rem;
+            }
+            
+            .concept-description {
+                font-size: 1rem;
+            }
+            
+            .examples-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .example {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Botones flotantes -->
+    <div class="floating-btn to-home" onclick="window.location.href='index.html'">
+        🏠
+    </div>
+    <div class="floating-btn to-top" onclick="window.scrollTo(0, 0)">
+        ↑
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1>Estructuras de Control en JavaScript</h1>
+            <p class="subtitle">Domina condicionales y bucles para controlar el flujo de tus programas</p>
+            <div class="btn-group">
+                <a href="index.html" class="btn">← Volver al Editor</a>
+                <a href="#condicionales" class="btn btn-tutorial">Condicionales</a>
+                <a href="#bucles" class="btn btn-tutorial">Bucles</a>
+                <a href="#ejercicios" class="btn btn-tutorial">Ejercicios Prácticos</a>
+            </div>
+        </header>
+        
+        <!-- Introducción -->
+        <section class="concept-section">
+            <h2>🧠 ¿Qué son las estructuras de control?</h2>
+            <p class="concept-description">
+                Las estructuras de control son bloques fundamentales en programación que determinan 
+                el flujo de ejecución de tu código. Permiten tomar decisiones y repetir acciones, 
+                haciendo que tus programas sean dinámicos y adaptables.<br><br>
+                
+                Imagina un semáforo: las estructuras condicionales son como las luces que deciden 
+                si los autos deben detenerse o avanzar. Los bucles son como el ciclo repetitivo 
+                del semáforo que cambia de rojo a verde una y otra vez.<br><br>
+                
+                En JavaScript, existen dos tipos principales:<br>
+                1️⃣ <strong>Condicionales</strong>: Deciden qué código ejecutar basado en condiciones<br>
+                2️⃣ <strong>Bucles</strong>: Repiten bloques de código mientras se cumpla una condición
+            </p>
+        </section>
+        
+        <!-- Condicionales -->
+        <section class="concept-section">
+            <h2 id="condicionales">🔀 Condicionales: Tomando decisiones</h2>
+            <p class="concept-description">
+                Las estructuras condicionales permiten que tu programa tome decisiones basadas en condiciones. 
+                Son como las bifurcaciones en un camino: dependiendo de ciertas condiciones, 
+                el programa seguirá un camino u otro.
+            </p>
+            
+            <div class="tip-box">
+                <div class="tip-title">Buenas prácticas</div>
+                <div class="tip-content">
+                    ✅ Usa condiciones claras y descriptivas<br>
+                    ✅ Anida condicionales solo cuando sea necesario<br>
+                    ✅ Considera usar <code>switch</code> cuando tengas múltiples casos<br>
+                    ✅ Evita condiciones demasiado complejas (más de 3 operadores)
+                </div>
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">if, else if, else</h3>
+                    <pre><code>// Verificar la hora del día
+let hora = new Date().getHours();
+let mensaje;
+
+if (hora < 12) {
+    mensaje = "¡Buenos días!";
+} else if (hora < 19) {
+    mensaje = "¡Buenas tardes!";
+} else {
+    mensaje = "¡Buenas noches!";
+}
+
+console.log(mensaje);</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Operador Ternario</h3>
+                    <pre><code>// Forma compacta de if/else
+let edad = 20;
+let puedeConducir = (edad >= 18) ? "Sí, puede conducir" : "No puede conducir";
+
+console.log(puedeConducir);</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Switch</h3>
+                    <pre><code>// Determinar el día de la semana
+let dia = new Date().getDay();
+let nombreDia;
+
+switch(dia) {
+    case 0: nombreDia = "Domingo"; break;
+    case 1: nombreDia = "Lunes"; break;
+    case 2: nombreDia = "Martes"; break;
+    case 3: nombreDia = "Miércoles"; break;
+    case 4: nombreDia = "Jueves"; break;
+    case 5: nombreDia = "Viernes"; break;
+    case 6: nombreDia = "Sábado"; break;
+    default: nombreDia = "Día inválido";
+}
+
+console.log(`Hoy es ${nombreDia}`);</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Bucles -->
+        <section class="concept-section">
+            <h2 id="bucles">🔄 Bucles: Repitiendo acciones</h2>
+            <p class="concept-description">
+                Los bucles permiten ejecutar un bloque de código múltiples veces. 
+                Son fundamentales para procesar colecciones de datos y automatizar tareas repetitivas.<br><br>
+                
+                Cada tipo de bucle tiene sus casos de uso específicos:
+                - <code>for</code>: Cuando sabes cuántas iteraciones necesitas<br>
+                - <code>while</code>: Cuando el número de iteraciones es desconocido<br>
+                - <code>do...while</code>: Similar a while pero se ejecuta al menos una vez<br>
+                - <code>for...of</code>: Para iterar sobre elementos de arrays<br>
+                - <code>for...in</code>: Para iterar sobre propiedades de objetos
+            </p>
+            
+            <div class="tip-box">
+                <div class="tip-title">Evita bucles infinitos</div>
+                <div class="tip-content">
+                    ⚠️ Siempre asegúrate de que la condición de tu bucle eventualmente será falsa<br>
+                    ⚠️ Usa <code>break</code> para salir temprano si es necesario<br>
+                    ⚠️ Considera los métodos de array (<code>map</code>, <code>filter</code>, etc.) para operaciones con colecciones
+                </div>
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Bucle for</h3>
+                    <pre><code>// Imprimir números pares del 0 al 10
+for (let i = 0; i <= 10; i++) {
+    if (i % 2 === 0) {
+        console.log(i);
+    }
+}</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">Bucle while</h3>
+                    <pre><code>// Contador regresivo
+let contador = 5;
+while (contador > 0) {
+    console.log(contador);
+    contador--;
+}
+console.log("¡Despegue!");</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">Bucle do...while</h3>
+                    <pre><code>// Pedir entrada hasta que sea válida
+let entrada;
+do {
+    entrada = prompt("Introduce un número mayor que 10:");
+} while (entrada <= 10 || isNaN(entrada));
+
+console.log("Número válido:", entrada);</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+                
+                <div class="example">
+                    <h3 class="example-title">for...of (Arrays)</h3>
+                    <pre><code>// Sumar elementos de un array
+const numeros = [3, 7, 2, 9, 5];
+let suma = 0;
+
+for (const num of numeros) {
+    suma += num;
+}
+
+console.log("La suma es:", suma);</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+            
+            <div class="examples-container">
+                <div class="example">
+                    <h3 class="example-title">for...in (Objetos)</h3>
+                    <pre><code>// Listar propiedades de un objeto
+const usuario = {
+    nombre: "Carlos",
+    edad: 28,
+    email: "carlos@ejemplo.com"
+};
+
+for (const propiedad in usuario) {
+    console.log(`${propiedad}: ${usuario[propiedad]}`);
+}</code></pre>
+                    <button class="copy-btn" aria-label="Copiar código" onclick="copyCode(this)">📋 Copiar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Ejercicios interactivos -->
+        <section class="concept-section">
+            <h2 id="ejercicios">💻 Ejercicios Prácticos</h2>
+            <p class="concept-description">
+                Pon en práctica lo aprendido con estos ejercicios interactivos. 
+                Escribe el código en los editores y ejecútalo para ver los resultados.
+            </p>
+            
+            <div class="interactive-section">
+                <div class="exercise">
+                    <h3 class="exercise-title">Ejercicio 1: Calculadora de Edad</h3>
+                    <p>Completa el código para determinar si una persona es menor de edad, adulta o adulto mayor.</p>
+                    <div class="code-editor" contenteditable="true">function verificarEdad(edad) {
+    // Completa el código aquí
+    if (edad < 18) {
+        return "Menor de edad";
+    } else if (edad >= 18 && edad < 65) {
+        return "Adulto";
+    } else {
+        return "Adulto mayor";
+    }
+}
+
+// Pruebas
+console.log(verificarEdad(15)); // Debe mostrar "Menor de edad"
+console.log(verificarEdad(25)); // Debe mostrar "Adulto"
+console.log(verificarEdad(70)); // Debe mostrar "Adulto mayor"</div>
+                    <button class="run-btn" onclick="runCode(this)">▶ Ejecutar Código</button>
+                    <div class="output">Los resultados aparecerán aquí...</div>
+                </div>
+                
+                <div class="exercise">
+                    <h3 class="exercise-title">Ejercicio 2: Sumar números pares</h3>
+                    <p>Usa un bucle for para sumar todos los números pares entre 1 y 20.</p>
+                    <div class="code-editor" contenteditable="true">let suma = 0;
+
+// Completa el bucle aquí
+for (let i = 1; i <= 20; i++) {
+    if (i % 2 === 0) {
+        suma += i;
+    }
+}
+
+console.log("La suma de números pares es:", suma); // Debe mostrar 110</div>
+                    <button class="run-btn" onclick="runCode(this)">▶ Ejecutar Código</button>
+                    <div class="output">Los resultados aparecerán aquí...</div>
+                </div>
+                
+                <div class="exercise">
+                    <h3 class="exercise-title">Ejercicio 3: Generador de Tablas de Multiplicar</h3>
+                    <p>Completa el código para generar la tabla de multiplicar de un número dado.</p>
+                    <div class="code-editor" contenteditable="true">function tablaMultiplicar(numero) {
+    console.log(`Tabla del ${numero}:`);
+    
+    // Completa el bucle aquí
+    for (let i = 1; i <= 10; i++) {
+        console.log(`${numero} x ${i} = ${numero * i}`);
+    }
+}
+
+tablaMultiplicar(5);
+// Debe mostrar:
+// Tabla del 5:
+// 5 x 1 = 5
+// 5 x 2 = 10
+// ... hasta 5 x 10 = 50</div>
+                    <button class="run-btn" onclick="runCode(this)">▶ Ejecutar Código</button>
+                    <div class="output">Los resultados aparecerán aquí...</div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>✅ Has completado la sección de Estructuras de Control en JavaScript</p>
+            <p>✨ Continúa practicando estos conceptos fundamentales para dominarlos</p>
+        </footer>
+    </div>
+
+    <script>
+        // Función para copiar código
+        function copyCode(button) {
+            const preElement = button.previousElementSibling;
+            const code = preElement.textContent;
+            
+            navigator.clipboard.writeText(code)
+                .then(() => {
+                    const originalText = button.textContent;
+                    button.textContent = "✓ Copiado!";
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Error al copiar: ', err);
+                });
+        }
+        
+        // Función para ejecutar código en ejercicios interactivos
+        function runCode(button) {
+            const exercise = button.parentElement;
+            const codeEditor = exercise.querySelector('.code-editor');
+            const outputElement = exercise.querySelector('.output');
+            
+            try {
+                // Limpiar la salida anterior
+                outputElement.innerHTML = '';
+                
+                // Capturar console.log
+                const originalLog = console.log;
+                console.log = function(...args) {
+                    const message = document.createElement('div');
+                    message.textContent = args.join(' ');
+                    outputElement.appendChild(message);
+                    originalLog.apply(console, args);
+                };
+                
+                // Ejecutar el código
+                const code = codeEditor.textContent;
+                const execute = new Function(code);
+                execute();
+                
+                // Restaurar console.log
+                console.log = originalLog;
+                
+                // Si no hay output, mostrar mensaje
+                if (outputElement.innerHTML === '') {
+                    outputElement.innerHTML = '<div>El código se ejecutó, pero no se mostró ningún resultado</div>';
+                }
+            } catch (error) {
+                outputElement.innerHTML = `<div style="color: #e74c3c;">Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

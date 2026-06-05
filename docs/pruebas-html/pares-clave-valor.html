@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juego de Pares Clave-Valor</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .tarjeta { display: inline-block; margin: 10px; padding: 10px; border: 1px solid #ccc; cursor: pointer; background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>Empareja las claves con sus valores</h1>
+  <div id="juego"></div>
+  <p id="resultado"></p>
+
+  <script>
+    const pares = {
+      "HTML": "Lenguaje de marcado",
+      "CSS": "Estilos visuales",
+      "JavaScript": "Interactividad"
+    };
+
+    const elementos = [...Object.entries(pares), ...Object.entries(pares).map(([k, v]) => [v, k])];
+    const mezclados = elementos.sort(() => Math.random() - 0.5);
+
+    const seleccionados = [];
+    const juego = document.getElementById("juego");
+
+    mezclados.forEach(([texto]) => {
+      const div = document.createElement("div");
+      div.className = "tarjeta";
+      div.textContent = texto;
+      div.onclick = () => seleccionar(div);
+      juego.appendChild(div);
+    });
+
+    function seleccionar(div) {
+      if (seleccionados.length < 2 && !div.classList.contains("seleccionado")) {
+        div.classList.add("seleccionado");
+        seleccionados.push(div);
+        if (seleccionados.length === 2) verificar();
+      }
+    }
+
+    function verificar() {
+      const [a, b] = seleccionados.map(d => d.textContent);
+      if (pares[a] === b || pares[b] === a) {
+        seleccionados.forEach(d => d.style.background = "lightgreen");
+      } else {
+        seleccionados.forEach(d => d.style.background = "lightcoral");
+      }
+      setTimeout(() => {
+        seleccionados.forEach(d => d.classList.remove("seleccionado"));
+        seleccionados.length = 0;
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

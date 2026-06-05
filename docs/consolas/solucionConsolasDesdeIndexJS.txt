@@ -1,0 +1,671 @@
+﻿Veo el problema. La consola principal no está funcionando correctamente porque hay conflictos en la inicialización y falta una implementación robusta. Voy a mejorar ambas consolas:
+
+Código mejorado para index.js (Consola Principal):
+
+```javascript
+// ===== CONSOLA PRINCIPAL MEJORADA =====
+class MainConsole {
+    constructor() {
+        this.consoleOutput = document.getElementById('consoleOutput');
+        this.consoleInput = document.getElementById('consoleInput');
+        this.commandHistory = [];
+        this.historyIndex = -1;
+        this.isExecuting = false;
+        
+        this.initializeMainConsole();
+    }
+
+    initializeMainConsole() {
+        // Configurar event listeners
+        this.setupConsoleEvents();
+        
+        // Mensaje de bienvenida
+        this.addToConsole('🚀 Consola JavaScript lista. Escribe código o usa "Run" para ejecutar.', 'info');
+    }
+
+    setupConsoleEvents() {
+        // Botón ejecutar
+        document.getElementById('runButton').addEventListener('click', () => {
+            this.executeEditorCode();
+        });
+
+        // Botón limpiar consola
+        document.getElementById('clearConsole').addEventListener('click', () => {
+            this.clearConsole();
+        });
+
+        // Input de consola (para comandos directos)
+        if (this.consoleInput) {
+            this.consoleInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.executeConsoleInput();
+                }
+                
+                // Navegación en historial
+                if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    this.navigateHistory(-1);
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    this.navigateHistory(1);
+                }
+            });
+        }
+    }
+
+    executeEditorCode() {
+        const language = document.getElementById('modeSelector').value;
+        
+        if (language !== "javascript") {
+            this.addToConsole("❌ La consola solo ejecuta código JavaScript\nCambia el lenguaje a JavaScript para ejecutar código", "error");
+            return;
+        }
+
+        const code = editor.getValue();
+        if (!code.trim()) {
+            this.addToConsole("❌ No hay código para ejecutar", "error");
+            return;
+        }
+
+        this.executeJavaScriptCode(code);
+    }
+
+    executeConsoleInput() {
+        const code = this.consoleInput.value.trim();
+        if (!code) return;
+
+        this.addToConsole(`> ${code}`, 'input');
+        this.executeJavaScriptCode(code);
+        
+        // Agregar al historial
+        if (this.commandHistory[this.commandHistory.length - 1] !== code) {
+            this.commandHistory.push(code);
+            if (this.commandHistory.length > 50) {
+                this.commandHistory.shift();
+            }
+        }
+        this.historyIndex = -1;
+        this.consoleInput.value = '';
+    }
+
+    navigateHistory(direction) {
+        if (this.commandHistory.length === 0) return;
+
+        this.historyIndex += direction;
+        
+        if (this.historyIndex < 0) {
+            this.historyIndex = -1;
+            this.consoleInput.value = '';
+        } else if (this.historyIndex >= this.commandHistory.length) {
+            this.historyIndex = this.commandHistory.length - 1;
+        } else {
+            this.consoleInput.value = this.commandHistory[this.historyIndex];
+        }
+    }
+
+    async executeJavaScriptCode(code) {
+        if (this.isExecuting) {
+            this.addToConsole("⏳ Ya hay una ejecución en curso...", "warning");
+            return;
+        }
+
+        this.isExecuting = true;
+        
+        try {
+            // Crear un contexto aislado más robusto
+            const sandbox = this.createSecureSandbox();
+            
+            // Ejecutar con timeout
+            await this.executeWithTimeout(code, sandbox);
+            
+        } catch (error) {
+            this.addToConsole(`❌ Error: ${error.message}`, "error");
+        } finally {
+            this.isExecuting = false;
+        }
+    }
+
+    createSecureSandbox() {
+        const sandbox = {
+            // Console methods
+            console: {
+                log: (...args) => this.consoleLog(args),
+                error: (...args) => this.consoleError(args),
+                warn: (...args) => this.consoleWarn(args),
+                info: (...args) => this.consoleInfo(args),
+                clear: () => this.clearConsole()
+            },
+            
+            // Timers (limitados)
+            setTimeout: (fn, delay, ...args) => {
+                if (delay > 5000) delay = 5000; // Max 5 segundos
+                return setTimeout(fn, delay, ...args);
+            },
+            setInterval: (fn, delay, ...args) => {
+                if (delay > 5000) delay = 5000;
+                const id = setInterval(fn, delay, ...args);
+                // Auto-clear después de 10 segundos máximo
+                setTimeout(() => clearInterval(id), 10000);
+                return id;
+            },
+            clearTimeout,
+            clearInterval,
+            
+            // Objetos seguros
+            Math: Math,
+            Date: Date,
+            JSON: JSON,
+            Number: Number,
+            String: String,
+            Array: Array,
+            Object: Object,
+            Boolean: Boolean,
+            
+            // Promise limitado
+            Promise: class SafePromise extends Promise {
+                constructor(executor) {
+                    super((resolve, reject) => {
+                        executor(
+                            value => resolve(value),
+                            reason => reject(reason)
+                        );
+                    });
+                }
+            }
+        };
+
+        // Proxy para seguridad
+        return new Proxy(sandbox, {
+            has: () => true,
+            get: (target, prop) => {
+                if (prop === 'window' || prop === 'document' || prop === 'globalThis') {
+                    return undefined;
+                }
+                if (prop in target) {
+                    return target[prop];
+                }
+                return undefined;
+            },
+            set: () => false
+        });
+    }
+
+    async executeWithTimeout(code, sandbox) {
+        return new Promise((resolve, reject) => {
+            const timeoutId = setTimeout(() => {
+                reject(new Error("⏱️ Timeout: La ejecución tardó demasiado (10 segundos)"));
+            }, 10000);
+
+            try {
+                const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+                const fn = new AsyncFunction('sandbox', `
+                    with(sandbox) {
+                        try {
+                            ${code}
+                        } catch(e) {
+                            console.error('Execution Error:', e.message);
+                        }
+                    }
+                `);
+                
+                fn(sandbox).then(() => {
+                    clearTimeout(timeoutId);
+                    resolve();
+                }).catch(error => {
+                    clearTimeout(timeoutId);
+                    reject(error);
+                });
+                
+            } catch (error) {
+                clearTimeout(timeoutId);
+                reject(error);
+            }
+        });
+    }
+
+    // Métodos para capturar console
+    consoleLog(args) {
+        const message = args.map(arg => this.formatOutput(arg)).join(' ');
+        this.addToConsole(message, 'log');
+    }
+
+    consoleError(args) {
+        const message = args.map(arg => this.formatOutput(arg)).join(' ');
+        this.addToConsole(`❌ ${message}`, 'error');
+    }
+
+    consoleWarn(args) {
+        const message = args.map(arg => this.formatOutput(arg)).join(' ');
+        this.addToConsole(`⚠️ ${message}`, 'warning');
+    }
+
+    consoleInfo(args) {
+        const message = args.map(arg => this.formatOutput(arg)).join(' ');
+        this.addToConsole(`ℹ️ ${message}`, 'info');
+    }
+
+    formatOutput(arg) {
+        if (arg === null) return 'null';
+        if (arg === undefined) return 'undefined';
+        
+        if (typeof arg === 'object') {
+            try {
+                if (arg instanceof Error) {
+                    return `Error: ${arg.message}`;
+                }
+                return JSON.stringify(arg, null, 2);
+            } catch {
+                return String(arg);
+            }
+        }
+        
+        return String(arg);
+    }
+
+    addToConsole(text, type = "normal") {
+        if (!this.consoleOutput) return;
+        
+        const timestamp = new Date().toLocaleTimeString();
+        let formattedText = '';
+
+        switch (type) {
+            case 'error':
+                formattedText = `[${timestamp}] ❌ ${text}\n`;
+                break;
+            case 'warning':
+                formattedText = `[${timestamp}] ⚠️ ${text}\n`;
+                break;
+            case 'info':
+                formattedText = `[${timestamp}] ℹ️ ${text}\n`;
+                break;
+            case 'success':
+                formattedText = `[${timestamp}] ✅ ${text}\n`;
+                break;
+            case 'input':
+                formattedText = `[${timestamp}] > ${text}\n`;
+                break;
+            case 'log':
+                formattedText = `[${timestamp}] ${text}\n`;
+                break;
+            default:
+                formattedText = `[${timestamp}] ${text}\n`;
+        }
+
+        this.consoleOutput.value += formattedText;
+        this.consoleOutput.scrollTop = this.consoleOutput.scrollHeight;
+    }
+
+    clearConsole() {
+        if (this.consoleOutput) {
+            this.consoleOutput.value = '';
+            this.addToConsole('🧹 Consola limpiada', 'info');
+        }
+    }
+}
+
+// En la parte del DOMContentLoaded, reemplazar la inicialización vieja:
+document.addEventListener('DOMContentLoaded', () => {
+    // ... código existente ...
+    
+    // Inicializar consola principal MEJORADA
+    const mainConsole = new MainConsole();
+    
+    // ... resto del código ...
+});
+```
+
+Código mejorado para alternate-console.js:
+
+```javascript
+// ===== CANAL ALTERNO DE CONSOLA MEJORADO =====
+class AlternateConsole {
+    constructor() {
+        this.initializeElements();
+        this.setupEventListeners();
+        this.commandHistory = [];
+        this.historyIndex = -1;
+        this.isExecuting = false;
+        
+        this.showWelcomeMessage();
+    }
+
+    initializeElements() {
+        this.alternateInput = document.getElementById('alternateConsoleInput');
+        this.alternateOutput = document.getElementById('alternateConsoleOutput');
+        this.runButton = document.getElementById('runAlternateConsole');
+        this.clearInputButton = document.getElementById('clearAlternateInput');
+        this.clearOutputButton = document.getElementById('clearAlternateOutput');
+        
+        // Verificar que todos los elementos existen
+        if (!this.alternateInput || !this.alternateOutput) {
+            console.error('❌ No se encontraron los elementos del canal alterno');
+            return;
+        }
+    }
+
+    setupEventListeners() {
+        // Botón ejecutar
+        if (this.runButton) {
+            this.runButton.addEventListener('click', () => {
+                this.executeAlternateCode();
+            });
+        }
+
+        // Botón limpiar código
+        if (this.clearInputButton) {
+            this.clearInputButton.addEventListener('click', () => {
+                this.clearAlternateInput();
+            });
+        }
+
+        // Botón limpiar respuesta
+        if (this.clearOutputButton) {
+            this.clearOutputButton.addEventListener('click', () => {
+                this.clearAlternateOutput();
+            });
+        }
+
+        // Atajos de teclado mejorados
+        if (this.alternateInput) {
+            this.alternateInput.addEventListener('keydown', (e) => {
+                // Ctrl+Enter o F9 para ejecutar
+                if ((e.ctrlKey && e.key === 'Enter') || e.key === 'F9') {
+                    e.preventDefault();
+                    this.executeAlternateCode();
+                }
+                
+                // Ctrl+L para limpiar código
+                if (e.ctrlKey && e.key === 'l') {
+                    e.preventDefault();
+                    this.clearAlternateInput();
+                }
+                
+                // Ctrl+K para limpiar respuesta
+                if (e.ctrlKey && e.key === 'k') {
+                    e.preventDefault();
+                    this.clearAlternateOutput();
+                }
+                
+                // Ctrl+D para duplicar línea
+                if (e.ctrlKey && e.key === 'd') {
+                    e.preventDefault();
+                    this.duplicateLine();
+                }
+                
+                // Navegación en historial
+                if (e.ctrlKey && e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    this.navigateHistory(-1);
+                } else if (e.ctrlKey && e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    this.navigateHistory(1);
+                }
+            });
+
+            // Auto-indentación básica
+            this.alternateInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    this.insertTab();
+                }
+            });
+        }
+    }
+
+    showWelcomeMessage() {
+        this.addToAlternateOutput('🌟 Canal Alterno de Consola Listo', 'info');
+        this.addToAlternateOutput('💡 Escribe tu código JavaScript y ejecuta con Ctrl+Enter', 'info');
+        this.addToAlternateOutput('⚡ Atajos: Ctrl+L (limpiar código) | Ctrl+K (limpiar output)', 'info');
+        this.addToAlternateOutput('🔧 Historial: Ctrl+↑/↓ para navegar comandos anteriores\n', 'info');
+    }
+
+    executeAlternateCode() {
+        const code = this.alternateInput.value.trim();
+        
+        if (!code) {
+            this.addToAlternateOutput('❌ No hay código para ejecutar', 'error');
+            return;
+        }
+
+        if (this.isExecuting) {
+            this.addToAlternateOutput('⏳ Ejecución en curso... espera', 'warning');
+            return;
+        }
+
+        // Agregar al historial
+        this.addToHistory(code);
+
+        this.addToAlternateOutput('🚀 Ejecutando código...', 'info');
+        this.addToAlternateOutput(`📝 Entrada:\n${code}\n${'═'.repeat(60)}`, 'code');
+
+        this.isExecuting = true;
+
+        try {
+            // Crear contexto de ejecución
+            const result = this.executeInSandbox(code);
+            
+            if (result !== undefined) {
+                this.addToAlternateOutput(`💡 Retorno: ${this.formatResult(result)}`, 'result');
+            }
+            
+            this.addToAlternateOutput('✅ Ejecución completada', 'success');
+            
+        } catch (error) {
+            this.addToAlternateOutput(`❌ Error: ${error.message}`, 'error');
+            console.error('Alternate Console Error:', error);
+        } finally {
+            this.isExecuting = false;
+            this.addToAlternateOutput('', 'normal'); // Línea en blanco
+        }
+    }
+
+    executeInSandbox(code) {
+        // Capturar métodos de console
+        const originalConsole = { ...console };
+        const outputs = [];
+        
+        // Redirigir console
+        const consoleMethods = ['log', 'error', 'warn', 'info', 'debug'];
+        consoleMethods.forEach(method => {
+            console[method] = (...args) => {
+                const message = args.map(arg => this.formatOutput(arg)).join(' ');
+                outputs.push({ method, message });
+                originalConsole[method].apply(console, args); // Mantener en consola real
+            };
+        });
+
+        try {
+            // Ejecutar el código
+            const fn = new Function(code);
+            const result = fn();
+            
+            // Mostrar outputs capturados
+            outputs.forEach(output => {
+                const type = output.method === 'error' ? 'error' : 
+                            output.method === 'warn' ? 'warning' : 'log';
+                this.addToAlternateOutput(output.message, type);
+            });
+            
+            return result;
+            
+        } finally {
+            // Restaurar console original
+            consoleMethods.forEach(method => {
+                console[method] = originalConsole[method];
+            });
+        }
+    }
+
+    formatOutput(arg) {
+        if (arg === null) return 'null';
+        if (arg === undefined) return 'undefined';
+        
+        if (typeof arg === 'object') {
+            try {
+                if (arg instanceof Error) {
+                    return `Error: ${arg.message}`;
+                }
+                if (arg instanceof Array) {
+                    return `[${arg.map(item => this.formatOutput(item)).join(', ')}]`;
+                }
+                return JSON.stringify(arg, null, 2);
+            } catch {
+                return String(arg);
+            }
+        }
+        
+        return String(arg);
+    }
+
+    formatResult(result) {
+        if (result === null) return 'null';
+        if (result === undefined) return 'undefined';
+        if (typeof result === 'function') return '[Function]';
+        return this.formatOutput(result);
+    }
+
+    addToHistory(code) {
+        if (this.commandHistory[this.commandHistory.length - 1] !== code) {
+            this.commandHistory.push(code);
+            if (this.commandHistory.length > 30) {
+                this.commandHistory.shift();
+            }
+        }
+        this.historyIndex = -1;
+    }
+
+    navigateHistory(direction) {
+        if (this.commandHistory.length === 0) return;
+
+        this.historyIndex += direction;
+        
+        if (this.historyIndex < 0) {
+            this.historyIndex = -1;
+            this.alternateInput.value = '';
+        } else if (this.historyIndex >= this.commandHistory.length) {
+            this.historyIndex = this.commandHistory.length - 1;
+        } else {
+            this.alternateInput.value = this.commandHistory[this.historyIndex];
+        }
+    }
+
+    insertTab() {
+        const start = this.alternateInput.selectionStart;
+        const end = this.alternateInput.selectionEnd;
+        
+        this.alternateInput.value = this.alternateInput.value.substring(0, start) + 
+                                  '  ' + 
+                                  this.alternateInput.value.substring(end);
+        
+        this.alternateInput.selectionStart = this.alternateInput.selectionEnd = start + 2;
+    }
+
+    duplicateLine() {
+        const start = this.alternateInput.selectionStart;
+        const value = this.alternateInput.value;
+        const lines = value.split('\n');
+        
+        let lineStart = 0;
+        let currentLine = 0;
+        
+        for (let i = 0; i < lines.length; i++) {
+            const lineEnd = lineStart + lines[i].length;
+            if (start >= lineStart && start <= lineEnd) {
+                currentLine = i;
+                break;
+            }
+            lineStart = lineEnd + 1;
+        }
+        
+        // Duplicar línea actual
+        lines.splice(currentLine + 1, 0, lines[currentLine]);
+        this.alternateInput.value = lines.join('\n');
+    }
+
+    addToAlternateOutput(text, type = 'normal') {
+        if (!this.alternateOutput) return;
+
+        const timestamp = new Date().toLocaleTimeString();
+        let formattedText = '';
+
+        switch (type) {
+            case 'error':
+                formattedText = `[${timestamp}] ❌ ${text}\n`;
+                break;
+            case 'warning':
+                formattedText = `[${timestamp}] ⚠️ ${text}\n`;
+                break;
+            case 'info':
+                formattedText = `[${timestamp}] ℹ️ ${text}\n`;
+                break;
+            case 'success':
+                formattedText = `[${timestamp}] ✅ ${text}\n`;
+                break;
+            case 'code':
+                formattedText = `[${timestamp}] 📝 ${text}\n`;
+                break;
+            case 'result':
+                formattedText = `[${timestamp}] 💡 ${text}\n`;
+                break;
+            case 'log':
+                formattedText = `[${timestamp}] ${text}\n`;
+                break;
+            default:
+                formattedText = `[${timestamp}] ${text}\n`;
+        }
+
+        this.alternateOutput.value += formattedText;
+        this.alternateOutput.scrollTop = this.alternateOutput.scrollHeight;
+    }
+
+    clearAlternateInput() {
+        if (this.alternateInput) {
+            this.alternateInput.value = '';
+            this.alternateInput.focus();
+            this.addToAlternateOutput('🗑️ Área de código limpiada', 'info');
+        }
+    }
+
+    clearAlternateOutput() {
+        if (this.alternateOutput) {
+            this.alternateOutput.value = '';
+            this.addToAlternateOutput('🧹 Respuesta de consola limpiada', 'info');
+        }
+    }
+}
+
+// Inicialización mejorada
+document.addEventListener('DOMContentLoaded', () => {
+    // Esperar un poco para asegurar que el DOM esté completamente listo
+    setTimeout(() => {
+        try {
+            new AlternateConsole();
+        } catch (error) {
+            console.error('Error inicializando AlternateConsole:', error);
+        }
+    }, 100);
+});
+```
+
+Principales mejoras:
+
+Consola Principal:
+
+· ✅ Clase MainConsole más robusta
+· ✅ Mejor manejo de errores y timeouts
+· ✅ Sandbox más seguro
+· ✅ Historial de comandos
+· ✅ Formateo mejorado de objetos
+· ✅ Prevención de ejecuciones simultáneas
+
+Consola Alterna:
+
+· ✅ Mejores atajos de teclado (Ctrl+Enter, F9, etc.)
+· ✅ Auto-indentación con Tab
+· ✅ Duplicación de líneas (Ctrl+D)
+· ✅ Navegación en historial (Ctrl+↑/↓)
+· ✅ Mejor formateo de salidas
+· ✅ Manejo de errores más robusto
+
+Ambas consolas ahora son más estables, seguras y con mejor UX. La principal ejecuta código del editor, la alterna es para pruebas rápidas.

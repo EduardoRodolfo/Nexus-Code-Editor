@@ -1,0 +1,2274 @@
+﻿Rehacer las consolas 
+
+DeepSeek aquí te dejo el resultado de la exploración de como trabajan las dos consolas.
+Ejercicios Básicos de Consola
+
+1. Salidas básicas
+
+
+// Ejercicio 1: Diferentes métodos de console
+console.log("Mensaje normal");
+console.info("Esto es información");
+console.warn("¡Cuidado! Esto es una advertencia");
+console.error("¡Error! Algo salió mal");
+
+// Prueba esto en tu consola
+
+Respuesta 
+Primera consola
+
+[17:12:33] Mensaje normal
+[17:12:33] ! ERROR: Error: console.info is not a function
+
+
+Segunda consola:
+
+Respuesta
+
+Mensaje normal
+ERROR: ¡Error! Algo salió mal
+
+2. Variables y tipos de datos
+
+Respuesta de consola JS 1
+
+[17:19:28] Nombre: Ana
+[17:19:28] Edad: 25
+[17:19:28] ¿Es estudiante? true
+[17:19:28] Hobbies: [
+  "leer",
+  "programar",
+  "música"
+]
+
+
+Respuesta de consola JS número 2
+
+Nombre: Ana
+Edad: 25
+¿Es estudiante? true
+Hobbies: [
+  "leer",
+  "programar",
+  "música"
+]
+
+
+3. Console.table() - Para objetos y arrays
+
+Respuesta:
+
+Consola 1
+
+[17:24:17] ! ERROR: Error: console.table is not a function
+
+Consola alternativa 
+
+Sin respuesta.
+
+4. Console.group() - Agrupar mensajes
+
+```javascript
+// Ejercicio 4: Grupos en consola
+console.group("Información del Usuario");
+console.log("Nombre: Juan Pérez");
+console.log("Email: juan@email.com");
+console.group("Detalles de la cuenta");
+console.log("Plan: Premium");
+console.log("Miembro desde: 2023");
+console.groupEnd();
+console.groupEnd();
+
+Respuesta consola 1
+
+[17:31:42] ! ERROR: Error: console.group is not a function
+
+Consola alternativa
+
+Nombre: Juan Pérez
+Email: juan@email.com
+Plan: Premium
+Miembro desde: 2023
+
+
+// Ejercicio 5: Medir performance
+console.time("Tiempo de procesamiento");
+
+// Simular una operación que toma tiempo
+let resultado = 0;
+for (let i = 0; i < 1000000; i++) {
+    resultado += i;
+}
+
+console.timeEnd("Tiempo de procesamiento");
+console.log("Resultado:", resultado);
+
+Respuesta consola 1
+
+[17:34:32] ! ERROR: Error: console.time is not a function
+
+Consola alternativa
+
+Resultado: 499999500000
+
+
+// Ejercicio 6: Aserciones
+
+let temperatura = 25;
+let esCaluroso = temperatura > 30;
+
+console.assert(esCaluroso, "La temperatura debería ser mayor a 30°C");
+
+// Otro ejemplo
+let usuariosActivos = 5;
+console.assert(usuariosActivos > 0, "Debe haber al menos un usuario activo");
+
+Respuesta 
+Consola 1
+
+[17:37:56] ! ERROR: Error: console.assert is not a function
+
+Respuesta 
+Consola alternativa
+
+Sin respuesta
+
+Ejercicios Avanzados
+
+7. Console.trace() - Seguimiento de llamadas
+
+// Ejercicio 7: Trazado de ejecución
+function funcionA() {
+    funcionB();
+}
+
+function funcionB() {
+    funcionC();
+}
+
+function funcionC() {
+    console.trace("Seguimiento de la pila de llamadas");
+}
+
+funcionA();
+
+8. Estilos en consola
+
+// Ejercicio 8: Consola con estilos CSS
+console.log("%c¡Hola con estilo!", 
+    "color: white; background: blue; font-size: 20px; padding: 10px; border-radius: 5px;");
+
+console.log("%cJavaScript %c es %c divertido", 
+    "color: red; font-weight: bold;",
+    "color: green; font-size: 18px;",
+    "color: blue; text-decoration: underline;");
+
+
+9. Ejercicio práctico completo
+
+// Ejercicio 9: Sistema de gestión de tareas
+class GestorTareas {
+    constructor() {
+        this.tareas = [];
+    }
+    
+    agregarTarea(nombre, prioridad = "media") {
+        const tarea = { nombre, prioridad, completada: false };
+        this.tareas.push(tarea);
+        console.log(`✅ Tarea "${nombre}" agregada (Prioridad: ${prioridad})`);
+    }
+    
+    listarTareas() {
+        console.group("📋 Lista de Tareas");
+        this.tareas.forEach((tarea, index) => {
+            const estado = tarea.completada ? "✅" : "⏳";
+            console.log(`${index + 1}. ${estado} ${tarea.nombre} - ${tarea.prioridad}`);
+        });
+        console.groupEnd();
+    }
+    
+    completarTarea(indice) {
+        if (this.tareas[indice]) {
+            this.tareas[indice].completada = true;
+            console.log(`🎉 Tarea "${this.tareas[indice].nombre}" completada`);
+        } else {
+            console.error("❌ Tarea no encontrada");
+        }
+    }
+}
+
+// Probar el sistema
+const miGestor = new GestorTareas();
+miGestor.agregarTarea("Aprender JavaScript", "alta");
+miGestor.agregarTarea("Hacer ejercicio", "media");
+miGestor.agregarTarea("Leer un libro", "baja");
+miGestor.listarTareas();
+miGestor.completarTarea(0);
+miGestor.listarTareas();
+
+Entonces necesito que la consola 1 la separes igual que la consola alternativa en una página JS o idependiente de index.js y le ponemos un enlace en index.html
+
+Por favor revisa si puedes mejorar la consola alternativa.
+Cuando lleves la consola 1 principal, a un documento independiente de index.js no dejes de decirme de donde a donde tengo que borrar el código de la consola principal en index.js
+Te dejo todo el contenido de la carpeta:  js/
+index.js
+// trigger Editor extensions
+ace.require("ace/ext/language_tools");
+
+// Variables globales
+let currentFileName = null;
+let fileHandle = null;
+let currentDirectoryHandle = null;
+let currentProjectHandle = null;
+let openFiles = new Map(); // Map para archivos abiertos: {fileHandle, content, modified}
+let currentFileTab = null;
+let projectFiles = []; // Lista de archivos en el proyecto
+let editor = null;
+
+// ===== PERSISTENCIA DE CONFIGURACIÓN =====
+class ThemeManager {
+    constructor() {
+        this.defaultTheme = 'dreamweaver';
+        this.defaultMode = 'html';
+        this.defaultFontSize = 14;
+        this.defaultLineNumbers = true;
+        this.defaultWrapMode = true;
+    }
+
+    // Guardar configuración completa
+    saveConfig(settings) {
+        localStorage.setItem('editorConfig', JSON.stringify(settings));
+    }
+
+    // Cargar configuración guardada
+    loadConfig() {
+        const saved = localStorage.getItem('editorConfig');
+        if (saved) {
+            return JSON.parse(saved);
+        }
+        return this.getDefaultConfig();
+    }
+
+    // En la clase ThemeManager, modificar el método getDefaultConfig:
+    getDefaultConfig() {
+    return {
+        theme: this.defaultTheme,
+        mode: this.defaultMode,
+        fontSize: this.defaultFontSize,
+        lineNumbers: this.defaultLineNumbers,
+        wrapMode: this.defaultWrapMode
+    };
+}
+
+
+    // Aplicar configuración al editor
+    applyConfig(editor, config) {
+        if (!editor) return;
+
+        // Aplicar tema
+        editor.setTheme(`ace/theme/${config.theme}`);
+        
+        // Aplicar modo
+        editor.session.setMode(`ace/mode/${config.mode}`);
+        
+        // Aplicar otras configuraciones
+        editor.setFontSize(config.fontSize + 'px');
+        editor.setOption('showLineNumbers', config.lineNumbers);
+        editor.session.setUseWrapMode(config.wrapMode);
+
+        return config;
+    }
+
+    // Y en getCurrentConfig():
+    getCurrentConfig() {
+    return {
+        theme: document.getElementById('themeSelector')?.value || this.defaultTheme,
+        mode: document.getElementById('modeSelector')?.value || this.defaultMode,
+        fontSize: parseInt(document.getElementById('fontSize')?.value) || this.defaultFontSize,
+        lineNumbers: document.getElementById('lineNumbers')?.checked ?? this.defaultLineNumbers,
+        wrapMode: document.getElementById('wrapMode')?.checked ?? this.defaultWrapMode
+    };
+}
+
+    // Resetear a valores por defecto
+    resetToDefault(editor) {
+        const defaultConfig = this.getDefaultConfig();
+        this.applyConfig(editor, defaultConfig);
+        this.updateControls(defaultConfig);
+        this.saveConfig(defaultConfig);
+        this.showNotification('Configuración restablecida a valores por defecto', 'success');
+    }
+
+    // Actualizar controles de la UI
+    updateControls(config) {
+        const themeSelector = document.getElementById('themeSelector');
+        const modeSelector = document.getElementById('modeSelector');
+        const fontSizeInput = document.getElementById('fontSize');
+        const lineNumbersCheckbox = document.getElementById('lineNumbers');
+        const wrapModeCheckbox = document.getElementById('wrapMode');
+
+        if (themeSelector) themeSelector.value = config.theme;
+        if (modeSelector) modeSelector.value = config.mode;
+        if (fontSizeInput) fontSizeInput.value = config.fontSize;
+        if (lineNumbersCheckbox) lineNumbersCheckbox.checked = config.lineNumbers;
+        if (wrapModeCheckbox) wrapModeCheckbox.checked = config.wrapMode;
+    }
+
+    // Mostrar notificación
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+}
+
+// Instancia global del gestor de temas
+const themeManager = new ThemeManager();
+
+// Verificar si las APIs están disponibles
+const isFileSystemAccessSupported = () => {
+    return 'showOpenFilePicker' in window && 'showSaveFilePicker' in window && 'showDirectoryPicker' in window;
+};
+
+// Función para mostrar notificaciones
+function showNotification(message, isError = false) {
+    const notification = document.createElement('div');
+    notification.className = isError ? 'notification error' : 'notification success';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Función para inicializar el editor
+function initializeEditor() {
+    if (!editor) {
+        editor = ace.edit("editor");
+        
+        // Cargar configuración guardada
+        const savedConfig = themeManager.loadConfig();
+        
+        // Aplicar configuración
+        themeManager.applyConfig(editor, savedConfig);
+        themeManager.updateControls(savedConfig);
+        
+        // Configuración adicional que no se persiste
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            enableSnippets: true,
+            showPrintMargin: false,
+            useSoftTabs: true,
+            tabSize: 2
+        });
+        
+        // Función para actualizar la previsualización
+        const updatePreview = () => {
+            const preview = document.getElementById('preview');
+            const code = editor.getValue();
+            preview.srcdoc = code;
+        };
+
+        // Actualizar previsualización al cambiar el editor
+        editor.session.on('change', () => {
+            updatePreview();
+        });
+
+        return editor;
+    }
+    return editor;
+}
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar Ace Editor
+    editor = initializeEditor();
+    
+    // ===== CONFIGURACIÓN DEL EDITOR CON PERSISTENCIA =====
+    const themeSelector = document.getElementById('themeSelector');
+    const modeSelector = document.getElementById('modeSelector');
+    const fontSizeInput = document.getElementById('fontSize');
+    const lineNumbersCheckbox = document.getElementById('lineNumbers');
+    const wrapModeCheckbox = document.getElementById('wrapMode');
+
+    // Listener para cambio de tema
+    if (themeSelector) {
+        themeSelector.addEventListener('change', (e) => {
+            const config = themeManager.getCurrentConfig();
+            themeManager.applyConfig(editor, config);
+            themeManager.saveConfig(config);
+            themeManager.showNotification(`Tema cambiado a: ${e.target.value}`, 'success');
+        });
+    }
+
+    // Listener para cambio de lenguaje
+    if (modeSelector) {
+        modeSelector.addEventListener('change', (e) => {
+            const config = themeManager.getCurrentConfig();
+            themeManager.applyConfig(editor, config);
+            themeManager.saveConfig(config);
+            themeManager.showNotification(`Modo cambiado a: ${e.target.value}`, 'info');
+        });
+    }
+
+    // Listener para tamaño de fuente
+    if (fontSizeInput) {
+        fontSizeInput.addEventListener('change', (e) => {
+            const config = themeManager.getCurrentConfig();
+            themeManager.applyConfig(editor, config);
+            themeManager.saveConfig(config);
+        });
+    }
+
+    // Listeners para checkboxes
+    [lineNumbersCheckbox, wrapModeCheckbox].forEach(checkbox => {
+        if (checkbox) {
+            checkbox.addEventListener('change', () => {
+                const config = themeManager.getCurrentConfig();
+                themeManager.applyConfig(editor, config);
+                themeManager.saveConfig(config);
+            });
+        }
+    });
+
+    // ... el resto de tu código se mantiene igual ...
+
+    // ===== CONFIGURACIÓN DEL EDITOR =====
+    document.getElementById('themeSelector').addEventListener('change', (e) => {
+        editor.setTheme(`ace/theme/${e.target.value}`);
+    });
+
+    document.getElementById('modeSelector').addEventListener('change', (e) => {
+        editor.session.setMode(`ace/mode/${e.target.value}`);
+    });
+
+    document.getElementById('fontSize').addEventListener('change', (e) => {
+        editor.setFontSize(parseInt(e.target.value));
+    });
+
+    document.getElementById('lineNumbers').addEventListener('change', (e) => {
+        editor.setOption('showLineNumbers', e.target.checked);
+    });
+
+    document.getElementById('wrapMode').addEventListener('change', (e) => {
+        editor.session.setUseWrapMode(e.target.checked);
+    });
+
+    // ===== PROJECT NORMALIZER ===== 
+   class ProjectNormalizer {
+    constructor() {
+        this.originalHTML = '';
+        this.normalizedHTML = '';
+        this.combinedCSS = '';
+        this.combinedJS = '';
+    }
+
+    normalizeDownloadedProject(html, css = '', js = '') {
+        this.originalHTML = html;
+        this.combinedCSS = css;
+        this.combinedJS = js;
+
+        this.extractAllCSS();
+        this.extractAllJS();
+        
+        // CORRECIÓN: Reconstruir HTML con CSS y JS incorporados
+        return this.reconstructHTML();
+    }
+
+    extractAllCSS() {
+        const html = this.originalHTML;
+        const internalCSS = this.extractInternalCSS(html);
+        if (internalCSS) {
+            this.combinedCSS += '\n' + internalCSS;
+        }
+        this.extractExternalCSS(html);
+    }
+
+    extractInternalCSS(html) {
+        const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+        const matches = [];
+        let match;
+        while ((match = styleRegex.exec(html)) !== null) {
+            matches.push(match[1].trim());
+        }
+        return matches.join('\n');
+    }
+
+    extractExternalCSS(html) {
+        const linkRegex = /<link[^>]*href=["']([^"']*\.css)["'][^>]*>/gi;
+        let match;
+        while ((match = linkRegex.exec(html)) !== null) {
+            const cssPath = match[1];
+            this.combinedCSS += `\n/* CSS externo: ${cssPath} */\n`;
+            this.combinedCSS += `/* Contenido necesita ser incorporado manualmente */\n`;
+        }
+    }
+
+    extractAllJS() {
+        const html = this.originalHTML;
+        const internalJS = this.extractInternalJS(html);
+        if (internalJS) {
+            this.combinedJS += '\n' + internalJS;
+        }
+        this.extractExternalJS(html);
+    }
+
+    extractInternalJS(html) {
+        const scriptRegex = /<script(?!.*src)[^>]*>([\s\S]*?)<\/script>/gi;
+        const matches = [];
+        let match;
+        while ((match = scriptRegex.exec(html)) !== null) {
+            matches.push(match[1].trim());
+        }
+        return matches.join('\n');
+    }
+
+    extractExternalJS(html) {
+        const scriptRegex = /<script[^>]*src=["']([^"']*\.js)["'][^>]*><\/script>/gi;
+        let match;
+        while ((match = scriptRegex.exec(html)) !== null) {
+            const jsPath = match[1];
+            this.combinedJS += `\n// JS externo: ${jsPath}\n`;
+            this.combinedJS += `// Contenido necesita ser incorporado manualmente\n`;
+        }
+    }
+
+    // NUEVO MÉTODO: Reconstruir HTML con estructura normalizada
+    reconstructHTML() {
+        let html = this.originalHTML;
+        
+        // 1. Extraer solo el body content
+        const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+        const bodyContent = bodyMatch ? bodyMatch[1] : html;
+        
+        // 2. Extraer título
+        const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+        const title = titleMatch ? titleMatch[1] : 'Documento Normalizado';
+        
+        // 3. Crear nuevo HTML estructurado
+        let normalizedHTML = `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>`;
+    
+        // 4. Agregar CSS si existe
+        if (this.combinedCSS.trim()) {
+            normalizedHTML += '\n    <style>\n' + this.combinedCSS + '\n    </style>';
+        }
+        
+        normalizedHTML += '\n</head>\n<body>\n';
+        
+        // 5. Agregar contenido del body
+        normalizedHTML += bodyContent;
+        
+        // 6. Agregar JS si existe (al final del body)
+        if (this.combinedJS.trim()) {
+            normalizedHTML += '\n    <script>\n' + this.combinedJS + '\n    </script>';
+        }
+        
+        normalizedHTML += '\n</body>\n</html>';
+        
+        return {
+            html: normalizedHTML,
+            css: this.combinedCSS,
+            js: this.combinedJS
+        };
+    }
+}
+
+    // Instancia del normalizador
+    const projectNormalizer = new ProjectNormalizer();
+
+    // =====================================
+    // Funciones para normalizar proyectos descargados
+    // =====================================
+
+    // Agregar esta función para mostrar progreso (ANTES de normalizeDownloadedProject)
+function showNormalizationProgress(message) {
+    const progress = document.createElement('div');
+    progress.className = 'notification info';
+    progress.innerHTML = `🔄 ${message}`;
+    document.body.appendChild(progress);
+    
+    setTimeout(() => {
+        progress.remove();
+    }, 2000);
+}
+
+async function normalizeDownloadedProject() {
+    const htmlContent = editor.getValue();
+    
+    if (!htmlContent.trim()) {
+        showNotification('No hay contenido para normalizar', true);
+        return;
+    }
+    
+    showNormalizationProgress('🔄 Normalizando proyecto para uso comercial...');
+    
+    try {
+        addToConsole('=== NORMALIZACIÓN COMERCIAL INICIADA ===', 'input');
+        addToConsole('Analizando estructura HTML...', 'normal');
+        
+        const normalized = projectNormalizer.normalizeDownloadedProject(htmlContent);
+        
+        // Estadísticas detalladas
+        const originalLines = htmlContent.split('\n').length;
+        const normalizedLines = normalized.html.split('\n').length;
+        const cssLines = normalized.css.split('\n').length;
+        const jsLines = normalized.js.split('\n').length;
+        
+        addToConsole(`✓ HTML optimizado: ${originalLines} → ${normalizedLines} líneas`, 'success');
+        if (cssLines > 0) addToConsole(`✓ CSS extraído: ${cssLines} líneas`, 'success');
+        if (jsLines > 0) addToConsole(`✓ JavaScript extraído: ${jsLines} líneas`, 'success');
+        
+        // Mostrar instrucciones completas
+        addToConsole('\\n📋 INSTRUCCIONES PARA PROYECTO NORMALIZADO:', 'input');
+        addToConsole('1. El HTML ahora incluye todo el CSS y JS internos', 'normal');
+        addToConsole('2. Para máximo rendimiento, guarda CSS y JS en archivos separados', 'normal');
+        addToConsole('3. Usa el HTML normalizado como punto de partida', 'normal');
+        addToConsole('4. Optimiza el código para producción', 'normal');
+        
+        // Actualizar editor con HTML normalizado
+        editor.setValue(normalized.html);
+        
+        showNormalizationProgress('✅ Proyecto normalizado para uso comercial');
+        
+        // Oferta mejorada para guardar archivos
+        if (currentProjectHandle) {
+            setTimeout(() => {
+               const saveFiles = confirm(
+        '¿Deseas guardar CSS y JS como archivos separados?\n\n' +
+        '✅ Mejor organización\n' +
+        '✅ Más fácil de mantener\n' +
+        '✅ Mejor rendimiento'
+    );
+                
+                if (saveFiles) {
+                    if (normalized.css.trim()) {
+                        saveNormalizedFile('styles-normalized.css', normalized.css);
+                    }
+                    if (normalized.js.trim()) {
+                        saveNormalizedFile('scripts-normalized.js', normalized.js);
+                    }
+                }
+            }, 1500);
+        }
+        
+    } catch (error) {
+        console.error('Error en normalización:', error);
+        showNotification(`Error normalizando proyecto: ${error.message}`, true);
+        addToConsole(`❌ Error: ${error.message}`, 'error');
+    }
+}
+
+// Función para guardar archivos normalizados
+async function saveNormalizedFile(filename, content) {
+    try {
+        if (!currentProjectHandle) {
+            showNotification('Abre un proyecto primero para guardar archivos', true);
+            return;
+        }
+        
+        const fileHandle = await currentProjectHandle.getFileHandle(filename, { create: true });
+        const writable = await fileHandle.createWritable();
+        await writable.write(content);
+        await writable.close();
+        
+        showNotification(`✅ ${filename} guardado correctamente`);
+        addToConsole(`✓ Archivo guardado: ${filename}`, 'success');
+        
+        // Recargar estructura del proyecto
+        await loadProjectStructure();
+        
+    } catch (error) {
+        console.error('Error guardando archivo normalizado:', error);
+        showNotification(`Error guardando ${filename}: ${error.message}`, true);
+    }
+}
+
+    // ===== EVENTOS DEL MENÚ =====
+    document.getElementById('abrir-documento').addEventListener('click', openFile);
+    document.getElementById('guardar').addEventListener('click', saveFile);
+    document.getElementById('guardar-como').addEventListener('click', saveFileAs);
+    document.getElementById('nuevo-documento').addEventListener('click', newDocument);
+    document.getElementById('limpiar-editor').addEventListener('click', clearEditor);
+
+    // Event listeners para proyectos
+    document.getElementById('nuevo-proyecto').addEventListener('click', newProject);
+    document.getElementById('abrir-proyecto').addEventListener('click', openProject);
+    document.getElementById('normalizar-proyecto').addEventListener('click', normalizeDownloadedProject);
+
+    // Event listeners para sidebar
+    document.getElementById('toggle-sidebar').addEventListener('click', toggleProjectSidebar);
+    document.getElementById('close-sidebar').addEventListener('click', closeProjectSidebar);
+
+    // =====================================
+    // Funciones para manejo de archivos
+    // =====================================
+
+    // Abrir archivo
+    async function openFile() {
+        if (!isFileSystemAccessSupported()) {
+            showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+            return;
+        }
+
+        try {
+            const [handle] = await window.showOpenFilePicker({
+                types: [{
+                    description: 'Archivos de texto',
+                    accept: {'text/plain': ['.txt', '.js', '.html', '.css', '.json']}
+                }]
+            });
+            
+            fileHandle = handle;
+            const file = await fileHandle.getFile();
+            const contents = await file.text();
+            currentFileName = file.name;
+            
+            // Actualizar modo según extensión
+            const extension = currentFileName.split('.').pop();
+            const modeMap = {
+                'js': 'javascript',
+                'html': 'html',
+                'css': 'css',
+                'json': 'json'
+            };
+            
+            if (modeMap[extension]) {
+                editor.session.setMode(`ace/mode/${modeMap[extension]}`);
+                document.getElementById('modeSelector').value = modeMap[extension];
+            }
+            
+            editor.setValue(contents);
+            showNotification(`Archivo abierto: ${currentFileName}`);
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                console.error('Error abriendo archivo:', error);
+                showNotification(`Error: ${error.message}`, true);
+            }
+        }
+    }
+
+    // Guardar archivo - FUNCIÓN CORREGIDA
+async function saveFile() {
+    if (!isFileSystemAccessSupported()) {
+        showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+        return false;
+    }
+
+    try {
+        if (!fileHandle) {
+            return await saveFileAs();
+        }
+        
+        const writable = await fileHandle.createWritable();
+        await writable.write(editor.getValue());
+        await writable.close();
+        
+        // CORRECIÓN: Usar el nombre real del archivo
+        const fileName = fileHandle.name || currentFileName || 'documento_sin_titulo';
+        showNotification(`Archivo guardado: ${fileName}`);
+        return true;
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            // Usuario canceló la operación - NO mostrar error
+            return false;
+        }
+        console.error('Error guardando archivo:', error);
+        showNotification(`Error al guardar: ${error.message}`, true);
+        return false;
+    }
+}
+
+
+    // Guardar como - FUNCIÓN CORREGIDA
+async function saveFileAs() {
+    if (!isFileSystemAccessSupported()) {
+        showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+        return false;
+    }
+
+    try {
+        fileHandle = await window.showSaveFilePicker({
+            types: [{
+                description: 'Archivos de texto',
+                accept: {'text/plain': ['.txt', '.js', '.html', '.css', '.json']}
+            }],
+            suggestedName: currentFileName || 'sin_titulo.txt'
+        });
+        
+        const writable = await fileHandle.createWritable();
+        await writable.write(editor.getValue());
+        await writable.close();
+        
+        // CORRECIÓN: Actualizar nombre y mostrar notificación correcta
+        currentFileName = fileHandle.name;
+        showNotification(`Archivo guardado: ${currentFileName}`);
+        return true;
+        
+    } catch (error) {
+        if (error.name !== 'AbortError') {
+            console.error('Error guardando archivo:', error);
+            showNotification(`Error: ${error.message}`, true);
+        }
+        return false;
+    }
+}
+
+    // FUNCIÓN NUEVO DOCUMENTO - COMPLETAMENTE REVISADA
+async function newDocument() {
+    // Verificar cambios sin guardar
+    if (editor.getValue().trim() && !confirm('¿Crear nuevo documento? Se perderán los cambios no guardados.')) {
+        return;
+    }
+
+    // Resetear estado
+    editor.setValue('');
+    fileHandle = null;
+    currentFileName = 'nuevo_documento.html';
+    isNewFile = true;
+    
+    // Configurar modo HTML por defecto
+    editor.session.setMode("ace/mode/html");
+    document.getElementById('modeSelector').value = 'html';
+    
+    // Actualizar persistencia
+    const config = themeManager.getCurrentConfig();
+    themeManager.saveConfig(config);
+    
+    showNotification('📄 Nuevo documento creado');
+    
+    // Si hay proyecto abierto, ofrecer guardar ahí
+    if (currentProjectHandle) {
+        setTimeout(() => {
+            const saveInProject = confirm('¿Deseas guardar este nuevo documento en el proyecto actual?');
+            if (saveInProject) {
+                createNewFileInProject();
+            }
+        }, 500);
+    }
+}
+
+
+    // FUNCIÓN NUEVO PROYECTO - COMPLETAMENTE REVISADA
+async function newProject() {
+    if (!isFileSystemAccessSupported()) {
+        showNotification('API de archivos no soportada', true);
+        return;
+    }
+
+    try {
+        // Pedir directorio para el proyecto
+        currentProjectHandle = await window.showDirectoryPicker();
+        
+        // Crear estructura básica del proyecto
+        await createDefaultProjectStructure();
+        
+        // Cargar y mostrar estructura
+        await loadProjectStructure();
+        showProjectSidebar();
+        
+        // Cargar index.html en el editor
+        await openIndexHtmlFromProject();
+        
+        showNotification('🚀 Nuevo proyecto creado y cargado');
+        
+    } catch (error) {
+        if (error.name !== 'AbortError') {
+            console.error('Error creando proyecto:', error);
+            showNotification(`❌ Error: ${error.message}`, true);
+        }
+    }
+}
+
+// Función para abrir index.html automáticamente
+async function openIndexHtmlFromProject() {
+    try {
+        const indexHandle = await currentProjectHandle.getFileHandle('index.html');
+        await openFileFromProject(indexHandle, 'index.html');
+    } catch (error) {
+        console.log('index.html no encontrado, creando uno nuevo...');
+    }
+}
+
+
+    // Limpiar editor
+    function clearEditor() {
+        if (!editor.getValue()) return;
+        if (confirm('¿Limpiar editor? Se perderá todo el contenido.')) {
+            editor.setValue('');
+            showNotification('Editor limpiado');
+        }
+    }
+
+    // Crear nueva carpeta
+    async function createNewFolder() {
+        if (!isFileSystemAccessSupported()) {
+            showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+            return;
+        }
+
+        try {
+            if (!currentDirectoryHandle) {
+                currentDirectoryHandle = await window.showDirectoryPicker();
+            }
+            
+            const folderName = prompt('Nombre de la nueva carpeta:', 'Nueva Carpeta');
+            if (!folderName) return;
+            
+            await currentDirectoryHandle.getDirectoryHandle(folderName, { create: true });
+            showNotification(`Carpeta creada: ${folderName}`);
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                console.error('Error creando carpeta:', error);
+                showNotification(`Error: ${error.message}`, true);
+            }
+        }
+    }
+
+    // =====================================
+    // Funciones para manejo de proyectos
+    // =====================================
+
+    async function newProject() {
+        if (!isFileSystemAccessSupported()) {
+            showNotification('La API de acceso a archivos no está soportada en este navegador.', true);
+            return;
+        }
+
+        try {
+            currentProjectHandle = await window.showDirectoryPicker();
+            await loadProjectStructure();
+            // Mostrar sidebar automáticamente al crear proyecto
+            showProjectSidebar();
+            showNotification('Nuevo proyecto creado');
+            
+            await createDefaultProjectStructure();
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                console.error('Error creando proyecto:', error);
+                showNotification(`Error: ${error.message}`, true);
+            }
+        }
+    }
+
+   // FUNCIÓN ABRIR PROYECTO - COMPLETAMENTE REVISADA
+async function openProject() {
+    if (!isFileSystemAccessSupported()) {
+        showNotification('API de archivos no soportada', true);
+        return;
+    }
+
+    try {
+        currentProjectHandle = await window.showDirectoryPicker();
+        
+        // Cargar estructura del proyecto
+        await loadProjectStructure();
+        showProjectSidebar();
+        
+        // Intentar abrir index.html automáticamente
+        await openIndexHtmlFromProject();
+        
+        showNotification('📂 Proyecto abierto correctamente');
+        
+    } catch (error) {
+        if (error.name !== 'AbortError') {
+            console.error('Error abriendo proyecto:', error);
+            showNotification(`❌ Error: ${error.message}`, true);
+        }
+    }
+}
+
+    async function loadProjectStructure() {
+        if (!currentProjectHandle) return;
+
+        const fileExplorer = document.getElementById('file-explorer');
+        fileExplorer.innerHTML = '<div class="loading">Cargando proyecto...</div>';
+
+        projectFiles = [];
+        await loadCollapsedProjectStructure();
+    }
+
+    // =====================================
+    // Funciones para mostrar/ocultar sidebar
+    // =====================================
+
+    function toggleProjectSidebar() {
+        const sidebar = document.getElementById('project-sidebar');
+        const container = document.querySelector('.container');
+        const toggleBtn = document.getElementById('toggle-sidebar');
+        
+        if (currentProjectHandle) {
+            // Si hay proyecto abierto, alternar visibilidad
+            if (sidebar.classList.contains('open')) {
+                hideProjectSidebar();
+            } else {
+                showProjectSidebar();
+            }
+        } else {
+            // Si no hay proyecto, preguntar si abrir uno
+            if (confirm('No hay proyecto abierto. ¿Deseas abrir un proyecto?')) {
+                openProject();
+            }
+        }
+    }
+
+    function showProjectSidebar() {
+        if (!currentProjectHandle) {
+            showNotification('No hay proyecto abierto', true);
+            return;
+        }
+        
+        const sidebar = document.getElementById('project-sidebar');
+        const container = document.querySelector('.container');
+        const toggleBtn = document.getElementById('toggle-sidebar');
+        
+        sidebar.classList.add('open');
+        container.classList.add('with-sidebar');
+        toggleBtn.classList.add('active');
+        
+        showNotification('Explorador de proyecto abierto');
+    }
+
+    function hideProjectSidebar() {
+        const sidebar = document.getElementById('project-sidebar');
+        const container = document.querySelector('.container');
+        const toggleBtn = document.getElementById('toggle-sidebar');
+        
+        sidebar.classList.remove('open');
+        container.classList.remove('with-sidebar');
+        toggleBtn.classList.remove('active');
+        
+        showNotification('Explorador de proyecto cerrado');
+    }
+
+   // FUNCIÓN PARA OCULTAR SIDEBAR (solo con la X)
+function closeProjectSidebar() {
+    console.log('Ocultando sidebar con X...');
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    const toggleIcon = toggleBtn.querySelector('.menu-icon');
+    
+    // Solo ocultar, sin cambiar el icono del toggle
+    sidebar.classList.remove('open');
+    document.querySelector('.container').classList.remove('with-sidebar');
+    
+    // En desktop, ocultar visualmente
+    if (window.innerWidth >= 981) {
+        sidebar.style.visibility = 'hidden';
+        sidebar.style.opacity = '0';
+        sidebar.style.pointerEvents = 'none';
+    }
+    
+    showNotification('Explorador de proyecto ocultado');
+}
+
+// FUNCIÓN PARA MOSTRAR SIDEBAR (solo con el ojito)
+function showProjectSidebar() {
+    if (!currentProjectHandle) {
+        showNotification('No hay proyecto abierto', true);
+        return;
+    }
+    
+    console.log('Mostrando sidebar con ojito...');
+    
+    const sidebar = document.getElementById('project-sidebar');
+    const container = document.querySelector('.container');
+    
+    // Mostrar sidebar
+    sidebar.classList.add('open');
+    container.classList.add('with-sidebar');
+    
+    // En desktop, asegurar visibilidad
+    if (window.innerWidth >= 981) {
+        sidebar.style.visibility = 'visible';
+        sidebar.style.opacity = '1';
+        sidebar.style.pointerEvents = 'auto';
+    }
+    
+    showNotification('Explorador de proyecto visible');
+}
+
+// FUNCIÓN TOGGLE SIMPLIFICADA - SOLO CAMBIA VISIBILIDAD
+function toggleProjectSidebar() {
+    console.log('Toggle sidebar...');
+    
+    const sidebar = document.getElementById('project-sidebar');
+    
+    if (currentProjectHandle) {
+        if (sidebar.classList.contains('open')) {
+            // Si está abierto, ocultarlo
+            closeProjectSidebar();
+        } else {
+            // Si está oculto, mostrarlo
+            showProjectSidebar();
+        }
+    } else {
+        // No hay proyecto abierto
+        if (confirm('No hay proyecto abierto. ¿Deseas abrir un proyecto?')) {
+            openProject();
+        }
+    }
+}
+
+// ELIMINAR todas las funciones de cambiar iconos - ya no son necesarias
+
+
+// Función para verificar cambios sin guardar
+function checkUnsavedChanges() {
+    // Implementar lógica para detectar cambios sin guardar
+    // Por ahora retornamos false como placeholder
+    return false;
+}
+
+    // Listar archivos recursivamente
+    async function listFiles(directoryHandle, container, path = '') {
+        for await (const [name, handle] of directoryHandle.entries()) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.dataset.path = path ? `${path}/${name}` : name;
+            
+            const isDirectory = handle.kind === 'directory';
+            const icon = isDirectory ? '📁' : getFileIcon(name);
+            
+            // Crear la estructura del elemento de archivo/carpeta
+            fileItem.innerHTML = `
+                <span class="folder-toggle">${isDirectory ? '▶' : ''}</span>
+                <span class="file-icon">${icon}</span>
+                <span class="file-name">${name}</span>
+            `;
+
+            if (isDirectory) {
+                fileItem.classList.add('folder-item');
+                
+                // Crear contenedor para hijos
+                const folderChildren = document.createElement('div');
+                folderChildren.className = 'folder-children';
+                fileItem.appendChild(folderChildren);
+                
+                // Agregar evento para expandir/colapsar
+                const toggle = fileItem.querySelector('.folder-toggle');
+                fileItem.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    
+                    if (!fileItem.classList.contains('expanded')) {
+                        // Expandir y cargar contenido
+                        fileItem.classList.add('expanded');
+                        toggle.textContent = '▼';
+                        await listFiles(handle, folderChildren, path ? `${path}/${name}` : name);
+                    } else {
+                        // Colapsar
+                        fileItem.classList.remove('expanded');
+                        toggle.textContent = '▶';
+                    }
+                });
+            } else {
+                // Es un archivo, agregar evento para abrirlo
+                fileItem.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openFileFromProject(handle, name);
+                    
+                    // Remover active de todos y agregar al actual
+                    document.querySelectorAll('.file-item').forEach(item => item.classList.remove('active'));
+                    fileItem.classList.add('active');
+                });
+            }
+
+            container.appendChild(fileItem);
+            projectFiles.push({ name, handle, path, kind: handle.kind });
+        }
+    }
+
+    // Función para cargar estructura colapsada (solo primer nivel)
+    async function loadCollapsedProjectStructure() {
+        if (!currentProjectHandle) return;
+
+        const fileExplorer = document.getElementById('file-explorer');
+        fileExplorer.innerHTML = '';
+
+        projectFiles = [];
+        
+        // Cargar solo el primer nivel
+        for await (const [name, handle] of currentProjectHandle.entries()) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.dataset.path = name;
+            
+            const isDirectory = handle.kind === 'directory';
+            const icon = isDirectory ? '📁' : getFileIcon(name);
+            
+            fileItem.innerHTML = `
+                <span class="folder-toggle">${isDirectory ? '▶' : ''}</span>
+                <span class="file-icon">${icon}</span>
+                <span class="file-name">${name}</span>
+            `;
+
+            if (isDirectory) {
+                fileItem.classList.add('folder-item');
+                
+                const folderChildren = document.createElement('div');
+                folderChildren.className = 'folder-children';
+                fileItem.appendChild(folderChildren);
+                
+                const toggle = fileItem.querySelector('.folder-toggle');
+                fileItem.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    
+                    if (!fileItem.classList.contains('expanded')) {
+                        // Expandir y cargar contenido
+                        fileItem.classList.add('expanded');
+                        toggle.textContent = '▼';
+                        await listFiles(handle, folderChildren, name);
+                    } else {
+                        // Colapsar
+                        fileItem.classList.remove('expanded');
+                        toggle.textContent = '▶';
+                    }
+                });
+            } else {
+                fileItem.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openFileFromProject(handle, name);
+                    document.querySelectorAll('.file-item').forEach(item => item.classList.remove('active'));
+                    fileItem.classList.add('active');
+                });
+            }
+
+            fileExplorer.appendChild(fileItem);
+            projectFiles.push({ name, handle, path: '', kind: handle.kind });
+        }
+    }
+
+    // Obtener icono según extensión del archivo
+    function getFileIcon(filename) {
+        const ext = filename.split('.').pop().toLowerCase();
+        const icons = {
+            'html': '🌐', 'htm': '🌐',
+            'css': '🎨',
+            'js': '📜', 'javascript': '📜',
+            'json': '📋',
+            'md': '📝', 'txt': '📝',
+            'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'svg': '🖼️'
+        };
+        return icons[ext] || '📄';
+    }
+
+    // ===== GESTIÓN MEJORADA DE ARCHIVOS ABIERTOS =====
+let openFiles = new Map();
+let currentFileTab = null;
+
+// REEMPLAZAR la función openFileFromProject con esta versión mejorada:
+async function openFileFromProject(fileHandle, filename) {
+    try {
+        const file = await fileHandle.getFile();
+        const content = await file.text();
+        
+        // Actualizar editor
+        editor.setValue(content);
+        currentFileName = filename;
+        
+        // Actualizar modo según extensión
+        const extension = filename.split('.').pop();
+        const modeMap = {
+            'js': 'javascript',
+            'html': 'html',
+            'css': 'css',
+            'json': 'json',
+            'txt': 'text'
+        };
+        
+        if (modeMap[extension]) {
+            editor.session.setMode(`ace/mode/${modeMap[extension]}`);
+            document.getElementById('modeSelector').value = modeMap[extension];
+        }
+        
+        // Actualizar selección en sidebar
+        updateSidebarSelection(filename);
+        showNotification(`Archivo abierto: ${filename}`);
+        
+    } catch (error) {
+        console.error('Error abriendo archivo del proyecto:', error);
+        showNotification(`Error abriendo archivo: ${error.message}`, true);
+    }
+}
+
+// Función para actualizar selección en sidebar
+function updateSidebarSelection(filename) {
+    // Remover active de todos los elementos
+    document.querySelectorAll('.file-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Agregar active al archivo actual
+    const allFileItems = document.querySelectorAll('.file-item');
+    for (let item of allFileItems) {
+        const itemName = item.querySelector('.file-name').textContent;
+        if (itemName === filename) {
+            item.classList.add('active');
+            // Scroll para hacer visible el elemento
+            item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            break;
+        }
+    }
+}
+
+
+// Actualizar selección en sidebar
+function updateSidebarSelection(filename) {
+    // Remover active de todos los elementos
+    document.querySelectorAll('.file-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Agregar active al archivo actual
+    document.querySelectorAll('.file-item').forEach(item => {
+        const itemName = item.querySelector('.file-name').textContent;
+        if (itemName === filename) {
+            item.classList.add('active');
+        }
+    });
+}
+
+// Modificar el event listener en loadCollapsedProjectStructure
+function setupFileItemEvents(fileItem, handle, name) {
+    fileItem.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        
+        // Si ya está activo, no hacer nada
+        if (fileItem.classList.contains('active')) {
+            return;
+        }
+        
+        await openFileFromProject(handle, name);
+    });
+}
+
+    // Crear estructura por defecto del proyecto
+    async function createDefaultProjectStructure() {
+        if (!currentProjectHandle) return;
+
+        try {
+            // Crear index.html
+            const indexFileHandle = await currentProjectHandle.getFileHandle('index.html', { create: true });
+            const writable = await indexFileHandle.createWritable();
+            await writable.write(`<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Proyecto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>¡Bienvenido a tu nuevo proyecto!</h1>
+    <script src="script.js"></script>
+</body>
+</html>`);
+            await writable.close();
+
+            // Crear archivos CSS y JS vacíos
+            const cssFileHandle = await currentProjectHandle.getFileHandle('style.css', { create: true });
+            const jsFileHandle = await currentProjectHandle.getFileHandle('script.js', { create: true });
+
+            // Recargar estructura
+            await loadProjectStructure();
+
+        } catch (error) {
+            console.error('Error creando estructura del proyecto:', error);
+        }
+    }
+
+    // Guardar archivo actual del proyecto
+    async function saveCurrentFile() {
+        if (!currentFileTab || !openFiles.has(currentFileTab)) return false;
+
+        try {
+            const fileData = openFiles.get(currentFileTab);
+            const writable = await fileData.handle.createWritable();
+            await writable.write(editor.getValue());
+            await writable.close();
+
+            fileData.modified = false;
+            showNotification(`Archivo guardado: ${currentFileTab}`);
+            return true;
+        } catch (error) {
+            console.error('Error guardando archivo del proyecto:', error);
+            showNotification(`Error al guardar: ${error.message}`, true);
+            return false;
+        }
+    }
+
+    // Modificar el evento de cambio del editor para marcar como modificado
+    editor.session.on('change', () => {
+        // Marcar archivo como modificado si está en un proyecto
+        if (currentFileTab && openFiles.has(currentFileTab)) {
+            const fileData = openFiles.get(currentFileTab);
+            fileData.modified = true;
+            // Puedes agregar un indicador visual (asterisco) en la pestaña
+            const tab = document.querySelector(`.editor-tab[data-filename="${currentFileTab}"]`);
+            if (tab && !tab.textContent.includes('*')) {
+                tab.querySelector('span').textContent = currentFileTab + ' *';
+            }
+        }
+    });
+
+    // ===== PERSISTENCIA Y RESTAURACIÓN =====
+    // 1. Persistencia al cerrar
+    window.addEventListener('beforeunload', () => {
+        sessionStorage.setItem('editorContent', editor.getValue());
+        sessionStorage.setItem('editorMode', editor.session.getMode().split('/').pop());
+        sessionStorage.setItem('scrollPosition', editor.session.getScrollTop());
+    });
+
+    // 2. Restaurar estado
+    const savedContent = sessionStorage.getItem('editorContent');
+    const savedMode = sessionStorage.getItem('editorMode');
+    const savedPosition = sessionStorage.getItem('scrollPosition');
+    const copiedCode = sessionStorage.getItem('copiedCode');
+    
+    // Prioridad de restauración
+    if (copiedCode) {
+        editor.setValue(copiedCode);
+        sessionStorage.removeItem('copiedCode');
+        editor.session.setMode("ace/mode/javascript");
+        document.getElementById('modeSelector').value = 'javascript';
+    } else if (savedContent) {
+        editor.setValue(savedContent);
+        if (savedMode) {
+            editor.session.setMode(`ace/mode/${savedMode}`);
+            document.getElementById('modeSelector').value = savedMode;
+        }
+    } else {
+        // Contenido inicial
+        editor.setValue(`<!DOCTYPE html>
+<html>
+<head>
+  <title>Ejemplo</title>
+  <script>
+    console.log("Hola desde el editor");
+  </script>
+</head>
+<body>
+  <h1>¡Consola JavaScript Funcionando!</h1>
+</body>
+</html>`);
+    }
+
+    // 3. Restaurar posición (siempre)
+    if (savedPosition) {
+        setTimeout(() => {
+            editor.session.setScrollTop(parseInt(savedPosition));
+        }, 100);
+    }
+    
+    // 4. Posicionamiento y foco (siempre)
+    setTimeout(() => {
+        editor.gotoLine(0, 0, true);
+        editor.focus();
+    }, 300);
+    
+    // 5. Previsualización (siempre)
+    updatePreview();
+    
+    // ===== CONFIGURACIÓN DE LA CONSOLA =====
+    const consoleOutput = document.getElementById('consoleOutput');
+    const consoleInput = document.getElementById('consoleInput');
+    
+    // Historial de comandos
+    let commandHistory = [];
+    let historyIndex = -1;
+
+    // Limpiar consola
+    document.getElementById('clearConsole').addEventListener('click', () => {
+        consoleOutput.value = '';
+    });
+
+    // Ejecutar código del editor
+    document.getElementById('runButton').addEventListener('click', () => {
+        const language = document.getElementById('modeSelector').value;
+        if (language !== "javascript") {
+            addToConsole("La consola solo ejecuta código JavaScript\nCambia el lenguaje a JavaScript para ejecutar código", "error");
+            return;
+        }
+        executeJavaScriptCode(editor.getValue());
+    });
+
+    // Función para actualizar la previsualización
+    function updatePreview() {
+        const preview = document.getElementById('preview');
+        const code = editor.getValue();
+        preview.srcdoc = code;
+    }
+
+    // Función para añadir texto a la consola
+    function addToConsole(text, type = "normal") {
+        const timestamp = new Date().toLocaleTimeString();
+        const prefix = type === "error" ? `[${timestamp}] ! ERROR: ` :
+                     type === "input" ? `[${timestamp}] > ` : 
+                     `[${timestamp}] `;
+        
+        consoleOutput.value += prefix + text + '\n';
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
+
+    // Función para ejecutar código JavaScript
+    async function executeJavaScriptCode(code) {
+        consoleOutput.value = '';
+        
+        // Crear un contexto aislado
+        const sandbox = {
+            console: {
+                log: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    addToConsole(message);
+                },
+                error: (...args) => {
+                    addToConsole(args.join(' '), "error");
+                }
+            },
+            setTimeout,
+            setInterval,
+            clearTimeout,
+            clearInterval,
+            Promise: window.Promise,
+        };
+
+        // Crear proxy para seguridad
+        const sandboxProxy = new Proxy(sandbox, {
+            has: () => true,
+            get: (target, prop) => {
+                if (prop === Symbol.unscopables) return undefined;
+                return target[prop] || window[prop];
+            }
+        });
+
+        // Función para ejecutar en el contexto aislado
+        const execute = () => {
+            'use strict';
+            return new Promise((resolve) => {
+                const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+                const fn = new AsyncFunction('sandbox', `
+                    with(sandbox) {
+                        try {
+                            ${code}
+                        } catch(e) {
+                            console.error('Error:', e.message);
+                        }
+                    }
+                `);
+                
+                resolve(fn(sandboxProxy));
+            });
+        };
+
+        try {
+            // Ejecutar con timeout controlado
+            await Promise.race([
+                execute(),
+                new Promise((_, reject) => setTimeout(
+                    () => reject(new Error("Timeout excedido (10 segundos)")), 
+                    10000
+                ))
+            ]);
+        } catch (error) {
+            addToConsole(`[Execution Error] ${error.message}`, "error");
+        }
+    }
+
+    // Inicializar canal alterno de consola
+    initializeAlternateConsole();
+});
+
+// Función para inicializar el canal alterno de consola
+function initializeAlternateConsole() {
+    const runButton = document.getElementById('runAlternateConsole');
+    const clearInputButton = document.getElementById('clearAlternateInput');
+    const clearOutputButton = document.getElementById('clearAlternateOutput');
+    const inputTextarea = document.getElementById('alternateConsoleInput');
+    const outputTextarea = document.getElementById('alternateConsoleOutput');
+
+    if (runButton) {
+        runButton.addEventListener('click', () => {
+            const code = inputTextarea.value;
+            if (!code.trim()) return;
+
+            try {
+                // Capturar console.log
+                const originalLog = console.log;
+                const originalError = console.error;
+                let output = '';
+
+                console.log = (...args) => {
+                    output += args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ') + '\n';
+                };
+
+                console.error = (...args) => {
+                    output += 'ERROR: ' + args.join(' ') + '\n';
+                };
+
+                // Ejecutar el código
+                const result = new Function(code)();
+                
+                // Restaurar console.log original
+                console.log = originalLog;
+                console.error = originalError;
+
+                // Mostrar resultado
+                if (result !== undefined) {
+                    output += 'Resultado: ' + String(result) + '\n';
+                }
+
+                outputTextarea.value = output;
+            } catch (error) {
+                outputTextarea.value = 'Error: ' + error.message;
+            }
+        });
+    }
+
+    if (clearInputButton) {
+        clearInputButton.addEventListener('click', () => {
+            inputTextarea.value = '';
+        });
+    }
+
+    if (clearOutputButton) {
+        clearOutputButton.addEventListener('click', () => {
+            outputTextarea.value = '';
+        });
+    }
+}
+
+alternate-console.js
+// ===== EXTENSIÓN PARA EL CANAL ALTERNO DE CONSOLA =====
+
+// Este código es independiente y no modifica la consola principal
+
+
+
+class AlternateConsole {
+
+    constructor() {
+
+        this.initializeElements();
+
+        this.setupEventListeners();
+
+        this.commandHistory = [];
+
+        this.historyIndex = -1;
+
+    }
+
+
+
+    initializeElements() {
+
+        // Elementos del canal alterno
+
+        this.alternateInput = document.getElementById('alternateConsoleInput');
+
+        this.alternateOutput = document.getElementById('alternateConsoleOutput');
+
+        this.runButton = document.getElementById('runAlternateConsole');
+
+        this.clearInputButton = document.getElementById('clearAlternateInput');
+
+        this.clearOutputButton = document.getElementById('clearAlternateOutput');
+
+    }
+
+
+
+    setupEventListeners() {
+
+        // Botón ejecutar
+
+        this.runButton.addEventListener('click', () => {
+
+            this.executeAlternateCode();
+
+        });
+
+
+
+        // Botón limpiar código
+
+        this.clearInputButton.addEventListener('click', () => {
+
+            this.clearAlternateInput();
+
+        });
+
+
+
+        // Botón limpiar respuesta
+
+        this.clearOutputButton.addEventListener('click', () => {
+
+            this.clearAlternateOutput();
+
+        });
+
+
+
+        // Atajos de teclado
+
+        this.alternateInput.addEventListener('keydown', (e) => {
+
+            // Ctrl+Enter para ejecutar
+
+            if (e.ctrlKey && e.key === 'Enter') {
+
+                e.preventDefault();
+
+                this.executeAlternateCode();
+
+            }
+
+            
+
+            // Ctrl+L para limpiar código
+
+            if (e.ctrlKey && e.key === 'l') {
+
+                e.preventDefault();
+
+                this.clearAlternateInput();
+
+            }
+
+            
+
+            // Ctrl+K para limpiar respuesta
+
+            if (e.ctrlKey && e.key === 'k') {
+
+                e.preventDefault();
+
+                this.clearAlternateOutput();
+
+            }
+
+        });
+
+    }
+
+
+
+    executeAlternateCode() {
+
+        const code = this.alternateInput.value.trim();
+
+        
+
+        if (!code) {
+
+            this.addToAlternateOutput('❌ No hay código para ejecutar', 'error');
+
+            return;
+
+        }
+
+
+
+        // Agregar al historial si es diferente al último comando
+
+        if (this.commandHistory.length === 0 || this.commandHistory[this.commandHistory.length - 1] !== code) {
+
+            this.commandHistory.push(code);
+
+            if (this.commandHistory.length > 20) {
+
+                this.commandHistory.shift();
+
+            }
+
+        }
+
+        this.historyIndex = -1;
+
+
+
+        this.addToAlternateOutput('▶️ Ejecutando código...', 'info');
+
+        this.addToAlternateOutput(code, 'code');
+
+
+
+        try {
+
+            // Capturar console.log y otros métodos
+
+            const originalConsole = {
+
+                log: console.log,
+
+                error: console.error,
+
+                warn: console.warn,
+
+                info: console.info
+
+            };
+
+
+
+            // Redirigir console.log al output alterno
+
+            console.log = (...args) => {
+
+                const message = args.map(arg => 
+
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+
+                ).join(' ');
+
+                this.addToAlternateOutput(message, 'log');
+
+                originalConsole.log.apply(console, args);
+
+            };
+
+
+
+            console.error = (...args) => {
+
+                const message = args.map(arg => 
+
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+
+                ).join(' ');
+
+                this.addToAlternateOutput(`❌ ${message}`, 'error');
+
+                originalConsole.error.apply(console, args);
+
+            };
+
+
+
+            console.warn = (...args) => {
+
+                const message = args.map(arg => 
+
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+
+                ).join(' ');
+
+                this.addToAlternateOutput(`⚠️ ${message}`, 'warning');
+
+                originalConsole.warn.apply(console, args);
+
+            };
+
+
+
+            // Ejecutar el código
+
+            const result = new Function(code)();
+
+            
+
+            // Mostrar el resultado si no es undefined
+
+            if (result !== undefined) {
+
+                this.addToAlternateOutput(`✅ Resultado: ${String(result)}`, 'result');
+
+            } else {
+
+                this.addToAlternateOutput('✅ Código ejecutado correctamente', 'success');
+
+            }
+
+
+
+            // Restaurar console original
+
+            console.log = originalConsole.log;
+
+            console.error = originalConsole.error;
+
+            console.warn = originalConsole.warn;
+
+            console.info = originalConsole.info;
+
+
+
+        } catch (error) {
+
+            this.addToAlternateOutput(`❌ Error: ${error.message}`, 'error');
+
+        }
+
+    }
+
+
+
+    addToAlternateOutput(text, type = 'normal') {
+
+        const timestamp = new Date().toLocaleTimeString();
+
+        let formattedText = '';
+
+
+
+        switch (type) {
+
+            case 'error':
+
+                formattedText = `[${timestamp}] ❌ ${text}\n`;
+
+                break;
+
+            case 'warning':
+
+                formattedText = `[${timestamp}] ⚠️ ${text}\n`;
+
+                break;
+
+            case 'info':
+
+                formattedText = `[${timestamp}] ℹ️ ${text}\n`;
+
+                break;
+
+            case 'success':
+
+                formattedText = `[${timestamp}] ✅ ${text}\n`;
+
+                break;
+
+            case 'code':
+
+                formattedText = `[${timestamp}] 📝 Código:\n${text}\n${'-'.repeat(50)}\n`;
+
+                break;
+
+            case 'result':
+
+                formattedText = `[${timestamp}] 💡 ${text}\n`;
+
+                break;
+
+            case 'log':
+
+                formattedText = `[${timestamp}] ${text}\n`;
+
+                break;
+
+            default:
+
+                formattedText = `[${timestamp}] ${text}\n`;
+
+        }
+
+
+
+        this.alternateOutput.value += formattedText;
+
+        this.alternateOutput.scrollTop = this.alternateOutput.scrollHeight;
+
+    }
+
+
+
+    clearAlternateInput() {
+
+        this.alternateInput.value = '';
+
+        this.alternateInput.focus();
+
+        this.addToAlternateOutput('🗑️ Área de código limpiada', 'info');
+
+    }
+
+
+
+    clearAlternateOutput() {
+
+        this.alternateOutput.value = '';
+
+        this.addToAlternateOutput('🧹 Respuesta de consola limpiada', 'info');
+
+    }
+
+}
+
+
+
+// Inicializar el canal alterno cuando el DOM esté listo
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    new AlternateConsole();
+
+});
+
+
+server.js
+
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const { exec } = require('child_process');
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
+app.post('/run', (req, res) => {
+    const { language, code } = req.body;
+    let command;
+
+    if (language === "python") {
+        command = `python -c "${code}"`;
+    } else if (language === "php") {
+        command = `php -r "${code}"`;
+    } else if (language === "sql") {
+        command = `sqlite3 mydatabase.db "${code}"`;
+    }
+
+    if (command) {
+        exec(command, (error, stdout, stderr) => {
+            res.json({ output: error ? stderr : stdout });
+        });
+    } else {
+        res.json({ output: "Lenguaje no soportado en este servidor." });
+    }
+});
+
+app.listen(3000, () => console.log("Servidor ejecutando en puerto 3000"));
+
+
+index.html
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Code Editor 1.0</title>
+
+  <link rel="stylesheet" href="css/index.css">
+
+  <!-- Ace Editor -->
+  <script src="ace/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="ace/src-noconflict/ext-language_tools.js"></script>
+  <script src="js/index.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="imagenes/nexus-code-editor.gif" alt="logo-tipo del proyecto" id="logo">
+      <h1>Nexus Code Editor 1.0</h1>
+      <p>Sube y edita tus archivos HTML, CSS y JavaScript fácilmente</p>
+    </header>
+
+    <div class="ace-controls">
+      <div class="control-group">
+        <label for="themeSelector">Tema:</label>
+        <select id="themeSelector">
+          <option value="dreamweaver">Dreamweaver</option>
+          <option value="github">GitHub</option>
+          <option value="twilight">Twilight</option>
+          <option value="solarized_dark">Solarized Dark</option>
+          <option value="solarized_light">Solarized Light</option>
+          <option value="monokai">Monokai</option>
+          <option value="eclipse">Eclipse</option>
+          <option value="crimson_editor">Crimson Editor</option>
+          <option value="clouds">Clouds</option>
+          <option value="cloud9_day">Cloud9 Day</option>
+          <option value="clouds_midnight">Clouds Midnight</option>
+          <option value="cobalt">Cobalt</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="modeSelector">Lenguaje:</label>
+        <select id="modeSelector">
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="javascript">JavaScript</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label><input type="checkbox" id="lineNumbers" checked> Números de línea</label>
+        <label><input type="checkbox" id="wrapMode" checked> Ajuste de línea</label>
+      </div>
+
+      <div class="control-group">
+        <label for="fontSize">Tamaño fuente:</label>
+        <input type="number" id="fontSize" min="10" max="24" value="14">
+        <ul class="menu">
+          <li class="menu-item">
+            <a href="tutorial-js.html" id="tutorial-btn">
+              <sp        an class="menu-icon">📚</span> Tutorial JS
+            </a>
+          </li>
+        </ul>
+       </div>
+       </div>
+
+      <nav id="nav-bar">
+      <ul class="menu">
+        <li class="menu-item dropdown">
+          <a href="#"><span class="menu-icon">≡</span> Archivo</a>
+          <div class="dropdown-content">
+            <a id="abrir-documento" href="#"><span class="menu-icon">📂</span> Abrir documento</a>
+            <a id="guardar" href="#"><span class="menu-icon">💾</span> Guardar</a>
+            <a id="guardar-como" href="#"><span class="menu-icon">🔄</span> Guardar como</a>
+            <a id="nuevo-documento" href="#"><span class="menu-icon">📄</span> Nuevo documento</a>
+            <a id="nuevo-proyecto" href="#"><span class="menu-icon">🆕</span> Nuevo Proyecto</a>
+            <a id="abrir-proyecto" href="#"><span class="menu-icon">📂</span> Abrir Proyecto</a>
+            <a id="limpiar-editor" href="#"><span class="menu-icon">🧹</span> Limpiar Editor</a>
+            <a id="normalizar-proyecto" href="#"><span class="menu-icon">🔄</span> Normalizar Proyecto</a>
+            <a id="go-to-terminal" href="#"><span class="menu-icon">🌐</span> Terminal WebContainer</a>
+          </div>
+        </li>
+        <li class="menu-item">
+          <a href="#" id="toggle-sidebar">
+            <span class="menu-icon">📁</span> Explorador
+          </a>
+        </li>
+      </ul>
+    </nav>
+     
+     <!-- Sidebar de proyecto -->
+    <div id="project-sidebar" class="project-sidebar">
+    <div class="sidebar-header">
+        <h3>Explorador de Proyecto</h3>
+        <button id="close-sidebar">×</button>
+    </div>
+    <div id="file-explorer" class="file-explorer"></div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div id="main-content" class="main-content">
+      <div class="editor-container">
+        <div id="editor"></div>
+      </div>
+      
+      <div class="console-container">
+        <h2>Consola JavaScript</h2>
+        <textarea id="consoleOutput" readonly></textarea>
+        <div class="console-buttons">
+          <button id="runButton" class="button">Ejecutar Código</button>
+          <button id="clearConsole" class="button">Limpiar Consola</button>
+        </div>
+      </div>
+
+      <!-- Canal alterno para la consola JS -->
+      <div class="alternate-console-container">
+        <h2>Canal Alterno Consola JS</h2>
+        <div class="alternate-console-input">
+          <textarea id="alternateConsoleInput" rows="6" placeholder="Escribe código JavaScript aquí..."></textarea>
+        </div>
+        <div class="alternate-console-buttons">
+          <button id="runAlternateConsole" class="alt-button run-alt">▶ Ejecutar</button>
+          <button id="clearAlternateInput" class="alt-button clear-alt">🗑️ Limpiar Código</button>
+          <button id="clearAlternateOutput" class="alt-button output-alt">🧹 Limpiar Respuesta</button>
+        </div>
+        <div class="alternate-console-output">
+          <textarea id="alternateConsoleOutput" readonly placeholder="Aquí aparecerán los resultados..."></textarea>
+        </div>
+      </div>
+      
+      <div id="preview-container" class="preview-container">
+        <h2>Previsualización en Tiempo Real</h2>
+        <iframe id="preview"></iframe>
+      </div>
+    </div>
+  </div>
+
+<!-- Botones flotantes CORREGIDOS -->
+<div class="floating-buttons">
+    <button onclick="scrollToSection('nav-bar')" title="Ir al Menú">🧑‍💻</button>
+    <button onclick="scrollToSection('consoleOutput')" title="Ir a la Consola JS">🖥️</button>
+    <button onclick="scrollToSection('preview-container')" title="Ir al Previsualizador">🌐</button>
+    <button onclick="abrirEnNavegador()" title="Abrir en Navegador">🚀</button>
+</div>
+
+<script>
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function abrirEnNavegador() {
+      const editor = ace.edit("editor");
+      const contenido = editor.getValue();
+
+      const nuevaVentana = window.open("", "_blank");
+      if (nuevaVentana) {
+        nuevaVentana.document.open();
+        nuevaVentana.document.write(contenido);
+        nuevaVentana.document.close();
+      } else {
+        alert("No se pudo abrir una nueva ventana. Verifica que el navegador no esté bloqueando ventanas emergentes.");
+      }
+    }
+
+    document.getElementById('go-to-terminal').addEventListener('click', function(e) {
+      e.preventDefault();
+      window.open('deep-terminal-pro/index.html', '_blank');
+    });
+  </script>
+</body>
+</html>
+
+Por último el HTML; amigo yo creo que es mejor que las dos consolas estén independientes del archivo JS principal.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

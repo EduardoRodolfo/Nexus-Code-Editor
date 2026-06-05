@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor de Código Pro con Botones Flotantes</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #1e1f29;
+      color: #e4e4e6;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-gap: 25px;
+    }
+
+    header {
+      text-align: center;
+      padding: 25px;
+      background: linear-gradient(135deg, #2c3e50, #4a6491);
+      color: white;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .ace-controls {
+      background-color: #2a2b36;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .control-group label {
+      font-weight: 600;
+      color: #a6c1ee;
+    }
+
+    select, input[type="number"] {
+      padding: 10px 15px;
+      border: 1px solid #3d3f50;
+      border-radius: 6px;
+      background-color: #252631;
+      color: #e4e4e6;
+      font-size: 15px;
+      transition: border-color 0.3s;
+    }
+
+    select:focus, input[type="number"]:focus {
+      border-color: #4d8ff9;
+      outline: none;
+    }
+
+    .control-group label input[type="checkbox"] {
+      margin-right: 8px;
+      accent-color: #4d8ff9;
+    }
+
+    nav {
+      background-color: #2a2b36;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .menu {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    .menu-item {
+      position: relative;
+    }
+
+    .menu-item a {
+      text-decoration: none;
+      color: #a6c1ee;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .menu-item a:hover {
+      background-color: #3a3c4e;
+      color: #4d8ff9;
+    }
+
+    .menu-icon {
+      font-size: 1.1em;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #2a2b36;
+      min-width: 220px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      z-index: 100;
+      border-radius: 8px;
+      overflow: hidden;
+      top: 100%;
+      left: 0;
+      border: 1px solid #3d3f50;
+    }
+
+    .dropdown-content a {
+      padding: 12px 18px;
+      display: block;
+      color: #e4e4e6;
+      font-weight: normal;
+      border-bottom: 1px solid #3d3f50;
+    }
+
+    .dropdown-content a:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #3a3c4e;
+      color: #4d8ff9;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    #editor {
+      height: 400px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border: 1px solid #3d3f50;
+      font-size: 16px;
+    }
+
+    .console-container, .preview-container {
+      background-color: #2a2b36;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .console-container h2, .preview-container h2 {
+      margin-bottom: 18px;
+      color: #a6c1ee;
+      border-bottom: 2px solid #3d3f50;
+      padding-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #consoleOutput {
+      width: 100%;
+      height: 180px;
+      padding: 15px;
+      background-color: #1c1d25;
+      color: #e4e4e6;
+      border: 1px solid #3d3f50;
+      border-radius: 8px;
+      font-family: 'Fira Code', monospace;
+      font-size: 15px;
+      resize: vertical;
+    }
+
+    .console-input-container {
+      margin-top: 15px;
+    }
+
+    #consoleInput {
+      width: 100%;
+      padding: 12px 15px;
+      background-color: #1c1d25;
+      color: #e4e4e6;
+      border: 1px solid #3d3f50;
+      border-radius: 6px;
+      font-family: 'Fira Code', monospace;
+      font-size: 15px;
+      transition: border-color 0.3s;
+    }
+
+    #consoleInput:focus {
+      border-color: #4d8ff9;
+      outline: none;
+    }
+
+    .console-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .button {
+      padding: 12px 25px;
+      background: linear-gradient(to right, #4d8ff9, #3a7de0);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .button:hover {
+      background: linear-gradient(to right, #3a7de0, #2d6bc8);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(77, 143, 249, 0.3);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    #preview {
+      width: 100%;
+      height: 450px;
+      border: 1px solid #3d3f50;
+      border-radius: 8px;
+      background-color: white;
+    }
+
+    /* ------------------------- */
+    /* BOTONES FLOTANTES */
+    /* ------------------------- */
+    .floating-buttons {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 1000;
+    }
+
+    .floating-button {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4d8ff9, #2d6bc8);
+      color: white;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .floating-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateX(-100%);
+      transition: transform 0.4s;
+    }
+
+    .floating-button:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 8px 20px rgba(77, 143, 249, 0.4);
+    }
+
+    .floating-button:hover::before {
+      transform: translateX(100%);
+    }
+
+    .floating-button::after {
+      content: attr(title);
+      position: absolute;
+      top: -45px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .floating-button:hover::after {
+      opacity: 1;
+    }
+
+    #btn-console {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+
+    #btn-console:hover {
+      box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
+    }
+
+    #btn-preview {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+
+    #btn-preview:hover {
+      box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+    }
+
+    /* ------------------------- */
+    /* EFECTO DE PULSO */
+    /* ------------------------- */
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(77, 143, 249, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 15px rgba(77, 143, 249, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(77, 143, 249, 0);
+      }
+    }
+
+    /* ------------------------- */
+    /* RESPONSIVE */
+    /* ------------------------- */
+    @media (max-width: 992px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      
+      .ace-controls {
+        grid-template-columns: 1fr;
+      }
+      
+      #editor {
+        height: 350px;
+      }
+      
+      #preview {
+        height: 400px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.2rem;
+      }
+      
+      .menu {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .floating-buttons {
+        bottom: 20px;
+        right: 20px;
+      }
+      
+      .floating-button {
+        width: 55px;
+        height: 55px;
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-code"></i> Editor de Código Pro</h1>
+      <p>Sube y edita tus archivos HTML, CSS y JavaScript fácilmente</p>
+    </header>
+
+    <div class="ace-controls">
+      <div class="control-group">
+        <label for="themeSelector"><i class="fas fa-palette"></i> Tema:</label>
+        <select id="themeSelector">
+          <option value="dreamweaver">Dreamweaver</option>
+          <option value="github">GitHub</option>
+          <option value="twilight">Twilight</option>
+          <option value="solarized_dark">Solarized Dark</option>
+          <option value="solarized_light">Solarized Light</option>
+          <option value="monokai">Monokai</option>
+          <option value="eclipse">Eclipse</option>
+          <option value="crimson_editor">Crimson Editor</option>
+          <option value="clouds">Clouds</option>
+          <option value="cloud9_day">Cloud9 Day</option>
+          <option value="clouds_midnight">Clouds Midnight</option>
+          <option value="cobalt">Cobalt</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="modeSelector"><i class="fas fa-language"></i> Lenguaje:</label>
+        <select id="modeSelector">
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="javascript">JavaScript</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label><input type="checkbox" id="lineNumbers" checked> <i class="fas fa-list-ol"></i> Números de línea</label>
+        <label><input type="checkbox" id="wrapMode" checked> <i class="fas fa-text-width"></i> Ajuste de línea</label>
+      </div>
+
+      <div class="control-group">
+        <label for="fontSize"><i class="fas fa-text-height"></i> Tamaño fuente:</label>
+        <input type="number" id="fontSize" min="10" max="24" value="14">
+      </div>
+      <div>
+        <ul class="menu">
+          <li class="menu-item">
+            <a href="tutorial-js.html" id="tutorial-btn">
+              <span class="menu-icon"><i class="fas fa-book"></i></span> Tutorial JS
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <nav>
+      <ul class="menu">
+        <li class="menu-item dropdown">
+          <a href="#"><span class="menu-icon"><i class="fas fa-bars"></i></span> Archivo</a>
+          <div class="dropdown-content">
+            <a id="abrir-documento" href="#"><span class="menu-icon"><i class="fas fa-folder-open"></i></span> Abrir documento</a>
+            <a id="guardar" href="#"><span class="menu-icon"><i class="fas fa-save"></i></span> Guardar</a>
+            <a id="guardar-como" href="#"><span class="menu-icon"><i class="fas fa-copy"></i></span> Guardar como</a>
+            <a id="nuevo-documento" href="#"><span class="menu-icon"><i class="fas fa-file"></i></span> Nuevo documento</a>
+            <a id="nueva-carpeta" href="#"><span class="menu-icon"><i class="fas fa-folder-plus"></i></span> Nueva carpeta</a>
+            <a id="limpiar-editor" href="#"><span class="menu-icon"><i class="fas fa-broom"></i></span> Limpiar Editor</a>
+          </div>
+        </li>
+      </ul>
+    </nav>
+     
+    <div id="editor"></div>
+    
+    <div class="console-container" id="console-section">
+      <h2><i class="fas fa-terminal"></i> Consola JavaScript</h2>
+      <textarea id="consoleOutput" readonly></textarea>
+      <div class="console-input-container">
+        <input type="text" id="consoleInput" placeholder="Escribe comandos aquí (presiona Enter)">
+      </div>
+      <div class="console-buttons">
+        <button id="runButton" class="button"><i class="fas fa-play"></i> Ejecutar Código</button>
+        <button id="clearConsole" class="button"><i class="fas fa-trash"></i> Limpiar Consola</button>
+      </div>
+    </div>
+    
+    <div class="preview-container" id="preview-section">
+      <h2><i class="fas fa-eye"></i> Previsualización en Tiempo Real</h2>
+      <iframe id="preview"></iframe>
+    </div>
+  </div>
+  
+  <!-- Botones flotantes -->
+  <div class="floating-buttons">
+    <button class="floating-button pulse" id="btn-editor" title="Ir al Editor">
+      <i class="fas fa-code"></i>
+    </button>
+    <button class="floating-button" id="btn-console" title="Ir a la Consola">
+      <i class="fas fa-terminal"></i>
+    </button>
+    <button class="floating-button" id="btn-preview" title="Ir al Previsualizador">
+      <i class="fas fa-desktop"></i>
+    </button>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/ace.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/ext-language_tools.min.js"></script>
+  <script>
+    // Inicialización del editor Ace
+    const editor = ace.edit("editor");
+    editor.setTheme("ace/theme/dreamweaver");
+    editor.session.setMode("ace/mode/html");
+    editor.setFontSize(14);
+    editor.setOptions({
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: true,
+      enableSnippets: true,
+      showLineNumbers: true,
+      wrap: true
+    });
+
+    // Configuración de controles
+    document.getElementById('themeSelector').addEventListener('change', function() {
+      editor.setTheme(`ace/theme/${this.value}`);
+    });
+
+    document.getElementById('modeSelector').addEventListener('change', function() {
+      editor.session.setMode(`ace/mode/${this.value}`);
+    });
+
+    document.getElementById('lineNumbers').addEventListener('change', function() {
+      editor.setOption("showLineNumbers", this.checked);
+    });
+
+    document.getElementById('wrapMode').addEventListener('change', function() {
+      editor.setOption("wrap", this.checked);
+    });
+
+    document.getElementById('fontSize').addEventListener('change', function() {
+      editor.setFontSize(this.value + "px");
+    });
+
+    // Botones flotantes
+    document.getElementById('btn-editor').addEventListener('click', function() {
+      document.getElementById('editor').scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+
+    document.getElementById('btn-console').addEventListener('click', function() {
+      document.getElementById('console-section').scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+
+    document.getElementById('btn-preview').addEventListener('click', function() {
+      document.getElementById('preview-section').scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+
+    // Actualización en tiempo real
+    function updatePreview() {
+      const preview = document.getElementById('preview');
+      const content = editor.getValue();
+      preview.srcdoc = content;
+    }
+
+    editor.session.on('change', function() {
+      updatePreview();
+    });
+
+    // Ejecutar código en consola
+    document.getElementById('runButton').addEventListener('click', function() {
+      try {
+        const code = editor.getValue();
+        const consoleOutput = document.getElementById('consoleOutput');
+        
+        // Ejecutar JavaScript
+        const result = eval(code);
+        
+        // Mostrar resultado
+        consoleOutput.value += `> ${code}\n`;
+        consoleOutput.value += `Resultado: ${result}\n\n`;
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+      } catch (error) {
+        const consoleOutput = document.getElementById('consoleOutput');
+        consoleOutput.value += `Error: ${error.message}\n\n`;
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+      }
+    });
+
+    // Limpiar consola
+    document.getElementById('clearConsole').addEventListener('click', function() {
+      document.getElementById('consoleOutput').value = '';
+    });
+
+    // Ejecutar comando desde input
+    document.getElementById('consoleInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const command = this.value.trim();
+        if (command) {
+          const consoleOutput = document.getElementById('consoleOutput');
+          try {
+            const result = eval(command);
+            consoleOutput.value += `> ${command}\n`;
+            consoleOutput.value += `${result}\n\n`;
+          } catch (error) {
+            consoleOutput.value += `Error: ${error.message}\n\n`;
+          }
+          consoleOutput.scrollTop = consoleOutput.scrollHeight;
+          this.value = '';
+        }
+      }
+    });
+
+    // Actualización inicial
+    editor.setValue(`<!DOCTYPE html>
+<html>
+<head>
+  <title>Mi página</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      padding: 30px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    h1 {
+      color: #4fc3f7;
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+    }
+    p {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      margin-bottom: 30px;
+    }
+    .btn {
+      background: linear-gradient(to right, #4fc3f7, #3a7de0);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>¡Bienvenido al Editor de Código Pro!</h1>
+    <p>Edita este código HTML en el editor para ver los cambios en tiempo real en la previsualización. Utiliza los botones flotantes para navegar rápidamente entre las secciones.</p>
+    <button class="btn" onclick="this.innerHTML='¡Funciona!'">Haz clic aquí</button>
+  </div>
+</body>
+</html>`, 1);
+
+    updatePreview();
+    
+    // Simular funcionalidad de otros botones
+    document.getElementById('limpiar-editor').addEventListener('click', function() {
+      if(confirm('¿Estás seguro de que quieres limpiar el editor?')) {
+        editor.setValue('', 1);
+        updatePreview();
+      }
+    });
+    
+    document.getElementById('nuevo-documento').addEventListener('click', function() {
+      editor.setValue('<!DOCTYPE html>\n<html>\n<head>\n  <title>Nuevo Documento</title>\n</head>\n<body>\n  \n</body>\n</html>', 1);
+      updatePreview();
+    });
+  </script>
+</body>
+</html>

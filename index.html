@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Code Editor 1.0</title>
+<link rel="stylesheet" href="css/index.css">
+<!-- XTerm.js Terminal -->
+<link rel="stylesheet" href="js/xterm/xterm.css">
+<link rel="stylesheet" href="fontawesome-free-7.2.0-web/css/all.css">
+
+<!-- Ace Editor -->
+<script src="ace/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="ace/src-noconflict/ext-language_tools.js"></script>
+
+<!-- Traductor -->
+<script src="lang/translator.js"></script>
+
+</head>
+<body>
+<div class="container">
+  <header>
+    <img src="imagenes/nexus-code-editor.gif" alt="logo-tipo del proyecto" id="logo">
+    <div>
+      <h1 data-i18n="app.title">Nexus Code Editor 1.0</h1>
+      <p data-i18n="app.subtitle">Sube y edita tus archivos HTML, CSS y JavaScript fácilmente</p>
+    </div>
+
+  </header>
+
+  <div class="ace-controls">
+    <div class="control-group">
+      <label for="themeSelector" data-i18n="editor.theme">Tema:</label>
+      <select id="themeSelector">
+        <option value="dreamweaver">Dreamweaver</option>
+        <option value="github">GitHub</option>
+        <option value="twilight">Twilight</option>
+        <option value="solarized_dark">Solarized Dark</option>
+        <option value="solarized_light">Solarized Light</option>
+        <option value="monokai">Monokai</option>
+        <option value="eclipse">Eclipse</option>
+        <option value="crimson_editor">Crimson Editor</option>
+        <option value="clouds">Clouds</option>
+        <option value="cloud9_day">Cloud9 Day</option>
+        <option value="clouds_midnight">Clouds Midnight</option>
+        <option value="cobalt">Cobalt</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label for="modeSelector" data-i18n="editor.language">Lenguaje:</label>
+      <select id="modeSelector">
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="javascript">JavaScript</option>
+        <option value="python">Python</option>
+        <option value="java">Java</option>
+        <option value="c_cpp">C/C++</option>
+        <option value="php">PHP</option>
+        <option value="ruby">Ruby</option>
+        <option value="go">Go</option>
+        <option value="rust">Rust</option>
+        <option value="jsx">JSX (React)</option>
+        <option value="typescript">TypeScript</option>
+        <option value="vue">Vue.js</option>
+        <option value="sass">SASS</option>
+        <option value="less">LESS</option>
+        <option value="stylus">Stylus</option>
+        <option value="markdown">Markdown</option>
+        <option value="json">JSON</option>
+        <option value="xml">XML</option>
+        <option value="yaml">YAML</option>
+        <option value="bash">Bash/Shell</option>
+        <option value="powershell">PowerShell</option>
+        <option value="batchfile">Batch</option>
+        <option value="perl">Perl</option>
+        <option value="lua">Lua</option>
+        <option value="sql">SQL</option>
+        <option value="mysql">MySQL</option>
+        <option value="pgsql">PostgreSQL</option>
+        <option value="plsql">PL/SQL</option>
+        <option value="ini">INI</option>
+        <option value="dockerfile">Dockerfile</option>
+        <option value="makefile">Makefile</option>
+        <option value="nginx">Nginx</option>
+        <option value="apache_conf">Apache Config</option>
+        <option value="swift">Swift</option>
+        <option value="kotlin">Kotlin</option>
+        <option value="scala">Scala</option>
+        <option value="dart">Dart</option>
+        <option value="elixir">Elixir</option>
+        <option value="clojure">Clojure</option>
+        <option value="haskell">Haskell</option>
+        <option value="erlang">Erlang</option>
+        <option value="ocaml">OCaml</option>
+        <option value="fsharp">F#</option>
+        <option value="abap">ABAP</option>
+        <option value="ada">Ada</option>
+        <option value="actionscript">ActionScript</option>
+        <option value="c9search">C9Search</option>
+        <option value="coffee">CoffeeScript</option>
+        <option value="crystal">Crystal</option>
+        <option value="csharp">C#</option>
+        <option value="d">D</option>
+        <option value="diff">Diff</option>
+        <option value="ejs">EJS</option>
+        <option value="fortran">Fortran</option>
+        <option value="fsl">FSL</option>
+       <option value="gcode">GCode</option>
+<option value="graphqlschema">GraphQL</option>
+<option value="groovy">Groovy</option>
+<option value="haml">HAML</option>
+<option value="handlebars">Handlebars</option>
+<option value="haxe">Haxe</option>
+<option value="html_elixir">HTML (Elixir)</option>
+<option value="html_ruby">HTML (Ruby)</option>
+<option value="jade">Jade</option>
+<option value="jsp">JSP</option>
+<option value="jssm">JSSM</option>
+<option value="latex">LaTeX</option>
+<option value="livescript">LiveScript</option>
+<option value="logiql">LogiQL</option>
+<option value="lsl">LSL</option>
+<option value="luapage">LuaPage</option>
+<option value="matlab">MATLAB</option>
+<option value="mediawiki">MediaWiki</option>
+<option value="mel">MEL</option>
+<option value="mysql">MySQL</option>
+<option value="nim">Nim</option>
+<option value="nix">Nix</option>
+<option value="nsis">NSIS</option>
+<option value="nunjucks">Nunjucks</option>
+<option value="objectivec">Objective-C</option>
+<option value="pascal">Pascal</option>
+<option value="pgsql">PostgreSQL</option>
+<option value="php_laravel_blade">PHP Laravel Blade</option>
+<option value="plsql">PL/SQL</option>
+        <option value="powershell">PowerShell</option>
+        <option value="praat">Praat</option>
+        <option value="prisma">Prisma</option>
+        <option value="prolog">Prolog</option>
+        <option value="properties">Properties</option>
+        <option value="protobuf">Protobuf</option>
+        <option value="puppet">Puppet</option>
+        <option value="qml">QML</option>
+        <option value="r">R</option>
+        <option value="razor">Razor</option>
+        <option value="red">Red</option>
+        <option value="redshift">Redshift</option>
+        <option value="rhtml">RHTML</option>
+        <option value="robot">Robot</option>
+        <option value="rst">reStructuredText</option>
+        <option value="sass">SASS</option>
+        <option value="scad">SCAD</option>
+        <option value="scheme">Scheme</option>
+        <option value="scss">SCSS</option>
+        <option value="sh">Shell</option>
+        <option value="slim">Slim</option>
+        <option value="smarty">Smarty</option>
+        <option value="soy_template">Soy Template</option>
+        <option value="space">Space</option>
+        <option value="sparql">SPARQL</option>
+        <option value="stylus">Stylus</option>
+        <option value="svg">SVG</option>
+        <option value="tcl">Tcl</option>
+        <option value="terraform">Terraform</option>
+        <option value="tex">TeX</option>
+        <option value="text">Text</option>
+        <option value="textile">Textile</option>
+        <option value="toml">TOML</option>
+        <option value="tsx">TSX</option>
+        <option value="twig">Twig</option>
+        <option value="vala">Vala</option>
+        <option value="vbscript">VBScript</option>
+        <option value="velocity">Velocity</option>
+        <option value="verilog">Verilog</option>
+        <option value="vhdl">VHDL</option>
+        <option value="visualforce">Visualforce</option>
+        <option value="wollok">Wollok</option>
+        <option value="xquery">XQuery</option>
+        <option value="zeek">Zeek</option>
+        <option value="zig">Zig</option>
+
+        <option value="plain_text">Texto Plano</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label data-i18n="editor.lineNumbers"><input type="checkbox" id="lineNumbers" checked> Números de línea</label>
+      <label data-i18n="editor.wrapMode"><input type="checkbox" id="wrapMode" checked> Ajuste de línea</label>
+    </div>
+    <div class="control-group">
+      <label for="fontSize" data-i18n="editor.fontSize">Tamaño fuente:</label>
+      <input type="number" id="fontSize" min="10" max="24" value="14">
+    </div>
+  </div>
+
+  <nav id="nav-bar">
+    <ul class="menu">
+           <li class="menu-item dropdown tutorial-dropdown">
+        <a href="#" data-i18n="menu.tutorials"><span class="menu-icon">📚</span> Tutoriales ▾</a>
+        <div class="dropdown-content tutorial-dropdown-content">
+          <a href="tutorial-logica-prog.html" data-i18n="tutorials.logic">📖 Lógica de Programación</a>
+          <a href="tutorial-javascript.html" data-i18n="tutorials.javascript">📖 JavaScript</a>
+          <a href="tutorial-d-html.html" data-i18n="tutorials.html">📖 HTML</a>
+          <a href="tutorial-css.html" data-i18n="tutorials.css">📖 CSS</a>
+          <a href="tutorial-js.html" data-i18n="tutorials.jsMedium">📖 JavaScript Nivel Medio</a>
+        </div>
+      </li>
+      <li class="menu-item dropdown">
+        <a href="#" data-i18n="menu.file"><span class="menu-icon">≡</span> Archivo</a>
+        <div class="dropdown-content">
+          <!-- Separador y opciones de librerías -->
+<div style="border-top:1px solid #2a3a5c; margin:5px 0;"></div>
+<span style="color:#8892b0; font-size:0.75em; padding:5px 15px; display:block;" data-i18n="menu.insertLibs">📦 Insertar Librerías:</span>
+<a href="#" onclick="insertarLibrerias('cdn'); return false;" data-i18n="menu.libsCDN"><span class="menu-icon">🌐</span> Bootstrap+FA vía CDN</a>
+<a href="#" onclick="insertarLibrerias('local'); return false;" data-i18n="menu.libsLocal"><span class="menu-icon">📁</span> Bootstrap+FA Local</a>
+          <a id="abrir-documento" href="#" data-i18n="menu.open"><span class="menu-icon">📂</span> Abrir documento</a>
+          <a id="guardar" href="#" data-i18n="menu.save"><span class="menu-icon">💾</span> Guardar</a>
+          <a id="guardar-como" href="#" data-i18n="menu.saveAs"><span class="menu-icon">🔄</span> Guardar como</a>
+          <a id="nuevo-documento" href="#" data-i18n="menu.new"><span class="menu-icon">📄</span> Nuevo documento</a>
+          <a id="limpiar-editor" href="#" data-i18n="menu.clear"><span class="menu-icon">🧹</span> Limpiar Editor</a>
+          <a href="#terminal-container" data-i18n="menu.terminal"><span class="menu-icon">🌐</span> Terminal</a>
+          <a id="open-filemanager" href="../tinyfilemanager/tinyfilemanager.php" target="_blank" data-i18n="menu.fileManager"><span class="menu-icon">📁</span> Gestor de Archivos</a>
+        
+          <a href="bootstrap.html" target="_blank" rel="noopener" data-i18n="menu.bootstrapLocal"><span class="menu-icon"></span>Bootstrap Version local</a>
+        
+          <a href="fontawesome.html" target="_blank" rel="noopener" data-i18n="menu.fontawesomeLocal"><span class="menu-icon"></span>Font Awesome Version local</a>
+          <a id="nueva-instancia" href="#" target="_blank" data-i18n="menu.newInstance"><span class="menu-icon">🪟</span> Nueva Instancia</a>
+        </div>
+      </li>
+      <li class="menu-item">
+        <a href="labs.html" target="_blank" data-i18n="menu.labs"><span class="menu-icon">🔬</span> Laboratorios</a>
+      </li>
+      <li class="menu-item">
+        <a href="laboratorio-linux.html" target="_blank" data-i18n="menu.linuxLab"><span class="menu-icon">🐧</span> Linux Lab</a>
+      </li>
+      <li class="menu-item">
+        <a href="api-deep.html" target="_blank" data-i18n="menu.apiDeep"><span class="menu-icon">🤖</span> API Deep</a>
+      </li>
+       <li class="menu-item">
+        <a href="multi-ai.html" target="_blank" data-i18n="menu.apiIas"><span class="menu-icon">🤖</span> API IAs</a>
+      </li>
+      <li class="menu-item">
+        <a href="nexus-ia-bridge.html" target="_blank" data-i18n="menu.iasLocales"><span class="menu-icon">🧠</span> IAs Locales</a>
+      </li>
+       <li class="menu-item">
+        <a href="http://www.w3schools.com" target="_blank" data-i18n="menu.w3schools"><span class="menu-icon"> <i class="fas fa-graduation-cap"></i>
+</span> W3Schools.com</a>
+      </li>
+      <li class="menu-item">
+        <a href="empaquetar.html" target="_blank" data-i18n="menu.packageWeb"><span class="menu-icon"><i class="fas fa-cog"></i></span> Empaqueta tu web</a>
+      </li>
+      <li class="menu-item">
+        <a href="pagos.html" target="_blank" data-i18n="menu.buyLicense"><span class="menu-icon"><i class="fas fa-key"></i></span> comprar licencia</a>
+      </li>
+     
+      <li class="menu-item dropdown">
+    <a href="#" data-i18n="menu.shortcuts"><span class="menu-icon">⌨️</span> Atajos ▾</a>
+    <div class="dropdown-content atajos-dropdown">
+        <div class="atajos-header" data-i18n="shortcuts.title">⚡ Atajos de Teclado - Nexus Editor</div>
+        
+        <div class="atajos-categoria" data-i18n="shortcuts.editing">📝 Edición</div>
+        <div class="atajo-item"><kbd>Ctrl + Z</kbd> <span data-i18n="shortcuts.undo">Deshacer</span></div>
+        <div class="atajo-item"><kbd>Ctrl + Shift + Z</kbd> <span data-i18n="shortcuts.redo">Rehacer</span></div>
+        <div class="atajo-item"><kbd>Ctrl + X</kbd> <span data-i18n="shortcuts.cutLine">Cortar línea</span></div>
+        <div class="atajo-item"><kbd>Ctrl + C</kbd> <span data-i18n="shortcuts.copyLine">Copiar línea</span></div>
+        <div class="atajo-item"><kbd>Ctrl + V</kbd> <span data-i18n="shortcuts.paste">Pegar</span></div>
+        <div class="atajo-item"><kbd>Ctrl + D</kbd> <span data-i18n="shortcuts.duplicateLine">Duplicar línea</span></div>
+        <div class="atajo-item"><kbd>Ctrl + /</kbd> <span data-i18n="shortcuts.comment">Comentar/Descomentar</span></div>
+        <div class="atajo-item"><kbd>Tab</kbd> <span data-i18n="shortcuts.indent">Indentar</span></div>
+        <div class="atajo-item"><kbd>Shift + Tab</kbd> <span data-i18n="shortcuts.unindent">Desindentar</span></div>
+        
+        <div class="atajos-categoria" data-i18n="shortcuts.navigation">🔍 Navegación</div>
+        <div class="atajo-item"><kbd>Ctrl + F</kbd> <span data-i18n="shortcuts.find">Buscar</span></div>
+        <div class="atajo-item"><kbd>Ctrl + H</kbd> <span data-i18n="shortcuts.findReplace">Buscar y reemplazar</span></div>
+        <div class="atajo-item"><kbd>Ctrl + G</kbd> <span data-i18n="shortcuts.goToLine">Ir a línea</span></div>
+        <div class="atajo-item"><kbd>Ctrl + L</kbd> <span data-i18n="shortcuts.selectLine">Seleccionar línea</span></div>
+        <div class="atajo-item"><kbd>Ctrl + ← / →</kbd> <span data-i18n="shortcuts.wordJump">Salto de palabra</span></div>
+        <div class="atajo-item"><kbd>Ctrl + ↑ / ↓</kbd> <span data-i18n="shortcuts.moveLine">Desplazar línea</span></div>
+        <div class="atajo-item"><kbd>Home / End</kbd> <span data-i18n="shortcuts.lineStartEnd">Inicio/Fin de línea</span></div>
+        <div class="atajo-item"><kbd>Ctrl + Home / End</kbd> <span data-i18n="shortcuts.docStartEnd">Inicio/Fin del documento</span></div>
+        
+        <div class="atajos-categoria" data-i18n="shortcuts.selection">🎯 Selección</div>
+        <div class="atajo-item"><kbd>Ctrl + A</kbd> <span data-i18n="shortcuts.selectAll">Seleccionar todo</span></div>
+        <div class="atajo-item"><kbd>Shift + ← / →</kbd> <span data-i18n="shortcuts.charSelect">Selección carácter</span></div>
+        <div class="atajo-item"><kbd>Shift + ↑ / ↓</kbd> <span data-i18n="shortcuts.lineSelect">Selección línea</span></div>
+        <div class="atajo-item"><kbd>Ctrl + Shift + L</kbd> <span data-i18n="shortcuts.selectMatches">Seleccionar todas las coincidencias</span></div>
+        <div class="atajo-item"><kbd>Alt + click</kbd> <span data-i18n="shortcuts.multiCursor">Multi-cursor</span></div>
+        <div class="atajo-item"><kbd>Alt + Shift + ↑ / ↓</kbd> <span data-i18n="shortcuts.addCursorUpDown">Agregar cursor arriba/abajo</span></div>
+        
+        <div class="atajos-categoria" data-i18n="shortcuts.editorSection">📦 Editor</div>
+        <div class="atajo-item"><kbd>Ctrl + S</kbd> <span data-i18n="shortcuts.saveFile">Guardar archivo</span></div>
+        <div class="atajo-item"><kbd>Ctrl + Shift + S</kbd> <span data-i18n="shortcuts.saveFileAs">Guardar como</span></div>
+        <div class="atajo-item"><kbd>Ctrl + N</kbd> <span data-i18n="shortcuts.newDoc">Nuevo documento</span></div>
+        <div class="atajo-item"><kbd>Ctrl + O</kbd> <span data-i18n="shortcuts.openFile">Abrir archivo</span></div>
+        <div class="atajo-item"><kbd>F11</kbd> <span data-i18n="shortcuts.fullscreen">Pantalla completa</span></div>
+        <div class="atajo-item"><kbd>Ctrl + + / -</kbd> <span data-i18n="shortcuts.zoom">Zoom</span></div>
+        
+        <div class="atajos-categoria" data-i18n="shortcuts.snippets">💡 Snippets (TAB)</div>
+        <div class="atajo-item"><kbd>for + Tab</kbd> <span data-i18n="shortcuts.forLoop">Loop for</span></div>
+        <div class="atajo-item"><kbd>if + Tab</kbd> <span data-i18n="shortcuts.ifCond">Condicional if</span></div>
+        <div class="atajo-item"><kbd>fun + Tab</kbd> <span data-i18n="shortcuts.function">Función</span></div>
+        <div class="atajo-item"><kbd>class + Tab</kbd> <span data-i18n="shortcuts.class">Clase</span></div>
+        <div class="atajo-item"><kbd>sw + Tab</kbd> <span data-i18n="shortcuts.switch">Switch</span></div>
+        <div class="atajo-item"><kbd>try + Tab</kbd> <span data-i18n="shortcuts.tryCatch">Try/Catch</span></div>
+        <div class="atajo-item"><kbd>wh + Tab</kbd> <span data-i18n="shortcuts.while">While</span></div>
+        
+        <div class="atajos-footer" data-i18n="shortcuts.footer">Presiona las teclas para ejecutar el atajo</div>
+      </div>
+      </li>
+      <li class="menu-item lang-selector-item">
+    <select id="langSelector" onchange="TRANSLATOR.setLanguage(this.value)" class="lang-selector">
+        <option value="es">🇪🇸 ES</option>
+        <option value="en">🇬🇧 EN</option>
+        <option value="zh">🇨🇳 中文</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="ru">🇷🇺 Русский</option>
+        <option value="de">🇩🇪 Deutsch</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="pt">🇧🇷 Português</option>
+    </select>
+</li>
+    </ul>
+   
+  </nav>
+
+  <!-- Contenido principal -->
+  <div id="main-content" class="main-content">
+    <div class="editor-container">
+      <div id="editor"></div>
+    </div>
+
+       <div class="console-container">
+  <h2 data-i18n="editor.console">Consola JavaScript</h2>
+  <textarea id="consoleOutput" readonly data-i18n-placeholder="editor.consolePlaceholder" placeholder="Resultados de la ejecución de código..."></textarea>
+</div>
+ <div class="console-buttons">
+    <button id="runButton" class="button" data-i18n="editor.runButton">▶ Ejecutar</button>
+    <button id="clearConsole" class="button" data-i18n="editor.clearConsole">🧹 Limpiar</button>
+</div>
+    <div id="preview-container" class="preview-container">
+      <h2 data-i18n="editor.preview">Previsualización en Tiempo Real</h2>
+      <iframe id="preview" title="Previsualización en tiempo real del código HTML"></iframe>
+    </div>
+
+    <div id="terminal-container" class="terminal-container">
+      <h2 data-i18n="editor.terminal">Terminal Linux</h2>
+      <div id="terminal"></div>
+      <div class="terminal-controls">
+        <button id="clear-terminal" class="button" data-i18n="editor.clearTerminal">Limpiar Terminal</button>
+        <button id="terminal-help" class="button" data-i18n="editor.terminalHelp">Ayuda</button>
+        <button id="terminal-example" class="button" data-i18n="editor.terminalExamples">Ejemplos</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Botones flotantes -->
+<div class="floating-buttons">
+  <button onclick="scrollToSection('editor')" title="Ir al Editor" data-i18n-title="Ir al Editor">🧑‍💻</button>
+  <button onclick="scrollToSection('consoleOutput')" title="Ir a la Consola JS" data-i18n-title="Ir a la Consola JS">🖥️</button>
+  <button onclick="scrollToSection('preview-container')" title="Ir al Previsualizador" data-i18n-title="Ir al Previsualizador">🌐</button>
+  <button onclick="abrirEnNavegador()" title="Abrir en Navegador" data-i18n-title="Abrir en Navegador">🚀</button>
+  <button onclick="openTinyManager()" title="Abrir TinyManager" data-i18n-title="Abrir TinyManager">📁</button>
+  <button onclick="openLabs()" title="Abrir Laboratorios" data-i18n-title="Abrir Laboratorios">🔬</button>
+</div>
+
+<script>
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function abrirEnNavegador() {
+  const editor = ace.edit("editor");
+  const contenido = editor.getValue();
+  const nuevaVentana = window.open("", "_blank");
+  if (nuevaVentana) {
+    nuevaVentana.document.open();
+    nuevaVentana.document.write(contenido);
+    nuevaVentana.document.close();
+  } else {
+    alert("No se pudo abrir una nueva ventana. Verifica que el navegador no esté bloqueando ventanas emergentes.");
+  }
+}
+
+function openTinyManager() {
+  window.open('../tinyfilemanager/tinyfilemanager.php', '_blank');
+}
+
+function openLabs() {
+  window.open('labs.html', '_blank');
+}
+// ============================================================
+// INSERTAR ENLACES BOOTSTRAP Y FONTAWESOME
+// ============================================================
+function insertarLibrerias(tipo) {
+    var editor2 = ace.edit("editor");
+    var codigo = '';
+    
+    if (tipo === 'cdn') {
+        codigo = '<!-- Librerias via CDN -->\n';
+        codigo += '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">\n';
+        codigo += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">\n';
+        codigo += '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"><\/script>\n\n';
+    } else if (tipo === 'local') {
+        codigo = '<!-- Librerias locales -->\n';
+        codigo += '<link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">\n';
+        codigo += '<link rel="stylesheet" href="fontawesome-free-7.2.0-web/css/all.css">\n';
+        codigo += '<script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"><\/script>\n\n';
+    }
+    
+    // Insertar al inicio del editor
+    var contenidoActual = editor2.getValue();
+    editor2.setValue(codigo + contenidoActual);
+    editor2.gotoLine(1, 0);
+    
+    // Notificacion visual
+    var notif = document.createElement('div');
+    notif.className = 'notification success';
+    notif.textContent = 'Enlaces ' + (tipo === 'cdn' ? 'CDN' : 'locales') + ' insertados al inicio';
+    document.body.appendChild(notif);
+    setTimeout(function() { notif.remove(); }, 3000);
+}
+
+
+// Dropdown menus
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.menu-item.dropdown > a').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var li = this.parentElement;
+      li.classList.toggle('active');
+      document.querySelectorAll('.menu-item.dropdown.active').forEach(function(d) {
+        if (d !== li) d.classList.remove('active');
+      });
+    });
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.menu-item.dropdown')) {
+      document.querySelectorAll('.menu-item.dropdown.active').forEach(function(d) {
+        d.classList.remove('active');
+      });
+    }
+  });
+});
+</script>
+
+<!-- Carga dinámica de snippets inteligentes -->
+<script src="ace/src-noconflict/ext-language_tools.js"></script>
+<script>
+// ============================================================
+// 🚀 SNIPPETS INTELIGENTES - ACTIVACIÓN PARA 150+ LENGUAJES
+// ============================================================
+// Los snippets permiten escribir código más rápido:
+//   - Escribe "for" + TAB → genera un loop for completo
+//   - Escribe "if" + TAB → genera estructura if
+//   - Escribe "fun" + TAB → genera una función
+//   - Escribe "class" + TAB → genera una clase
+//   - Escribe "sw" + TAB → genera un switch
+// ============================================================
+(function() {
+    // Verificar cuando ACE esté listo
+    function checkAce() {
+        if (typeof ace !== 'undefined') {
+            try {
+                // Forzar carga del snippet manager
+                ace.require('ace/ext/language_tools');
+                
+                // Configurar snippets para todos los modos
+                const snippetManager = ace.require('ace/snippets').snippetManager;
+                if (snippetManager) {
+                    console.log('✅ SNIPPETS INTELIGENTES ACTIVADOS');
+                    console.log('📚 Lenguajes disponibles: 150+');
+                    console.log('💡 Escribe "for", "if", "fun", "class" + TAB');
+                }
+            } catch(e) {
+                console.log('⚠️ Los snippets se activarán al cargar el editor');
+            }
+        } else {
+            setTimeout(checkAce, 500);
+        }
+    }
+    
+    // Iniciar verificación
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', checkAce);
+    } else {
+        checkAce();
+    }
+})();
+</script>
+
+
+
+<script src="js/xterm/xterm.min.js"></script>
+<script src="js/terminal.js"></script>
+<script src="js/index.js"></script>
+
+</body>
+</html>

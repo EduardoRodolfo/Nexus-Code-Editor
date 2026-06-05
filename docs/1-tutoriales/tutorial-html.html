@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial Completo de HTML5 - Desde Cero</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ====================
+           VARIABLES CSS
+           ==================== */
+        :root {
+            --primary: #e34c26; /* Naranja HTML5 */
+            --secondary: #f06529;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #3498db;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            --transition: all 0.3s ease;
+            /* Variable de escala de fuente */
+            --font-scale: 1;
+        }
+        
+        /* ====================
+           ESTILOS BASE
+           ==================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f9f9f9 0%, #eef2f3 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+        
+        /* ====================
+           HEADER
+           ==================== */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            font-size: calc(3rem * var(--font-scale));
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: calc(1.4rem * var(--font-scale));
+            margin-bottom: 25px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .html-logo {
+            font-size: calc(5rem * var(--font-scale));
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        /* ====================
+           SISTEMA DE CONTROL DE FUENTE
+           ==================== */
+        .font-controls-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin: 20px auto;
+            max-width: 800px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .font-label {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+            font-size: calc(1.1rem * var(--font-scale));
+            text-align: center;
+        }
+        
+        .font-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        
+        .font-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: calc(1rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .font-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        .font-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .font-indicator {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: calc(0.9rem * var(--font-scale));
+            text-align: center;
+            font-style: italic;
+        }
+        
+        /* ====================
+           MENÚ DE NAVEGACIÓN
+           ==================== */
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid var(--primary);
+            overflow-x: auto;
+            padding: 0;
+        }
+        
+        .nav-tab {
+            padding: 18px 25px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: calc(1.05rem * var(--font-scale));
+            font-weight: 600;
+            color: var(--dark);
+            transition: var(--transition);
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-tab:hover {
+            background: rgba(227, 76, 38, 0.1);
+        }
+        
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: rgba(227, 76, 38, 0.08);
+        }
+        
+        /* ====================
+           CONTENIDO PRINCIPAL
+           ==================== */
+        .content-section {
+            padding: 40px 30px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid rgba(227, 76, 38, 0.2);
+            font-size: calc(2.2rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        h3 {
+            color: var(--dark);
+            margin: 30px 0 20px;
+            font-size: calc(1.6rem * var(--font-scale));
+        }
+        
+        p {
+            margin-bottom: 20px;
+            font-size: calc(1.1rem * var(--font-scale));
+            line-height: 1.7;
+            color: #444;
+        }
+        
+        /* ====================
+           EJEMPLOS DE CÓDIGO
+           ==================== */
+        .code-container {
+            background: #1e1e1e;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .code-header {
+            background: #2d2d2d;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3d3d3d;
+        }
+        
+        .code-title {
+            color: #ccc;
+            font-weight: 600;
+            font-size: calc(1rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: calc(0.9rem * var(--font-scale));
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .copy-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .copy-btn.copied {
+            background: var(--success);
+        }
+        
+        pre {
+            margin: 0;
+            padding: 25px;
+            overflow-x: auto;
+            font-size: calc(0.95rem * var(--font-scale));
+            line-height: 1.5;
+        }
+        
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            color: #f8f8f2;
+        }
+        
+        .html-tag { color: #569cd6; }
+        .html-attribute { color: #9cdcfe; }
+        .html-value { color: #ce9178; }
+        .html-comment { color: #6a9955; }
+        .html-text { color: #d4d4d4; }
+        
+        /* ====================
+           EJEMPLOS VISUALES
+           ==================== */
+        .visual-example {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .visual-title {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-size: calc(1.4rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .example-output {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            border: 2px dashed #ddd;
+            min-height: 150px;
+            margin-top: 20px;
+        }
+        
+        /* ====================
+           TABLAS
+           ==================== */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: calc(1rem * var(--font-scale));
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+        
+        .info-table th {
+            background: var(--primary);
+            color: white;
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+        }
+        
+        .info-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .info-table tr:hover {
+            background: #f1f1f1;
+        }
+        
+        /* ====================
+           CONSEJOS Y NOTAS
+           ==================== */
+        .tip-box {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid var(--info);
+        }
+        
+        .tip-title {
+            color: #1565c0;
+            margin-bottom: 15px;
+            font-size: calc(1.3rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid var(--warning);
+        }
+        
+        .warning-title {
+            color: #ef6c00;
+            margin-bottom: 15px;
+            font-size: calc(1.3rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* ====================
+           FOOTER
+           ==================== */
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 40px 30px;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .footer-title {
+            font-size: calc(1.8rem * var(--font-scale));
+            margin-bottom: 20px;
+            color: #ecf0f1;
+        }
+        
+        .footer-text {
+            font-size: calc(1.1rem * var(--font-scale));
+            opacity: 0.8;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            transition: var(--transition);
+            font-size: calc(1rem * var(--font-scale));
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* ====================
+           RESPONSIVE
+           ==================== */
+        @media (max-width: 992px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: calc(2.2rem * var(--font-scale));
+            }
+            
+            .subtitle {
+                font-size: calc(1.1rem * var(--font-scale));
+            }
+            
+            h2 {
+                font-size: calc(1.8rem * var(--font-scale));
+            }
+            
+            h3 {
+                font-size: calc(1.3rem * var(--font-scale));
+            }
+            
+            .nav-tabs {
+                overflow-x: auto;
+            }
+            
+            .nav-tab {
+                padding: 15px 20px;
+                font-size: calc(0.95rem * var(--font-scale));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .content-section {
+                padding: 30px 20px;
+            }
+            
+            .font-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .font-btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tab {
+                border-bottom: 1px solid #eee;
+                border-right: none;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: calc(1.8rem * var(--font-scale));
+            }
+            
+            .html-logo {
+                font-size: calc(3.5rem * var(--font-scale));
+            }
+            
+            .font-controls-container {
+                padding: 12px;
+            }
+        }
+        
+        /* ====================
+           NOTIFICACIÓN TEMPORAL
+           ==================== */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="html-logo">
+                    <i class="fab fa-html5"></i>
+                </div>
+                <h1>Tutorial Completo de HTML5</h1>
+                <p class="subtitle">Domina el lenguaje fundamental de la web - Desde cero hasta profesional</p>
+                
+                <!-- Sistema de Control de Tamaño de Fuente -->
+                <div class="font-controls-container">
+                    <span class="font-label">
+                        <i class="fas fa-text-height"></i> Tamaño del texto:
+                    </span>
+                    <div class="font-buttons">
+                        <button class="font-btn" data-size="small" onclick="changeFontSize('small')">
+                            <i class="fas fa-search-minus"></i> A-
+                        </button>
+                        <button class="font-btn active" data-size="normal" onclick="changeFontSize('normal')">
+                            <i class="fas fa-font"></i> Normal
+                        </button>
+                        <button class="font-btn" data-size="large" onclick="changeFontSize('large')">
+                            <i class="fas fa-search-plus"></i> A+
+                        </button>
+                        <button class="font-btn" data-size="xlarge" onclick="changeFontSize('xlarge')">
+                            <i class="fas fa-expand-alt"></i> A++
+                        </button>
+                    </div>
+                    <div id="fontSizeIndicator" class="font-indicator">
+                        Tamaño actual: Normal (100%)
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Menú de Navegación -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="introduccion">
+                <i class="fas fa-home"></i> Introducción
+            </button>
+            <button class="nav-tab" data-tab="estructura">
+                <i class="fas fa-code"></i> Estructura Básica
+            </button>
+            <button class="nav-tab" data-tab="etiquetas">
+                <i class="fas fa-tags"></i> Etiquetas Principales
+            </button>
+            <button class="nav-tab" data-tab="formularios">
+                <i class="fas fa-edit"></i> Formularios
+            </button>
+            <button class="nav-tab" data-tab="semantica">
+                <i class="fas fa-sitemap"></i> HTML Semántico
+            </button>
+            <button class="nav-tab" data-tab="multimedia">
+                <i class="fas fa-photo-video"></i> Multimedia
+            </button>
+            <button class="nav-tab" data-tab="ejercicios">
+                <i class="fas fa-laptop-code"></i> Ejercicios
+            </button>
+        </nav>
+        
+        <!-- Contenido de las Secciones -->
+        <main>
+            <!-- Sección: Introducción -->
+            <section id="introduccion" class="content-section active">
+                <h2><i class="fas fa-info-circle"></i> Introducción a HTML5</h2>
+                
+                <p><strong>HTML (HyperText Markup Language)</strong> es el lenguaje estándar para crear páginas web. Describe la estructura de una página web mediante <em>etiquetas (tags)</em>.</p>
+                
+                <div class="tip-box">
+                    <div class="tip-title">
+                        <i class="fas fa-lightbulb"></i> ¿Sabías que?
+                    </div>
+                    <p>HTML5 es la quinta y actual versión principal del estándar HTML. Se publicó oficialmente en octubre de 2014, pero ya era ampliamente utilizado antes de su publicación formal.</p>
+                </div>
+                
+                <h3>¿Qué es HTML?</h3>
+                <p>HTML no es un lenguaje de programación, sino un lenguaje de marcado que define la estructura de tu contenido. HTML consiste en una serie de elementos que encierran diferentes partes del contenido para que se vean o comporten de una determinada manera.</p>
+                
+                <h3>Ventajas de HTML5</h3>
+                <ul style="font-size: calc(1.1rem * var(--font-scale)); margin-left: 20px; margin-bottom: 20px;">
+                    <li>Soporte nativo para audio y video</li>
+                    <li>Elementos semánticos mejorados</li>
+                    <li>API de almacenamiento local</li>
+                    <li>Mejor soporte para aplicaciones web</li>
+                    <li>Compatibilidad con dispositivos móviles</li>
+                </ul>
+                
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-title">
+                            <i class="fas fa-code"></i> Ejemplo Básico de HTML
+                        </div>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="far fa-copy"></i> Copiar Código
+                        </button>
+                    </div>
+                    <pre><code><span class="html-tag">&lt;!DOCTYPE html&gt;</span>
+<span class="html-tag">&lt;html</span> <span class="html-attribute">lang</span>=<span class="html-value">"es"</span><span class="html-tag">&gt;</span>
+<span class="html-tag">&lt;head&gt;</span>
+    <span class="html-tag">&lt;meta</span> <span class="html-attribute">charset</span>=<span class="html-value">"UTF-8"</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;title&gt;</span><span class="html-text">Mi Primera Página</span><span class="html-tag">&lt;/title&gt;</span>
+<span class="html-tag">&lt;/head&gt;</span>
+<span class="html-tag">&lt;body&gt;</span>
+    <span class="html-tag">&lt;h1&gt;</span><span class="html-text">¡Hola Mundo!</span><span class="html-tag">&lt;/h1&gt;</span>
+    <span class="html-tag">&lt;p&gt;</span><span class="html-text">Esta es mi primera página web.</span><span class="html-tag">&lt;/p&gt;</span>
+<span class="html-tag">&lt;/body&gt;</span>
+<span class="html-tag">&lt;/html&gt;</span></code></pre>
+                </div>
+            </section>
+            
+            <!-- Sección: Estructura Básica -->
+            <section id="estructura" class="content-section">
+                <h2><i class="fas fa-code"></i> Estructura Básica de un Documento HTML</h2>
+                
+                <p>Todos los documentos HTML siguen una estructura básica que incluye las siguientes partes esenciales:</p>
+                
+                <div class="visual-example">
+                    <div class="visual-title">
+                        <i class="fas fa-sitemap"></i> Estructura de un Documento HTML
+                    </div>
+                    <div class="example-output">
+                        <div style="border: 2px solid #e34c26; padding: 20px; border-radius: 8px;">
+                            <div style="background: #f8f9fa; padding: 10px; margin-bottom: 10px; border-left: 4px solid #e34c26;">
+                                <strong>&lt;!DOCTYPE html&gt;</strong> - Declaración del tipo de documento
+                            </div>
+                            <div style="background: #f8f9fa; padding: 10px; margin-bottom: 10px; border-left: 4px solid #3498db;">
+                                <strong>&lt;html&gt;</strong> - Elemento raíz
+                            </div>
+                            <div style="padding-left: 20px;">
+                                <div style="background: #f8f9fa; padding: 10px; margin-bottom: 10px; border-left: 4px solid #2ecc71;">
+                                    <strong>&lt;head&gt;</strong> - Información del documento (metadatos)
+                                </div>
+                                <div style="background: #f8f9fa; padding: 10px; margin-bottom: 10px; border-left: 4px solid #f39c12;">
+                                    <strong>&lt;body&gt;</strong> - Contenido visible de la página
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>Elemento</th>
+                            <th>Descripción</th>
+                            <th>Ejemplo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>&lt;!DOCTYPE html&gt;</code></td>
+                            <td>Define que el documento es HTML5</td>
+                            <td>Obligatorio al inicio del documento</td>
+                        </tr>
+                        <tr>
+                            <td><code>&lt;html&gt;</code></td>
+                            <td>Elemento raíz que contiene todo el documento</td>
+                            <td><code>&lt;html lang="es"&gt;...&lt;/html&gt;</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>&lt;head&gt;</code></td>
+                            <td>Contiene metadatos, enlaces a CSS, título</td>
+                            <td><code>&lt;head&gt;&lt;title&gt;Mi Página&lt;/title&gt;&lt;/head&gt;</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>&lt;body&gt;</code></td>
+                            <td>Contiene el contenido visible de la página</td>
+                            <td><code>&lt;body&gt;&lt;h1&gt;Hola&lt;/h1&gt;&lt;/body&gt;</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-title">
+                            <i class="fas fa-file-code"></i> Estructura HTML Completa
+                        </div>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="far fa-copy"></i> Copiar Código
+                        </button>
+                    </div>
+                    <pre><code><span class="html-comment">&lt;!-- Declaración del tipo de documento --&gt;</span>
+<span class="html-tag">&lt;!DOCTYPE html&gt;</span>
+
+<span class="html-comment">&lt;!-- Elemento raíz con especificación de idioma --&gt;</span>
+<span class="html-tag">&lt;html</span> <span class="html-attribute">lang</span>=<span class="html-value">"es"</span><span class="html-tag">&gt;</span>
+
+<span class="html-comment">&lt;!-- Cabecera con metadatos --&gt;</span>
+<span class="html-tag">&lt;head&gt;</span>
+    <span class="html-comment">&lt;!-- Codificación de caracteres --&gt;</span>
+    <span class="html-tag">&lt;meta</span> <span class="html-attribute">charset</span>=<span class="html-value">"UTF-8"</span><span class="html-tag">&gt;</span>
+    
+    <span class="html-comment">&lt;!-- Compatibilidad con Internet Explorer --&gt;</span>
+    <span class="html-tag">&lt;meta</span> <span class="html-attribute">http-equiv</span>=<span class="html-value">"X-UA-Compatible"</span> <span class="html-attribute">content</span>=<span class="html-value">"IE=edge"</span><span class="html-tag">&gt;</span>
+    
+    <span class="html-comment">&lt;!-- Viewport para responsive design --&gt;</span>
+    <span class="html-tag">&lt;meta</span> <span class="html-attribute">name</span>=<span class="html-value">"viewport"</span> <span class="html-attribute">content</span>=<span class="html-value">"width=device-width, initial-scale=1.0"</span><span class="html-tag">&gt;</span>
+    
+    <span class="html-comment">&lt;!-- Título de la página --&gt;</span>
+    <span class="html-tag">&lt;title&gt;</span><span class="html-text">Mi Página Web</span><span class="html-tag">&lt;/title&gt;</span>
+    
+    <span class="html-comment">&lt;!-- Enlace a hoja de estilos --&gt;</span>
+    <span class="html-tag">&lt;link</span> <span class="html-attribute">rel</span>=<span class="html-value">"stylesheet"</span> <span class="html-attribute">href</span>=<span class="html-value">"estilos.css"</span><span class="html-tag">&gt;</span>
+<span class="html-tag">&lt;/head&gt;</span>
+
+<span class="html-comment">&lt;!-- Cuerpo de la página --&gt;</span>
+<span class="html-tag">&lt;body&gt;</span>
+    <span class="html-comment">&lt;!-- Contenido visible de la página --&gt;</span>
+    <span class="html-tag">&lt;h1&gt;</span><span class="html-text">Bienvenido a mi página web</span><span class="html-tag">&lt;/h1&gt;</span>
+    <span class="html-tag">&lt;p&gt;</span><span class="html-text">Este es el contenido principal.</span><span class="html-tag">&lt;/p&gt;</span>
+    
+    <span class="html-comment">&lt;!-- Enlace a script JavaScript --&gt;</span>
+    <span class="html-tag">&lt;script</span> <span class="html-attribute">src</span>=<span class="html-value">"script.js"</span><span class="html-tag">&gt;&lt;/script&gt;</span>
+<span class="html-tag">&lt;/body&gt;</span>
+
+<span class="html-tag">&lt;/html&gt;</span></code></pre>
+                </div>
+            </section>
+            
+            <!-- Sección: Etiquetas Principales -->
+            <section id="etiquetas" class="content-section">
+                <h2><i class="fas fa-tags"></i> Etiquetas HTML Principales</h2>
+                
+                <p>HTML tiene una gran variedad de etiquetas para diferentes propósitos. A continuación, las más importantes:</p>
+                
+                <h3>Etiquetas de Texto</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-title">
+                            <i class="fas fa-font"></i> Formateo de Texto
+                        </div>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="far fa-copy"></i> Copiar Código
+                        </button>
+                    </div>
+                    <pre><code><span class="html-comment">&lt;!-- Títulos --&gt;</span>
+<span class="html-tag">&lt;h1&gt;</span><span class="html-text">Título Principal (solo uno por página)</span><span class="html-tag">&lt;/h1&gt;</span>
+<span class="html-tag">&lt;h2&gt;</span><span class="html-text">Subtítulo</span><span class="html-tag">&lt;/h2&gt;</span>
+<span class="html-tag">&lt;h3&gt;</span><span class="html-text">Sub-subtítulo</span><span class="html-tag">&lt;/h3&gt;</span>
+
+<span class="html-comment">&lt;!-- Párrafos --&gt;</span>
+<span class="html-tag">&lt;p&gt;</span><span class="html-text">Este es un párrafo normal.</span><span class="html-tag">&lt;/p&gt;</span>
+<span class="html-tag">&lt;p&gt;</span><span class="html-text">Este es otro párrafo con <span class="html-tag">&lt;strong&gt;</span>texto en negrita<span class="html-tag">&lt;/strong&gt;</span> 
+y <span class="html-tag">&lt;em&gt;</span>texto en cursiva<span class="html-tag">&lt;/em&gt;</span>.</span><span class="html-tag">&lt;/p&gt;</span>
+
+<span class="html-comment">&lt;!-- Listas --&gt;</span>
+<span class="html-tag">&lt;ul&gt;</span>
+    <span class="html-tag">&lt;li&gt;</span><span class="html-text">Elemento de lista no ordenada</span><span class="html-tag">&lt;/li&gt;</span>
+    <span class="html-tag">&lt;li&gt;</span><span class="html-text">Otro elemento</span><span class="html-tag">&lt;/li&gt;</span>
+<span class="html-tag">&lt;/ul&gt;</span>
+
+<span class="html-tag">&lt;ol&gt;</span>
+    <span class="html-tag">&lt;li&gt;</span><span class="html-text">Primer elemento ordenado</span><span class="html-tag">&lt;/li&gt;</span>
+    <span class="html-tag">&lt;li&gt;</span><span class="html-text">Segundo elemento</span><span class="html-tag">&lt;/li&gt;</span>
+<span class="html-tag">&lt;/ol&gt;</span></code></pre>
+                </div>
+                
+                <h3>Etiquetas de Enlace e Imagen</h3>
+                <div class="visual-example">
+                    <div class="visual-title">
+                        <i class="fas fa-link"></i> Enlaces e Imágenes
+                    </div>
+                    <div class="example-output">
+                        <p><a href="#" style="color: #e34c26; text-decoration: none; font-weight: bold;">Este es un enlace de ejemplo</a></p>
+                        <div style="width: 200px; height: 150px; background: linear-gradient(135deg, #3498db, #9b59b6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-top: 15px;">
+                            [Imagen de Ejemplo]
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-title">
+                            <i class="fas fa-image"></i> Código para Enlaces e Imágenes
+                        </div>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="far fa-copy"></i> Copiar Código
+                        </button>
+                    </div>
+                    <pre><code><span class="html-comment">&lt;!-- Enlace (hipervínculo) --&gt;</span>
+<span class="html-tag">&lt;a</span> <span class="html-attribute">href</span>=<span class="html-value">"https://www.ejemplo.com"</span> <span class="html-attribute">target</span>=<span class="html-value">"_blank"</span><span class="html-tag">&gt;</span>
+    <span class="html-text">Texto del enlace</span>
+<span class="html-tag">&lt;/a&gt;</span>
+
+<span class="html-comment">&lt;!-- Imagen --&gt;</span>
+<span class="html-tag">&lt;img</span> <span class="html-attribute">src</span>=<span class="html-value">"imagen.jpg"</span> 
+     <span class="html-attribute">alt</span>=<span class="html-value">"Descripción de la imagen"</span>
+     <span class="html-attribute">width</span>=<span class="html-value">"300"</span>
+     <span class="html-attribute">height</span>=<span class="html-value">"200"</span><span class="html-tag">&gt;</span>
+
+<span class="html-comment">&lt;!-- Enlace con imagen --&gt;</span>
+<span class="html-tag">&lt;a</span> <span class="html-attribute">href</span>=<span class="html-value">"pagina.html"</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;img</span> <span class="html-attribute">src</span>=<span class="html-value">"miniatura.jpg"</span> <span class="html-attribute">alt</span>=<span class="html-value">"Miniatura"</span><span class="html-tag">&gt;</span>
+<span class="html-tag">&lt;/a&gt;</span></code></pre>
+                </div>
+            </section>
+            
+            <!-- Sección: Ejercicios -->
+            <section id="ejercicios" class="content-section">
+                <h2><i class="fas fa-laptop-code"></i> Ejercicios Prácticos de HTML</h2>
+                
+                <p>La mejor manera de aprender HTML es practicando. Aquí tienes algunos ejercicios para mejorar tus habilidades:</p>
+                
+                <div class="tip-box">
+                    <div class="tip-title">
+                        <i class="fas fa-graduation-cap"></i> Consejo para Practicar
+                    </div>
+                    <p>Crea un archivo HTML en tu computadora y prueba cada ejercicio. Usa un editor de texto como Visual Studio Code, Sublime Text o incluso el Bloc de notas.</p>
+                </div>
+                
+                <h3>Ejercicio 1: Crear una Página Personal</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-title">
+                            <i class="fas fa-user"></i> Instrucciones
+                        </div>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="far fa-copy"></i> Ver Solución
+                        </button>
+                    </div>
+                    <pre><code><span class="html-comment">&lt;!-- 
+EJERCICIO: Crea una página web personal que incluya:
+
+1. Un título principal con tu nombre
+2. Una breve descripción sobre ti
+3. Una lista de tus hobbies
+4. Una tabla con tu educación
+5. Un enlace a tu red social favorita
+6. Una imagen (puede ser un avatar o placeholder)
+
+Estructura básica para empezar:
+--&gt;</span>
+
+<span class="html-tag">&lt;!DOCTYPE html&gt;</span>
+<span class="html-tag">&lt;html</span> <span class="html-attribute">lang</span>=<span class="html-value">"es"</span><span class="html-tag">&gt;</span>
+<span class="html-tag">&lt;head&gt;</span>
+    <span class="html-tag">&lt;meta</span> <span class="html-attribute">charset</span>=<span class="html-value">"UTF-8"</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;title&gt;</span><span class="html-text">Mi Página Personal</span><span class="html-tag">&lt;/title&gt;</span>
+<span class="html-tag">&lt;/head&gt;</span>
+<span class="html-tag">&lt;body&gt;</span>
+    <span class="html-comment">&lt;!-- Tu código aquí --&gt;</span>
+<span class="html-tag">&lt;/body&gt;</span>
+<span class="html-tag">&lt;/html&gt;</span></code></pre>
+                </div>
+                
+                <h3>Ejercicio 2: Crear un Formulario de Contacto</h3>
+                <div class="visual-example">
+                    <div class="visual-title">
+                        <i class="fas fa-edit"></i> Formulario de Contacto
+                    </div>
+                    <div class="example-output">
+                        <div style="max-width: 500px; margin: 0 auto;">
+                            <h3 style="color: #e34c26; margin-bottom: 20px;">Formulario de Contacto</h3>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nombre:</label>
+                                <input type="text" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email:</label>
+                                <input type="email" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Mensaje:</label>
+                                <textarea style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; height: 100px;"></textarea>
+                            </div>
+                            <button style="background: #e34c26; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                                Enviar Mensaje
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-title">
+                            <i class="fas fa-code"></i> Código Base para el Formulario
+                        </div>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="far fa-copy"></i> Copiar Código
+                        </button>
+                    </div>
+                    <pre><code><span class="html-comment">&lt;!-- Formulario de contacto básico --&gt;</span>
+<span class="html-tag">&lt;form</span> <span class="html-attribute">action</span>=<span class="html-value">"procesar.php"</span> <span class="html-attribute">method</span>=<span class="html-value">"POST"</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;div&gt;</span>
+        <span class="html-tag">&lt;label</span> <span class="html-attribute">for</span>=<span class="html-value">"nombre"</span><span class="html-tag">&gt;</span><span class="html-text">Nombre:</span><span class="html-tag">&lt;/label&gt;</span>
+        <span class="html-tag">&lt;input</span> <span class="html-attribute">type</span>=<span class="html-value">"text"</span> <span class="html-attribute">id</span>=<span class="html-value">"nombre"</span> <span class="html-attribute">name</span>=<span class="html-value">"nombre"</span> <span class="html-attribute">required</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;/div&gt;</span>
+    
+    <span class="html-tag">&lt;div&gt;</span>
+        <span class="html-tag">&lt;label</span> <span class="html-attribute">for</span>=<span class="html-value">"email"</span><span class="html-tag">&gt;</span><span class="html-text">Email:</span><span class="html-tag">&lt;/label&gt;</span>
+        <span class="html-tag">&lt;input</span> <span class="html-attribute">type</span>=<span class="html-value">"email"</span> <span class="html-attribute">id</span>=<span class="html-value">"email"</span> <span class="html-attribute">name</span>=<span class="html-value">"email"</span> <span class="html-attribute">required</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;/div&gt;</span>
+    
+    <span class="html-tag">&lt;div&gt;</span>
+        <span class="html-tag">&lt;label</span> <span class="html-attribute">for</span>=<span class="html-value">"mensaje"</span><span class="html-tag">&gt;</span><span class="html-text">Mensaje:</span><span class="html-tag">&lt;/label&gt;</span>
+        <span class="html-tag">&lt;textarea</span> <span class="html-attribute">id</span>=<span class="html-value">"mensaje"</span> <span class="html-attribute">name</span>=<span class="html-value">"mensaje"</span> <span class="html-attribute">rows</span>=<span class="html-value">"4"</span> <span class="html-attribute">required</span><span class="html-tag">&gt;&lt;/textarea&gt;</span>
+    <span class="html-tag">&lt;/div&gt;</span>
+    
+    <span class="html-tag">&lt;button</span> <span class="html-attribute">type</span>=<span class="html-value">"submit"</span><span class="html-tag">&gt;</span><span class="html-text">Enviar</span><span class="html-tag">&lt;/button&gt;</span>
+<span class="html-tag">&lt;/form&gt;</span></code></pre>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <div class="footer-content">
+                <div class="footer-title">
+                    <i class="fab fa-html5"></i> Tutorial de HTML5
+                </div>
+                <p class="footer-text">
+                    Has completado este tutorial introductorio de HTML5. Recuerda que la práctica constante es la clave para dominar cualquier lenguaje de programación o marcado.
+                </p>
+                <div class="footer-links">
+                    <a href="index.html" class="footer-link">
+                        <i class="fas fa-arrow-left"></i> Volver a Editor
+                    </a>
+                    <a href="#" class="footer-link" onclick="changeFontSize('normal')">
+                        <i class="fas fa-font"></i> Resetear Tamaño
+                    </a>
+                    <a href="#introduccion" class="footer-link" onclick="showSection('introduccion')">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Notificación Temporal -->
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Texto copiado al portapapeles</span>
+    </div>
+    
+    <script>
+        // ====================
+        // SISTEMA DE CONTROL DE TAMAÑO DE FUENTE
+        // ====================
+        const fontConfig = {
+            small: { 
+                scale: 0.85, 
+                label: 'Pequeño (85%)',
+                icon: 'fa-search-minus'
+            },
+            normal: { 
+                scale: 1, 
+                label: 'Normal (100%)',
+                icon: 'fa-font'
+            },
+            large: { 
+                scale: 1.15, 
+                label: 'Grande (115%)',
+                icon: 'fa-search-plus'
+            },
+            xlarge: { 
+                scale: 1.3, 
+                label: 'Muy Grande (130%)',
+                icon: 'fa-expand-alt'
+            }
+        };
+        
+        let currentFontSize = 'normal';
+        
+        function changeFontSize(size) {
+            if (!fontConfig[size]) return;
+            
+            // Aplicar escala
+            document.documentElement.style.setProperty('--font-scale', fontConfig[size].scale);
+            
+            // Actualizar estado
+            currentFontSize = size;
+            
+            // Actualizar botones activos
+            document.querySelectorAll('.font-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.size === size) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Actualizar indicador
+            document.getElementById('fontSizeIndicator').textContent = 
+                `Tamaño actual: ${fontConfig[size].label}`;
+            
+            // Guardar preferencia
+            localStorage.setItem('htmlTutorialFontSize', size);
+            
+            // Mostrar notificación
+            showNotification(`Tamaño de texto cambiado a: ${fontConfig[size].label}`);
+        }
+        
+        // ====================
+        // NAVEGACIÓN ENTRE SECCIONES
+        // ====================
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Mostrar sección seleccionada
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Actualizar pestañas activas
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.tab === sectionId) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Scroll suave al inicio de la sección
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        // ====================
+        // COPIAR CÓDIGO
+        // ====================
+        function copyCode(button) {
+            const codeElement = button.closest('.code-container').querySelector('code');
+            const codeText = codeElement.textContent;
+            
+            // Usar Clipboard API
+            navigator.clipboard.writeText(codeText).then(() => {
+                // Cambiar texto del botón temporalmente
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                button.classList.add('copied');
+                
+                // Mostrar notificación
+                showNotification('Código copiado al portapapeles');
+                
+                // Restaurar botón después de 2 segundos
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+                showNotification('Error al copiar el código', 'error');
+            });
+        }
+        
+        // ====================
+        // MOSTRAR NOTIFICACIÓN
+        // ====================
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            // Cambiar color según tipo
+            if (type === 'error') {
+                notification.style.background = 'var(--danger)';
+            } else if (type === 'warning') {
+                notification.style.background = 'var(--warning)';
+            } else {
+                notification.style.background = 'var(--success)';
+            }
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            // Ocultar después de 3 segundos
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // ====================
+        // INICIALIZACIÓN
+        // ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar tamaño de fuente guardado
+            const savedSize = localStorage.getItem('htmlTutorialFontSize');
+            if (savedSize && fontConfig[savedSize]) {
+                changeFontSize(savedSize);
+            }
+            
+            // Configurar eventos de pestañas
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    showSection(this.dataset.tab);
+                });
+            });
+            
+            // Configurar atajos de teclado para tamaño de fuente
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + Shift + + para aumentar
+                if (e.ctrlKey && e.shiftKey && (e.key === '=' || e.key === '+')) {
+                    e.preventDefault();
+                    const sizes = Object.keys(fontConfig);
+                    const currentIndex = sizes.indexOf(currentFontSize);
+                    if (currentIndex < sizes.length - 1) {
+                        changeFontSize(sizes[currentIndex + 1]);
+                    }
+                }
+                
+                // Ctrl + Shift + - para disminuir
+                if (e.ctrlKey && e.shiftKey && e.key === '-') {
+                    e.preventDefault();
+                    const sizes = Object.keys(fontConfig);
+                    const currentIndex = sizes.indexOf(currentFontSize);
+                    if (currentIndex > 0) {
+                        changeFontSize(sizes[currentIndex - 1]);
+                    }
+                }
+                
+                // Ctrl + Shift + 0 para resetear
+                if (e.ctrlKey && e.shiftKey && e.key === '0') {
+                    e.preventDefault();
+                    changeFontSize('normal');
+                }
+            });
+            
+            // Mostrar información de atajos
+            console.log('Atajos de teclado disponibles:');
+            console.log('- Ctrl + Shift + + : Aumentar tamaño de texto');
+            console.log('- Ctrl + Shift + - : Disminuir tamaño de texto');
+            console.log('- Ctrl + Shift + 0 : Tamaño normal');
+        });
+    </script>
+</body>
+</html>

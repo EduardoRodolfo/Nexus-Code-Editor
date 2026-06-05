@@ -1,0 +1,1755 @@
+﻿¡Perfecto! Vamos con el **Backend Node.js** que te dará acceso completo al sistema. Te ayudo a implementarlo paso a paso:
+
+## 🚀 **Estructura Completa del Proyecto**
+
+### **1. Estructura de Archivos:**
+```
+real-terminal/
+├── server/
+│   ├── terminal-server.js
+│   ├── command-executor.js
+│   ├── project-manager.js
+│   └── package-manager.js
+├── public/
+│   ├── index.html
+│   ├── terminal.js
+│   ├── integration.js
+│   └── styles.css
+├── projects/ (se crea automáticamente)
+└── package.json
+```
+
+### **2. package.json del Backend:**
+```json
+{
+  "name": "real-terminal",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Terminal real con Backend Node.js",
+  "main": "server/terminal-server.js",
+  "scripts": {
+    "start": "node server/terminal-server.js",
+    "dev": "nodemon server/terminal-server.js",
+    "setup": "node server/setup.js"
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "socket.io": "^4.7.0",
+    "cors": "^2.8.5",
+    "chokidar": "^3.5.3",
+    "node-pty": "^0.10.1",
+    "tree-kill": "^1.2.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "keywords": ["terminal", "nodejs", "socketio"],
+  "author": "Tu Nombre",
+  "license": "MIT"
+}
+```
+
+### **3. Servidor Principal (`server/terminal-server.js`):**
+```javascript
+import express from 'express';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import cors from 'cors';
+import { spawn, exec } from 'child_process';
+import fs from 'fs/promises';
+import os from 'os';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+class RealTerminalServer {
+    constructor() {
+        this.app = express();
+        this.server = createServer(this.app);
+        this.io = new Server(this.server, {
+            cors: {
+                origin: "*",
+                methods: ["GET", "POST"]
+            }
+        });
+        
+        this.projectsDir = join(__dirname, '..', 'projects');
+        this.activeProcesses = new Map();
+        
+        this.init();
+    }
+
+    async init() {
+        await this.setupDirectories();
+        this.setupMiddleware();
+        this.setupRoutes();
+        this.setupSocket();
+        this.startServer();
+    }
+
+    async setupDirectories() {
+        try {
+            await fs.access(this.projectsDir);
+        } catch {
+            await fs.mkdir(this.projectsDir, { recursive: true });
+            console.log('✅ Directorio projects creado');
+        }
+    }
+
+    setupMiddleware() {
+        this.app.use(cors());
+        this.app.use(express.json());
+        this.app.use(express.static(join(__dirname, '..', 'public')));
+    }
+
+    setupRoutes() {
+        // Servir el frontend
+        this.app.get('/', (req, res) => {
+            res.sendFile(join(__dirname, '..', 'public', 'index.html'));
+        });
+
+        // API para gestión de archivos
+        this.app.post('/api/files', async (req, res) => {
+            try {
+                const { project, filename, content } = req.body;
+                const filePath = join(this.projectsDir, project, filename);
+                
+                await fs.writeFile(filePath, content, 'utf8');
+                res.json({ success: true, path: filePath });
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        });
+
+        this.app.get('/api/files/:project/:filename', async (req, res) => {
+            try {
+                const { project, filename } = req.params;
+                const filePath = join(this.projectsDir, project, filename);
+                
+                const content = await fs.readFile(filePath, 'utf8');
+                res.json({ content });
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        });
+
+        // Listar proyectos
+        this.app.get('/api/projects', async (req, res) => {
+            try {
+                const projects = await fs.readdir(this.projectsDir);
+                const projectsInfo = await Promise.all(
+                    projects.map(async (project) => {
+                        const stats = await fs.stat(join(this.projectsDir, project));
+                        return {
+                            name: project,
+                            created: stats.birthtime,
+                            type: await this.detectProjectType(project)
+                        };
+                    })
+                );
+                res.json(projectsInfo);
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        });
+    }
+
+    setupSocket() {
+        this.io.on('connection', (socket) => {
+            console.log('🔌 Cliente conectado:', socket.id);
+
+            // Comandos de terminal
+            socket.on('execute-command', (data) => {
+                this.handleCommand(socket, data);
+            });
+
+            // Gestión de proyectos
+            socket.on('create-project', (data) => {
+                this.createProject(socket, data);
+            });
+
+            socket.on('install-package', (data) => {
+                this.installPackage(socket, data);
+            });
+
+            socket.on('run-script', (data) => {
+                this.runScript(socket, data);
+            });
+
+            socket.on('kill-process', (data) => {
+                this.killProcess(socket, data);
+            });
+
+            // Gestión de archivos
+            socket.on('read-file', (data) => {
+                this.readFile(socket, data);
+            });
+
+            socket.on('write-file', (data) => {
+                this.writeFile(socket, data);
+            });
+
+            socket.on('disconnect', () => {
+                console.log('❌ Cliente desconectado:', socket.id);
+                this.cleanupProcesses(socket.id);
+            });
+        });
+    }
+
+    async handleCommand(socket, { command, project = 'default', workingDir }) {
+        const projectPath = workingDir || join(this.projectsDir, project);
+        
+        try {
+            // Verificar que el directorio existe
+            await fs.access(projectPath);
+        } catch {
+            socket.emit('command-output', {
+                type: 'error',
+                data: `❌ Directorio no existe: ${projectPath}\r\n`
+            });
+            return;
+        }
+
+        const [cmd, ...args] = command.trim().split(' ');
+        
+        if (!cmd) {
+            socket.emit('command-output', { type: 'output', data: '\r\n' });
+            return;
+        }
+
+        console.log(`Ejecutando: ${command} en ${projectPath}`);
+
+        const process = spawn(cmd, args, {
+            cwd: projectPath,
+            shell: true,
+            stdio: ['pipe', 'pipe', 'pipe']
+        });
+
+        // Guardar referencia al proceso
+        this.activeProcesses.set(socket.id, process);
+
+        // Salida estándar
+        process.stdout.on('data', (data) => {
+            socket.emit('command-output', {
+                type: 'output',
+                data: data.toString()
+            });
+        });
+
+        // Salida de error
+        process.stderr.on('data', (data) => {
+            socket.emit('command-output', {
+                type: 'error',
+                data: data.toString()
+            });
+        });
+
+        // Cuando termina el proceso
+        process.on('close', (code) => {
+            socket.emit('command-output', {
+                type: 'exit',
+                data: `\r\nProceso terminado con código: ${code}\r\n`
+            });
+            this.activeProcesses.delete(socket.id);
+        });
+
+        process.on('error', (error) => {
+            socket.emit('command-output', {
+                type: 'error',
+                data: `❌ Error ejecutando comando: ${error.message}\r\n`
+            });
+        });
+    }
+
+    async createProject(socket, { name, type = 'node' }) {
+        try {
+            const projectPath = join(this.projectsDir, name);
+            
+            // Crear directorio del proyecto
+            await fs.mkdir(projectPath, { recursive: true });
+
+            // Crear estructura según el tipo
+            switch (type) {
+                case 'node':
+                    await this.createNodeProject(projectPath, name);
+                    break;
+                case 'express':
+                    await this.createExpressProject(projectPath, name);
+                    break;
+                case 'react':
+                    await this.createReactProject(projectPath, name);
+                    break;
+                case 'html':
+                    await this.createHtmlProject(projectPath, name);
+                    break;
+                default:
+                    await this.createNodeProject(projectPath, name);
+            }
+
+            socket.emit('project-created', {
+                success: true,
+                project: name,
+                path: projectPath,
+                message: `✅ Proyecto ${name} creado correctamente`
+            });
+
+        } catch (error) {
+            socket.emit('project-created', {
+                success: false,
+                error: error.message
+            });
+        }
+    }
+
+    async createNodeProject(projectPath, name) {
+        const packageJson = {
+            name: name,
+            version: "1.0.0",
+            description: "Proyecto Node.js creado con Real Terminal",
+            main: "index.js",
+            scripts: {
+                start: "node index.js",
+                dev: "node --watch index.js"
+            },
+            keywords: ["node", "terminal"],
+            author: "Real Terminal User",
+            license: "MIT"
+        };
+
+        await fs.writeFile(
+            join(projectPath, 'package.json'),
+            JSON.stringify(packageJson, null, 2)
+        );
+
+        const indexJs = `// ${name} - Proyecto Node.js
+console.log('¡Hola desde ${name}!');
+
+function main() {
+    console.log('🚀 Aplicación ejecutándose...');
+    console.log('📂 Directorio:', process.cwd());
+    
+    // Servidor HTTP básico
+    const http = require('http');
+    const server = http.createServer((req, res) => {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('¡Servidor funcionando!');
+    });
+    
+    server.listen(3000, () => {
+        console.log('🌐 Servidor en http://localhost:3000');
+    });
+}
+
+main();
+`;
+
+        await fs.writeFile(join(projectPath, 'index.js'), indexJs);
+    }
+
+    async createExpressProject(projectPath, name) {
+        const packageJson = {
+            name: name,
+            version: "1.0.0",
+            type: "module",
+            scripts: {
+                start: "node server.js",
+                dev: "node --watch server.js"
+            },
+            dependencies: {
+                express: "^4.18.0",
+                cors: "^2.8.5",
+                helmet: "^7.0.0"
+            }
+        };
+
+        await fs.writeFile(
+            join(projectPath, 'package.json'),
+            JSON.stringify(packageJson, null, 2)
+        );
+
+        const serverJs = `import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middlewares
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
+
+// Rutas
+app.get('/', (req, res) => {
+    res.json({
+        message: '¡Express Server funcionando!',
+        project: '${name}',
+        timestamp: new Date().toISOString()
+    });
+});
+
+app.get('/api/users', (req, res) => {
+    res.json([
+        { id: 1, name: 'Juan Pérez', email: 'juan@example.com' },
+        { id: 2, name: 'María García', email: 'maria@example.com' }
+    ]);
+});
+
+app.post('/api/users', (req, res) => {
+    const newUser = {
+        id: Date.now(),
+        ...req.body
+    };
+    res.status(201).json(newUser);
+});
+
+app.listen(PORT, () => {
+    console.log(\`🚀 Servidor Express ejecutándose en: http://localhost:\${PORT}\`);
+    console.log(\`📊 Endpoints disponibles:\`);
+    console.log(\`   GET  /\`);
+    console.log(\`   GET  /api/users\`);
+    console.log(\`   POST /api/users\`);
+});
+`;
+
+        await fs.writeFile(join(projectPath, 'server.js'), serverJs);
+    }
+
+    async createReactProject(projectPath, name) {
+        const packageJson = {
+            name: name,
+            version: "1.0.0",
+            type: "module",
+            scripts: {
+                dev: "vite",
+                build: "vite build",
+                preview: "vite preview"
+            },
+            dependencies: {
+                "react": "^18.2.0",
+                "react-dom": "^18.2.0"
+            },
+            devDependencies: {
+                "@vitejs/plugin-react": "^4.0.0",
+                "vite": "^4.4.0"
+            }
+        };
+
+        await fs.writeFile(
+            join(projectPath, 'package.json'),
+            JSON.stringify(packageJson, null, 2)
+        );
+
+        const viteConfig = `import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000
+  }
+})
+`;
+
+        await fs.writeFile(join(projectPath, 'vite.config.js'), viteConfig);
+
+        // Crear estructura de directorios
+        await fs.mkdir(join(projectPath, 'src'), { recursive: true });
+        await fs.mkdir(join(projectPath, 'public'), { recursive: true });
+
+        const indexHtml = `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${name} - React App</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>`;
+
+        await fs.writeFile(join(projectPath, 'index.html'), indexHtml);
+
+        const mainJsx = `import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+`;
+
+        await fs.writeFile(join(projectPath, 'src', 'main.jsx'), mainJsx);
+
+        const appJsx = `import { useState } from 'react'
+import './App.css'
+
+function App() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div className="App">
+      <h1>¡Hola desde ${name}!</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          Contador: {count}
+        </button>
+        <p>
+          Edita <code>src/App.jsx</code> y guarda para probar HMR
+        </p>
+      </div>
+    </div>
+  )
+}
+
+export default App
+`;
+
+        await fs.writeFile(join(projectPath, 'src', 'App.jsx'), appJsx);
+    }
+
+    async createHtmlProject(projectPath, name) {
+        const indexHtml = `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${name}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>¡${name}!</h1>
+        <p>Tu aplicación HTML está funcionando correctamente</p>
+    </div>
+</body>
+</html>`;
+
+        await fs.writeFile(join(projectPath, 'index.html'), indexHtml);
+    }
+
+    async installPackage(socket, { packageName, project = 'default', isDev = false }) {
+        const projectPath = join(this.projectsDir, project);
+        
+        try {
+            const args = ['install', packageName];
+            if (isDev) args.push('--save-dev');
+            
+            socket.emit('command-output', {
+                type: 'output',
+                data: `📦 Instalando ${packageName}...\r\n`
+            });
+
+            const process = spawn('npm', args, {
+                cwd: projectPath,
+                shell: true
+            });
+
+            process.stdout.on('data', (data) => {
+                socket.emit('command-output', {
+                    type: 'output',
+                    data: data.toString()
+                });
+            });
+
+            process.stderr.on('data', (data) => {
+                socket.emit('command-output', {
+                    type: 'error',
+                    data: data.toString()
+                });
+            });
+
+            process.on('close', (code) => {
+                if (code === 0) {
+                    socket.emit('command-output', {
+                        type: 'output',
+                        data: `✅ ${packageName} instalado correctamente\r\n`
+                    });
+                }
+            });
+
+        } catch (error) {
+            socket.emit('command-output', {
+                type: 'error',
+                data: `❌ Error instalando ${packageName}: ${error.message}\r\n`
+            });
+        }
+    }
+
+    async runScript(socket, { script = 'start', project = 'default' }) {
+        const projectPath = join(this.projectsDir, project);
+        
+        socket.emit('command-output', {
+            type: 'output',
+            data: `🚀 Ejecutando: npm run ${script}\r\n`
+        });
+
+        const process = spawn('npm', ['run', script], {
+            cwd: projectPath,
+            shell: true
+        });
+
+        this.activeProcesses.set(socket.id, process);
+
+        process.stdout.on('data', (data) => {
+            socket.emit('command-output', {
+                type: 'output',
+                data: data.toString()
+            });
+        });
+
+        process.stderr.on('data', (data) => {
+            socket.emit('command-output', {
+                type: 'error',
+                data: data.toString()
+            });
+        });
+    }
+
+    async killProcess(socket, { pid }) {
+        const process = this.activeProcesses.get(socket.id);
+        if (process) {
+            process.kill('SIGTERM');
+            socket.emit('command-output', {
+                type: 'output',
+                data: '🛑 Proceso terminado\r\n'
+            });
+        }
+    }
+
+    async readFile(socket, { project, filename }) {
+        try {
+            const filePath = join(this.projectsDir, project, filename);
+            const content = await fs.readFile(filePath, 'utf8');
+            
+            socket.emit('file-content', {
+                success: true,
+                filename,
+                content
+            });
+        } catch (error) {
+            socket.emit('file-content', {
+                success: false,
+                error: error.message
+            });
+        }
+    }
+
+    async writeFile(socket, { project, filename, content }) {
+        try {
+            const filePath = join(this.projectsDir, project, filename);
+            await fs.writeFile(filePath, content, 'utf8');
+            
+            socket.emit('file-saved', {
+                success: true,
+                filename
+            });
+        } catch (error) {
+            socket.emit('file-saved', {
+                success: false,
+                error: error.message
+            });
+        }
+    }
+
+    cleanupProcesses(socketId) {
+        const process = this.activeProcesses.get(socketId);
+        if (process) {
+            process.kill('SIGTERM');
+            this.activeProcesses.delete(socketId);
+        }
+    }
+
+    async detectProjectType(projectName) {
+        try {
+            const projectPath = join(this.projectsDir, projectName);
+            const packageJsonPath = join(projectPath, 'package.json');
+            
+            const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf8'));
+            
+            if (packageJson.dependencies?.react) return 'react';
+            if (packageJson.dependencies?.express) return 'express';
+            return 'node';
+        } catch {
+            return 'html';
+        }
+    }
+
+    startServer(port = 3000) {
+        this.server.listen(port, () => {
+            console.log('🚀 Real Terminal Server ejecutándose');
+            console.log(`📡 http://localhost:${port}`);
+            console.log(`📂 Proyectos en: ${this.projectsDir}`);
+            console.log('💡 Usa Ctrl+C para detener el servidor');
+        });
+    }
+}
+
+// Iniciar servidor
+const terminalServer = new RealTerminalServer();
+export default terminalServer;
+```
+
+**Continuo en el siguiente mensaje con el frontend y las instrucciones de instalación...**
+-------------------------------------------
+Perfecto! Aquí está la segunda parte con el **Frontend** y las **instrucciones de instalación**:
+
+## 🎨 **Frontend para la Terminal Real**
+
+### **4. index.html (Actualizado):**
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Real - CodeStudio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/xterm/css/xterm.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">🚀 Terminal Real</div>
+            <div class="controls">
+                <button id="create-project">📁 Nuevo Proyecto</button>
+                <button id="install-package">📦 Instalar Paquete</button>
+                <button id="run-script">▶️ Ejecutar</button>
+                <button id="kill-process">🛑 Detener</button>
+                <button id="clear-terminal">🧹 Limpiar</button>
+            </div>
+        </header>
+
+        <!-- Área Principal -->
+        <div class="main-content">
+            <!-- Panel de Proyectos -->
+            <div class="projects-panel">
+                <div class="panel-header">
+                    <h3>📂 Proyectos</h3>
+                    <button id="refresh-projects">🔄</button>
+                </div>
+                <div class="projects-list" id="projects-list">
+                    <!-- Los proyectos se cargan dinámicamente -->
+                </div>
+                <div class="project-info">
+                    <h4>Proyecto Actual: <span id="current-project">default</span></h4>
+                    <div class="project-stats">
+                        <span id="project-type">node</span>
+                        <span id="file-count">0 archivos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal -->
+            <div class="terminal-panel">
+                <div class="terminal-header">
+                    <div class="terminal-info">
+                        <span>💻 Terminal Real</span>
+                        <span id="current-directory">~/projects/default</span>
+                    </div>
+                    <div class="terminal-controls">
+                        <button id="terminal-fullscreen">⛶ Pantalla Completa</button>
+                    </div>
+                </div>
+                <div class="terminal-container">
+                    <div id="terminal"></div>
+                </div>
+                <div class="terminal-status">
+                    <span id="connection-status">🟢 Conectado</span>
+                    <span id="active-process">Procesos: 0</span>
+                    <span id="server-status">Servidor: Online</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Nuevo Proyecto -->
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📁 Crear Nuevo Proyecto</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nombre del Proyecto:</label>
+                    <input type="text" id="project-name" placeholder="mi-proyecto" />
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Proyecto:</label>
+                    <select id="project-type">
+                        <option value="node">Node.js Básico</option>
+                        <option value="express">Express Server</option>
+                        <option value="react">React App</option>
+                        <option value="html">HTML/CSS/JS</option>
+                    </select>
+                </div>
+                <button id="create-project-btn">🚀 Crear Proyecto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Instalar Paquetes -->
+    <div id="package-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📦 Instalar Paquetes</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Paquetes a instalar:</label>
+                    <input type="text" id="package-names" placeholder="express cors mongoose" />
+                    <small>Separa múltiples paquetes con espacios</small>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="dev-dependency" />
+                        Instalar como dependencia de desarrollo
+                    </label>
+                </div>
+                <button id="install-packages-btn">📥 Instalar Paquetes</button>
+                
+                <div class="package-suggestions">
+                    <h4>Paquetes Populares:</h4>
+                    <div class="suggestions-grid">
+                        <div class="suggestion" data-pkg="express">Express</div>
+                        <div class="suggestion" data-pkg="react">React</div>
+                        <div class="suggestion" data-pkg="mongoose">Mongoose</div>
+                        <div class="suggestion" data-pkg="axios">Axios</div>
+                        <div class="suggestion" data-pkg="cors">CORS</div>
+                        <div class="suggestion" data-pkg="nodemon">Nodemon</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/xterm/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+    <script src="terminal.js"></script>
+    <script src="integration.js"></script>
+</body>
+</html>
+```
+
+### **5. terminal.js (Frontend):**
+```javascript
+class RealTerminalFrontend {
+    constructor() {
+        this.socket = null;
+        this.terminal = null;
+        this.fitAddon = null;
+        this.currentProject = 'default';
+        this.activeProcesses = 0;
+        this.isConnected = false;
+        
+        this.init();
+    }
+
+    async init() {
+        await this.connectToServer();
+        this.setupTerminal();
+        this.setupEventListeners();
+        this.loadProjects();
+    }
+
+    async connectToServer() {
+        try {
+            this.socket = io();
+            
+            this.socket.on('connect', () => {
+                this.isConnected = true;
+                this.updateConnectionStatus('🟢 Conectado');
+                console.log('✅ Conectado al servidor');
+            });
+
+            this.socket.on('disconnect', () => {
+                this.isConnected = false;
+                this.updateConnectionStatus('🔴 Desconectado');
+                console.log('❌ Desconectado del servidor');
+            });
+
+            this.socket.on('command-output', (data) => {
+                this.handleCommandOutput(data);
+            });
+
+            this.socket.on('project-created', (data) => {
+                this.handleProjectCreated(data);
+            });
+
+            this.socket.on('file-content', (data) => {
+                this.handleFileContent(data);
+            });
+
+            this.socket.on('file-saved', (data) => {
+                this.handleFileSaved(data);
+            });
+
+        } catch (error) {
+            console.error('Error conectando al servidor:', error);
+            this.updateConnectionStatus('🔴 Error de conexión');
+        }
+    }
+
+    setupTerminal() {
+        this.terminal = new Terminal({
+            theme: {
+                background: '#1e1e1e',
+                foreground: '#ffffff',
+                cursor: '#ffffff',
+                selection: '#3a3d41',
+                black: '#000000',
+                red: '#cd3131',
+                green: '#0dbc79',
+                yellow: '#e5e510',
+                blue: '#2472c8',
+                magenta: '#bc3fbc',
+                cyan: '#11a8cd',
+                white: '#e5e5e5'
+            },
+            fontSize: 12,
+            fontFamily: 'Consolas, "Courier New", monospace',
+            cursorBlink: true,
+            scrollback: 1000,
+            convertEol: true
+        });
+
+        this.fitAddon = new FitAddon.FitAddon();
+        this.terminal.loadAddon(this.fitAddon);
+
+        this.terminal.open(document.getElementById('terminal'));
+        this.fitAddon.fit();
+
+        // Manejar entrada del usuario
+        this.terminal.onData((data) => {
+            this.handleTerminalInput(data);
+        });
+
+        // Mostrar prompt inicial
+        this.showPrompt();
+    }
+
+    handleTerminalInput(data) {
+        // Enviar entrada al servidor
+        if (this.socket && this.isConnected) {
+            this.socket.emit('execute-command', {
+                command: data,
+                project: this.currentProject
+            });
+        } else {
+            this.terminal.write('❌ No conectado al servidor\r\n');
+            this.showPrompt();
+        }
+    }
+
+    handleCommandOutput(data) {
+        switch (data.type) {
+            case 'output':
+                this.terminal.write(data.data);
+                break;
+            case 'error':
+                this.terminal.write(`\x1b[31m${data.data}\x1b[0m`);
+                break;
+            case 'exit':
+                this.terminal.write(`\x1b[33m${data.data}\x1b[0m`);
+                this.activeProcesses = Math.max(0, this.activeProcesses - 1);
+                this.updateProcessStatus();
+                this.showPrompt();
+                break;
+        }
+    }
+
+    showPrompt() {
+        this.terminal.write(`\r\n\x1b[32muser@terminal\x1b[0m:\x1b[34m~/projects/${this.currentProject}\x1b[0m$ `);
+    }
+
+    setupEventListeners() {
+        // Botones de control
+        document.getElementById('create-project').addEventListener('click', () => {
+            this.showProjectModal();
+        });
+
+        document.getElementById('install-package').addEventListener('click', () => {
+            this.showPackageModal();
+        });
+
+        document.getElementById('run-script').addEventListener('click', () => {
+            this.runScript('start');
+        });
+
+        document.getElementById('kill-process').addEventListener('click', () => {
+            this.killProcess();
+        });
+
+        document.getElementById('clear-terminal').addEventListener('click', () => {
+            this.clearTerminal();
+        });
+
+        document.getElementById('refresh-projects').addEventListener('click', () => {
+            this.loadProjects();
+        });
+
+        document.getElementById('terminal-fullscreen').addEventListener('click', () => {
+            this.toggleFullscreen();
+        });
+
+        // Modales
+        this.setupModalHandlers();
+
+        // Redimensionamiento
+        window.addEventListener('resize', () => {
+            this.fitAddon.fit();
+        });
+    }
+
+    setupModalHandlers() {
+        // Modal de proyecto
+        const projectModal = document.getElementById('project-modal');
+        const projectClose = projectModal.querySelector('.close');
+        const createProjectBtn = document.getElementById('create-project-btn');
+
+        document.getElementById('create-project').addEventListener('click', () => {
+            projectModal.style.display = 'block';
+        });
+
+        projectClose.addEventListener('click', () => {
+            projectModal.style.display = 'none';
+        });
+
+        createProjectBtn.addEventListener('click', () => {
+            this.createNewProject();
+        });
+
+        // Modal de paquetes
+        const packageModal = document.getElementById('package-modal');
+        const packageClose = packageModal.querySelector('.close');
+        const installPackagesBtn = document.getElementById('install-packages-btn');
+
+        document.getElementById('install-package').addEventListener('click', () => {
+            packageModal.style.display = 'block';
+        });
+
+        packageClose.addEventListener('click', () => {
+            packageModal.style.display = 'none';
+        });
+
+        installPackagesBtn.addEventListener('click', () => {
+            this.installPackages();
+        });
+
+        // Sugerencias de paquetes
+        document.querySelectorAll('.suggestion').forEach(suggestion => {
+            suggestion.addEventListener('click', () => {
+                const pkg = suggestion.getAttribute('data-pkg');
+                const input = document.getElementById('package-names');
+                input.value = input.value ? `${input.value} ${pkg}` : pkg;
+            });
+        });
+
+        // Cerrar modales al hacer clic fuera
+        window.addEventListener('click', (e) => {
+            if (e.target === projectModal) projectModal.style.display = 'none';
+            if (e.target === packageModal) packageModal.style.display = 'none';
+        });
+    }
+
+    async createNewProject() {
+        const name = document.getElementById('project-name').value.trim();
+        const type = document.getElementById('project-type').value;
+
+        if (!name) {
+            alert('Por favor ingresa un nombre para el proyecto');
+            return;
+        }
+
+        if (this.socket) {
+            this.socket.emit('create-project', { name, type });
+            document.getElementById('project-modal').style.display = 'none';
+            document.getElementById('project-name').value = '';
+        }
+    }
+
+    handleProjectCreated(data) {
+        if (data.success) {
+            this.terminal.write(`\r\n\x1b[32m${data.message}\x1b[0m\r\n`);
+            this.loadProjects();
+            this.switchProject(data.project);
+        } else {
+            this.terminal.write(`\r\n\x1b[31m❌ Error: ${data.error}\x1b[0m\r\n`);
+        }
+        this.showPrompt();
+    }
+
+    async installPackages() {
+        const packageNames = document.getElementById('package-names').value.trim();
+        const isDev = document.getElementById('dev-dependency').checked;
+
+        if (!packageNames) {
+            alert('Por favor ingresa al menos un paquete');
+            return;
+        }
+
+        if (this.socket) {
+            this.socket.emit('install-package', {
+                packageName: packageNames,
+                project: this.currentProject,
+                isDev
+            });
+            document.getElementById('package-modal').style.display = 'none';
+            document.getElementById('package-names').value = '';
+        }
+    }
+
+    runScript(script) {
+        if (this.socket) {
+            this.socket.emit('run-script', {
+                script,
+                project: this.currentProject
+            });
+            this.activeProcesses++;
+            this.updateProcessStatus();
+        }
+    }
+
+    killProcess() {
+        if (this.socket) {
+            this.socket.emit('kill-process', {});
+            this.activeProcesses = Math.max(0, this.activeProcesses - 1);
+            this.updateProcessStatus();
+        }
+    }
+
+    clearTerminal() {
+        this.terminal.clear();
+        this.showPrompt();
+    }
+
+    toggleFullscreen() {
+        const terminalContainer = document.querySelector('.terminal-container');
+        if (!document.fullscreenElement) {
+            terminalContainer.requestFullscreen().catch(err => {
+                console.log(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    async loadProjects() {
+        try {
+            const response = await fetch('/api/projects');
+            const projects = await response.json();
+            this.displayProjects(projects);
+        } catch (error) {
+            console.error('Error cargando proyectos:', error);
+        }
+    }
+
+    displayProjects(projects) {
+        const projectsList = document.getElementById('projects-list');
+        projectsList.innerHTML = '';
+
+        projects.forEach(project => {
+            const projectElement = document.createElement('div');
+            projectElement.className = `project-item ${project.name === this.currentProject ? 'active' : ''}`;
+            projectElement.innerHTML = `
+                <div class="project-icon">📁</div>
+                <div class="project-info">
+                    <div class="project-name">${project.name}</div>
+                    <div class="project-type">${project.type}</div>
+                </div>
+            `;
+
+            projectElement.addEventListener('click', () => {
+                this.switchProject(project.name);
+            });
+
+            projectsList.appendChild(projectElement);
+        });
+    }
+
+    switchProject(projectName) {
+        this.currentProject = projectName;
+        document.getElementById('current-project').textContent = projectName;
+        document.getElementById('current-directory').textContent = `~/projects/${projectName}`;
+        
+        // Actualizar lista de proyectos
+        this.loadProjects();
+        
+        // Mostrar mensaje en terminal
+        this.terminal.write(`\r\n\x1b[36m📂 Cambiado a proyecto: ${projectName}\x1b[0m\r\n`);
+        this.showPrompt();
+    }
+
+    updateConnectionStatus(status) {
+        document.getElementById('connection-status').textContent = status;
+    }
+
+    updateProcessStatus() {
+        document.getElementById('active-process').textContent = `Procesos: ${this.activeProcesses}`;
+    }
+
+    handleFileContent(data) {
+        if (data.success) {
+            // Aquí podrías cargar el contenido en un editor
+            console.log('Contenido del archivo:', data.content);
+        } else {
+            this.terminal.write(`\r\n\x1b[31m❌ Error leyendo archivo: ${data.error}\x1b[0m\r\n`);
+        }
+    }
+
+    handleFileSaved(data) {
+        if (data.success) {
+            this.terminal.write(`\r\n\x1b[32m✅ Archivo guardado: ${data.filename}\x1b[0m\r\n`);
+        } else {
+            this.terminal.write(`\r\n\x1b[31m❌ Error guardando archivo: ${data.error}\x1b[0m\r\n`);
+        }
+    }
+
+    // Método para ejecutar comandos específicos
+    executeCommand(command) {
+        if (this.socket && this.isConnected) {
+            this.socket.emit('execute-command', {
+                command,
+                project: this.currentProject
+            });
+        }
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    window.realTerminal = new RealTerminalFrontend();
+});
+```
+
+### **6. styles.css (Actualizado):**
+```css
+/* Estilos Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #1e1e1e;
+    color: #e0e0e0;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Header */
+.app-header {
+    background: #2d2d2d;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #444;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #007acc;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+}
+
+.controls button {
+    background: #007acc;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.controls button:hover {
+    background: #005a9e;
+    transform: translateY(-1px);
+}
+
+.controls button:active {
+    transform: translateY(0);
+}
+
+/* Contenido Principal */
+.main-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Panel de Proyectos */
+.projects-panel {
+    width: 300px;
+    background: #252526;
+    border-right: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    padding: 15px;
+    border-bottom: 1px solid #444;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h3 {
+    font-size: 16px;
+    color: #cccccc;
+}
+
+.panel-header button {
+    background: transparent;
+    border: 1px solid #555;
+    color: #ccc;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.projects-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.project-item {
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s ease;
+}
+
+.project-item:hover {
+    background: #2a2d2e;
+}
+
+.project-item.active {
+    background: #094771;
+}
+
+.project-icon {
+    font-size: 18px;
+}
+
+.project-info {
+    flex: 1;
+}
+
+.project-name {
+    font-weight: 500;
+    color: #ffffff;
+}
+
+.project-type {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+}
+
+.project-info {
+    padding: 15px;
+    border-top: 1px solid #444;
+}
+
+.project-info h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #cccccc;
+}
+
+.project-stats {
+    display: flex;
+    gap: 10px;
+    font-size: 12px;
+    color: #888;
+}
+
+/* Terminal Panel */
+.terminal-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #1e1e1e;
+}
+
+.terminal-header {
+    background: #2d2d2d;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #444;
+}
+
+.terminal-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 14px;
+}
+
+#current-directory {
+    color: #888;
+    font-family: 'Consolas', monospace;
+}
+
+.terminal-controls button {
+    background: #555;
+    border: none;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.terminal-container {
+    flex: 1;
+    padding: 16px;
+    overflow: hidden;
+}
+
+.terminal-status {
+    background: #007acc;
+    padding: 4px 16px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: white;
+}
+
+/* Modales */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+    background: #2d2d2d;
+    margin: 10% auto;
+    padding: 0;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    color: white;
+}
+
+.modal-header {
+    background: #363636;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px 8px 0 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.close {
+    color: #aaa;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: white;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    background: #1e1e1e;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: white;
+    font-size: 14px;
+}
+
+.form-group small {
+    color: #888;
+    font-size: 12px;
+}
+
+.form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+button {
+    background: #007acc;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+button:hover {
+    background: #005a9e;
+}
+
+.package-suggestions {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+}
+
+.package-suggestions h4 {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.suggestions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.suggestion {
+    background: #363636;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 12px;
+    transition: background 0.2s ease;
+}
+
+.suggestion:hover {
+    background: #444;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #424242;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4f4f4f;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .projects-panel {
+        width: 100%;
+        height: 200px;
+    }
+    
+    .app-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+```
+
+## 📋 **Instrucciones de Instalación y Uso**
+
+### **1. Instalación:**
+```bash
+# Crear directorio del proyecto
+mkdir real-terminal
+cd real-terminal
+
+# Inicializar proyecto npm
+npm init -y
+
+# Instalar dependencias
+npm install express socket.io cors chokidar node-pty tree-kill
+
+# Crear estructura de directorios
+mkdir server public projects
+
+# Colocar los archivos en sus respectivas carpetas:
+# - server/terminal-server.js
+# - public/index.html, terminal.js, styles.css
+```
+
+### **2. Ejecución:**
+```bash
+# Iniciar el servidor
+npm start
+
+# O en modo desarrollo
+npm run dev
+```
+
+### **3. Acceder a la aplicación:**
+```
+Abre tu navegador y ve a: http://localhost:3000
+```
+
+## 🚀 **Características de la Terminal Real:**
+
+### **✅ Lo que PUEDES hacer:**
+- **Crear proyectos reales** (Node.js, Express, React, HTML)
+- **Instalar paquetes npm reales** 
+- **Ejecutar servidores reales** (Express, React dev server)
+- **Gestionar archivos reales** en el sistema
+- **Ejecutar cualquier comando** del sistema
+- **Ver output en tiempo real**
+
+### **📂 Estructura de Proyectos:**
+```
+projects/
+├── mi-api-express/
+│   ├── package.json
+│   └── server.js
+├── mi-app-react/
+│   ├── package.json
+│   ├── vite.config.js
+│   └── src/
+└── mi-sitio-web/
+    └── index.html
+```
+
+### **⚡ Comandos que puedes ejecutar:**
+```bash
+# Navegación
+ls
+cd mi-proyecto
+pwd
+
+# Gestión de paquetes
+npm install express
+npm run dev
+npm start
+
+# Git
+git init
+git add .
+git commit -m "Initial commit"
+
+# Sistema
+node server.js
+python app.py
+echo "Hola Mundo"
+```
+
+### **🛡️ Consideraciones de Seguridad:**
+- **Solo ejecutar en entornos de confianza**
+- **El servidor tiene acceso completo al sistema**
+- **Recomendado para desarrollo local**
+
+¡Ahora tienes una **terminal REAL** que puede crear e instalar aplicaciones reales! ¿Te gustaría que agreguemos alguna funcionalidad específica?
+

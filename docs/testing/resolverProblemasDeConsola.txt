@@ -1,0 +1,1086 @@
+﻿Perfecto, voy a reorganizar las consolas para que estén completamente independientes. Te explico qué vamos a hacer:
+
+📋 PLAN DE REORGANIZACIÓN
+
+1. Crear archivos independientes para cada consola:
+
+· js/consola-principal.js - Para la consola 1 (la que tiene más funciones)
+· js/consola-alterna.js - Para la consola alternativa (funciones básicas)
+
+2. Modificar index.html para cargar las consolas independientemente
+
+3. Eliminar del index.js todo el código relacionado con consolas
+
+---
+
+🚀 ARCHIVOS NUEVOS:
+
+js/consola-principal.js
+
+```javascript
+// ===== CONSOLA PRINCIPAL - MÁS AVANZADA =====
+class ConsolaPrincipal {
+    constructor() {
+        this.initializeElements();
+        this.setupEventListeners();
+        this.commandHistory = [];
+        this.historyIndex = -1;
+        this.isInitialized = false;
+    }
+
+    initializeElements() {
+        // Elementos de la consola principal
+        this.consoleOutput = document.getElementById('consoleOutput');
+        this.runButton = document.getElementById('runButton');
+        this.clearConsole = document.getElementById('clearConsole');
+        
+        if (!this.consoleOutput || !this.runButton) {
+            console.warn('Elementos de consola principal no encontrados');
+            return;
+        }
+        
+        this.isInitialized = true;
+    }
+
+    setupEventListeners() {
+        if (!this.isInitialized) return;
+
+        // Botón ejecutar código del editor
+        this.runButton.addEventListener('click', () => {
+            this.executeEditorCode();
+        });
+
+        // Botón limpiar consola
+        this.clearConsole.addEventListener('click', () => {
+            this.clearConsoleOutput();
+        });
+
+        // Atajos de teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                this.executeEditorCode();
+            }
+            
+            if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                this.clearConsoleOutput();
+            }
+        });
+    }
+
+    executeEditorCode() {
+        if (!window.editor) {
+            this.addToConsole('❌ Editor no disponible', 'error');
+            return;
+        }
+
+        const code = window.editor.getValue().trim();
+        const language = document.getElementById('modeSelector')?.value || 'html';
+        
+        if (language !== "javascript") {
+            this.addToConsole("⚠️ La consola solo ejecuta código JavaScript\nCambia el lenguaje a JavaScript para ejecutar código", 'warning');
+            return;
+        }
+
+        if (!code) {
+            this.addToConsole('❌ No hay código para ejecutar', 'error');
+            return;
+        }
+
+        this.addToConsole('▶️ Ejecutando código del editor...', 'info');
+        this.executeJavaScriptCode(code);
+    }
+
+    async executeJavaScriptCode(code) {
+        try {
+            // Crear un contexto aislado más seguro
+            const sandbox = this.createSecureSandbox();
+            
+            // Función para ejecutar en el contexto aislado
+            const execute = () => {
+                'use strict';
+                return new Promise((resolve) => {
+                    const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+                    const fn = new AsyncFunction('sandbox', `
+                        with(sandbox) {
+                            try {
+                                ${code}
+                            } catch(e) {
+                                console.error('Error:', e.message);
+                            }
+                        }
+                    `);
+                    
+                    resolve(fn(sandbox));
+                });
+            };
+
+            // Ejecutar con timeout controlado
+            await Promise.race([
+                execute(),
+                new Promise((_, reject) => setTimeout(
+                    () => reject(new Error("⏰ Timeout excedido (10 segundos)")), 
+                    10000
+                ))
+            ]);
+            
+        } catch (error) {
+            this.addToConsole(`❌ Error de ejecución: ${error.message}`, 'error');
+        }
+    }
+
+    createSecureSandbox() {
+        const sandbox = {
+            // Console methods
+            console: {
+                log: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    this.addToConsole(message, 'log');
+                },
+                error: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    this.addToConsole(`❌ ${message}`, 'error');
+                },
+                warn: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    this.addToConsole(`⚠️ ${message}`, 'warning');
+                },
+                info: (...args) => {
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    this.addToConsole(`ℹ️ ${message}`, 'info');
+                }
+            },
+            
+            // Safe globals
+            setTimeout: setTimeout,
+            setInterval: setInterval,
+            clearTimeout: clearTimeout,
+            clearInterval: clearInterval,
+            Promise: window.Promise,
+            Math: Math,
+            Date: Date,
+            JSON: JSON,
+            Number: Number,
+            String: String,
+            Boolean: Boolean,
+            Array: Array,
+            Object: Object,
+            
+            // Restricted access
+            window: undefined,
+            document: undefined,
+            eval: undefined
+        };
+
+        return new Proxy(sandbox, {
+            has: () => true,
+            get: (target, prop) => {
+                if (prop === Symbol.unscopables) return undefined;
+                if (prop in target) return target[prop];
+                return undefined; // Bloquear acceso a propiedades no permitidas
+            }
+        });
+    }
+
+    addToConsole(text, type = 'normal') {
+        if (!this.consoleOutput) return;
+        
+        const timestamp = new Date().toLocaleTimeString();
+        let formattedText = '';
+
+        switch (type) {
+            case 'error':
+                formattedText = `[${timestamp}] ❌ ${text}\n`;
+                break;
+            case 'warning':
+                formattedText = `[${timestamp}] ⚠️ ${text}\n`;
+                break;
+            case 'info':
+                formattedText = `[${timestamp}] ℹ️ ${text}\n`;
+                break;
+            case 'success':
+                formattedText = `[${timestamp}] ✅ ${text}\n`;
+                break;
+            case 'log':
+                formattedText = `[${timestamp}] ${text}\n`;
+                break;
+            default:
+                formattedText = `[${timestamp}] ${text}\n`;
+        }
+
+        this.consoleOutput.value += formattedText;
+        this.consoleOutput.scrollTop = this.consoleOutput.scrollHeight;
+    }
+
+    clearConsoleOutput() {
+        if (this.consoleOutput) {
+            this.consoleOutput.value = '';
+            this.addToConsole('🧹 Consola limpiada', 'info');
+        }
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        new ConsolaPrincipal();
+    }, 1000);
+});
+```
+
+js/consola-alterna.js
+
+```javascript
+// ===== CONSOLA ALTERNA - FUNCIONES BÁSICAS =====
+class ConsolaAlterna {
+    constructor() {
+        this.initializeElements();
+        this.setupEventListeners();
+        this.commandHistory = [];
+        this.historyIndex = -1;
+        this.isInitialized = false;
+    }
+
+    initializeElements() {
+        // Elementos del canal alterno
+        this.alternateInput = document.getElementById('alternateConsoleInput');
+        this.alternateOutput = document.getElementById('alternateConsoleOutput');
+        this.runButton = document.getElementById('runAlternateConsole');
+        this.clearInputButton = document.getElementById('clearAlternateInput');
+        this.clearOutputButton = document.getElementById('clearAlternateOutput');
+        
+        if (!this.alternateInput || !this.alternateOutput) {
+            console.warn('Elementos de consola alterna no encontrados');
+            return;
+        }
+        
+        this.isInitialized = true;
+    }
+
+    setupEventListeners() {
+        if (!this.isInitialized) return;
+
+        // Botón ejecutar
+        this.runButton.addEventListener('click', () => {
+            this.executeAlternateCode();
+        });
+
+        // Botón limpiar código
+        this.clearInputButton.addEventListener('click', () => {
+            this.clearAlternateInput();
+        });
+
+        // Botón limpiar respuesta
+        this.clearOutputButton.addEventListener('click', () => {
+            this.clearAlternateOutput();
+        });
+
+        // Atajos de teclado
+        this.alternateInput.addEventListener('keydown', (e) => {
+            // Ctrl+Enter para ejecutar
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                this.executeAlternateCode();
+            }
+            
+            // Ctrl+L para limpiar código
+            if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                this.clearAlternateInput();
+            }
+            
+            // Ctrl+K para limpiar respuesta
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                this.clearAlternateOutput();
+            }
+            
+            // Flecha arriba/abajo para historial
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                this.navigateHistory(-1);
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                this.navigateHistory(1);
+            }
+        });
+    }
+
+    executeAlternateCode() {
+        const code = this.alternateInput.value.trim();
+        
+        if (!code) {
+            this.addToAlternateOutput('❌ No hay código para ejecutar', 'error');
+            return;
+        }
+
+        // Agregar al historial
+        if (this.commandHistory.length === 0 || this.commandHistory[this.commandHistory.length - 1] !== code) {
+            this.commandHistory.push(code);
+            if (this.commandHistory.length > 20) {
+                this.commandHistory.shift();
+            }
+        }
+        this.historyIndex = -1;
+
+        this.addToAlternateOutput('▶️ Ejecutando código...', 'info');
+        this.addToAlternateOutput(code, 'code');
+
+        try {
+            // Capturar console methods temporalmente
+            const originalConsole = {
+                log: console.log,
+                error: console.error,
+                warn: console.warn,
+                info: console.info
+            };
+
+            // Redirigir console.log al output alterno
+            console.log = (...args) => {
+                const message = args.map(arg => 
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                ).join(' ');
+                this.addToAlternateOutput(message, 'log');
+                originalConsole.log.apply(console, args);
+            };
+
+            console.error = (...args) => {
+                const message = args.map(arg => 
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                ).join(' ');
+                this.addToAlternateOutput(`❌ ${message}`, 'error');
+                originalConsole.error.apply(console, args);
+            };
+
+            console.warn = (...args) => {
+                const message = args.map(arg => 
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                ).join(' ');
+                this.addToAlternateOutput(`⚠️ ${message}`, 'warning');
+                originalConsole.warn.apply(console, args);
+            };
+
+            // Ejecutar el código
+            const result = new Function(code)();
+            
+            // Mostrar el resultado si no es undefined
+            if (result !== undefined) {
+                this.addToAlternateOutput(`✅ Resultado: ${String(result)}`, 'result');
+            } else {
+                this.addToAlternateOutput('✅ Código ejecutado correctamente', 'success');
+            }
+
+            // Restaurar console original
+            console.log = originalConsole.log;
+            console.error = originalConsole.error;
+            console.warn = originalConsole.warn;
+            console.info = originalConsole.info;
+
+        } catch (error) {
+            this.addToAlternateOutput(`❌ Error: ${error.message}`, 'error');
+        }
+    }
+
+    addToAlternateOutput(text, type = 'normal') {
+        const timestamp = new Date().toLocaleTimeString();
+        let formattedText = '';
+
+        switch (type) {
+            case 'error':
+                formattedText = `[${timestamp}] ❌ ${text}\n`;
+                break;
+            case 'warning':
+                formattedText = `[${timestamp}] ⚠️ ${text}\n`;
+                break;
+            case 'info':
+                formattedText = `[${timestamp}] ℹ️ ${text}\n`;
+                break;
+            case 'success':
+                formattedText = `[${timestamp}] ✅ ${text}\n`;
+                break;
+            case 'code':
+                formattedText = `[${timestamp}] 📝 Código:\n${text}\n${'-'.repeat(50)}\n`;
+                break;
+            case 'result':
+                formattedText = `[${timestamp}] 💡 ${text}\n`;
+                break;
+            case 'log':
+                formattedText = `[${timestamp}] ${text}\n`;
+                break;
+            default:
+                formattedText = `[${timestamp}] ${text}\n`;
+        }
+
+        this.alternateOutput.value += formattedText;
+        this.alternateOutput.scrollTop = this.alternateOutput.scrollHeight;
+    }
+
+    clearAlternateInput() {
+        this.alternateInput.value = '';
+        this.alternateInput.focus();
+        this.addToAlternateOutput('🗑️ Área de código limpiada', 'info');
+    }
+
+    clearAlternateOutput() {
+        this.alternateOutput.value = '';
+        this.addToAlternateOutput('🧹 Respuesta de consola limpiada', 'info');
+    }
+
+    navigateHistory(direction) {
+        if (this.commandHistory.length === 0) return;
+        
+        this.historyIndex += direction;
+        
+        if (this.historyIndex < 0) {
+            this.historyIndex = -1;
+            this.alternateInput.value = '';
+            return;
+        }
+        
+        if (this.historyIndex >= this.commandHistory.length) {
+            this.historyIndex = this.commandHistory.length - 1;
+        }
+        
+        this.alternateInput.value = this.commandHistory[this.historyIndex];
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        new ConsolaAlterna();
+    }, 1000);
+});
+```
+
+---
+
+🔧 MODIFICACIONES EN index.html:
+
+En la sección de scripts, reemplaza:
+
+```html
+<script src="js/index.js"></script>
+```
+
+Por:
+
+```html
+<script src="js/index.js"></script>
+<script src="js/consola-principal.js"></script>
+<script src="js/consola-alterna.js"></script>
+```
+
+---
+
+🗑️ CÓDIGO A ELIMINAR DE index.js:
+
+En index.js, elimina TODO este código relacionado con consolas:
+
+ELIMINAR DESDE:
+
+```javascript
+// ===== CONFIGURACIÓN DE LA CONSOLA =====
+const consoleOutput = document.getElementById('consoleOutput');
+const consoleInput = document.getElementById('consoleInput');
+
+// Historial de comandos
+let commandHistory = [];
+let historyIndex = -1;
+
+// Limpiar consola
+document.getElementById('clearConsole').addEventListener('click', () => {
+    consoleOutput.value = '';
+});
+
+// Ejecutar código del editor
+document.getElementById('runButton').addEventListener('click', () => {
+    const language = document.getElementById('modeSelector').value;
+    if (language !== "javascript") {
+        addToConsole("La consola solo ejecuta código JavaScript\nCambia el lenguaje a JavaScript para ejecutar código", "error");
+        return;
+    }
+    executeJavaScriptCode(editor.getValue());
+});
+
+// Función para actualizar la previsualización
+function updatePreview() {
+    const preview = document.getElementById('preview');
+    const code = editor.getValue();
+    preview.srcdoc = code;
+}
+
+// Función para añadir texto a la consola
+function addToConsole(text, type = "normal") {
+    const timestamp = new Date().toLocaleTimeString();
+    const prefix = type === "error" ? `[${timestamp}] ! ERROR: ` :
+                 type === "input" ? `[${timestamp}] > ` : 
+                 `[${timestamp}] `;
+    
+    consoleOutput.value += prefix + text + '\n';
+    consoleOutput.scrollTop = consoleOutput.scrollHeight;
+}
+
+// Función para ejecutar código JavaScript
+async function executeJavaScriptCode(code) {
+    consoleOutput.value = '';
+    
+    // Crear un contexto aislado
+    const sandbox = {
+        console: {
+            log: (...args) => {
+                const message = args.map(arg => 
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                ).join(' ');
+                addToConsole(message);
+            },
+            error: (...args) => {
+                addToConsole(args.join(' '), "error");
+            }
+        },
+        setTimeout,
+        setInterval,
+        clearTimeout,
+        clearInterval,
+        Promise: window.Promise,
+    };
+
+    // Crear proxy para seguridad
+    const sandboxProxy = new Proxy(sandbox, {
+        has: () => true,
+        get: (target, prop) => {
+            if (prop === Symbol.unscopables) return undefined;
+            return target[prop] || window[prop];
+        }
+    });
+
+    // Función para ejecutar en el contexto aislado
+    const execute = () => {
+        'use strict';
+        return new Promise((resolve) => {
+            const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+            const fn = new AsyncFunction('sandbox', `
+                with(sandbox) {
+                    try {
+                        ${code}
+                    } catch(e) {
+                        console.error('Error:', e.message);
+                    }
+                }
+            `);
+            
+            resolve(fn(sandboxProxy));
+        });
+    };
+
+    try {
+        // Ejecutar con timeout controlado
+        await Promise.race([
+            execute(),
+            new Promise((_, reject) => setTimeout(
+                () => reject(new Error("Timeout excedido (10 segundos)")), 
+                10000
+            ))
+        ]);
+    } catch (error) {
+        addToConsole(`[Execution Error] ${error.message}`, "error");
+    }
+}
+
+// Inicializar canal alterno de consola
+initializeAlternateConsole();
+```
+
+Y TAMBIÉN ELIMINAR:
+
+```javascript
+// Función para inicializar el canal alterno de consola
+function initializeAlternateConsole() {
+    const runButton = document.getElementById('runAlternateConsole');
+    const clearInputButton = document.getElementById('clearAlternateInput');
+    const clearOutputButton = document.getElementById('clearAlternateOutput');
+    const inputTextarea = document.getElementById('alternateConsoleInput');
+    const outputTextarea = document.getElementById('alternateConsoleOutput');
+
+    if (runButton) {
+        runButton.addEventListener('click', () => {
+            const code = inputTextarea.value;
+            if (!code.trim()) return;
+
+            try {
+                // Capturar console.log
+                const originalLog = console.log;
+                const originalError = console.error;
+                let output = '';
+
+                console.log = (...args) => {
+                    output += args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ') + '\n';
+                };
+
+                console.error = (...args) => {
+                    output += 'ERROR: ' + args.join(' ') + '\n';
+                };
+
+                // Ejecutar el código
+                const result = new Function(code)();
+                
+                // Restaurar console.log original
+                console.log = originalLog;
+                console.error = originalError;
+
+                // Mostrar resultado
+                if (result !== undefined) {
+                    output += 'Resultado: ' + String(result) + '\n';
+                }
+
+                outputTextarea.value = output;
+            } catch (error) {
+                outputTextarea.value = 'Error: ' + error.message;
+            }
+        });
+    }
+
+    if (clearInputButton) {
+        clearInputButton.addEventListener('click', () => {
+            inputTextarea.value = '';
+        });
+    }
+
+    if (clearOutputButton) {
+        clearOutputButton.addEventListener('click', () => {
+            outputTextarea.value = '';
+        });
+    }
+}
+```
+
+---
+
+✅ RESULTADO FINAL:
+
+· Consola Principal: Funciones avanzadas, ejecución segura de código del editor
+· Consola Alterna: Funciones básicas, ejecución directa de código
+· Código Limpio: Cada consola en su propio archivo
+· Sin Conflictos: Las consolas no interfieren entre sí
+
+¿Te parece bien esta organización? Puedo hacer ajustes si necesitas alguna modificación específica.
+
+¡Tienes toda la razón! 😅 Veo que ya tienes un alternate-console.js que es muy similar a lo que te propuse. Vamos a optimizar usando lo que ya tienes.
+
+🔄 PLAN SIMPLIFICADO:
+
+1. Renombrar y organizar:
+
+· alternate-console.js → js/consola-alterna.js (ya lo tienes)
+· Crear js/consola-principal.js (nuevo para la consola 1)
+
+2. Modificar index.html para cargar correctamente:
+
+3. Eliminar del index.js solo el código de consolas
+
+---
+
+📁 ARCHIVOS FINALES:
+
+js/consola-principal.js (NUEVO - basado en tu análisis)
+
+```javascript
+// ===== CONSOLA PRINCIPAL - MÁS AVANZADA =====
+class ConsolaPrincipal {
+    constructor() {
+        this.consoleOutput = document.getElementById('consoleOutput');
+        this.runButton = document.getElementById('runButton');
+        this.clearConsole = document.getElementById('clearConsole');
+        
+        this.setupEventListeners();
+        this.addToConsole('✅ Consola Principal inicializada', 'success');
+    }
+
+    setupEventListeners() {
+        // Botón ejecutar código del editor
+        this.runButton.addEventListener('click', () => {
+            this.executeEditorCode();
+        });
+
+        // Botón limpiar consola
+        this.clearConsole.addEventListener('click', () => {
+            this.clearConsoleOutput();
+        });
+
+        // Atajos de teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                this.executeEditorCode();
+            }
+        });
+    }
+
+    executeEditorCode() {
+        if (!window.editor) {
+            this.addToConsole('❌ Editor no disponible', 'error');
+            return;
+        }
+
+        const code = window.editor.getValue().trim();
+        const language = document.getElementById('modeSelector')?.value || 'html';
+        
+        if (language !== "javascript") {
+            this.addToConsole("⚠️ La consola solo ejecuta código JavaScript", 'warning');
+            return;
+        }
+
+        if (!code) {
+            this.addToConsole('❌ No hay código para ejecutar', 'error');
+            return;
+        }
+
+        this.addToConsole('▶️ Ejecutando código del editor...', 'info');
+        this.executeJavaScriptCode(code);
+    }
+
+    async executeJavaScriptCode(code) {
+        try {
+            // Contexto seguro para la consola principal
+            const sandbox = {
+                console: {
+                    log: (...args) => {
+                        const message = args.map(arg => 
+                            typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+                        ).join(' ');
+                        this.addToConsole(message);
+                    },
+                    error: (...args) => {
+                        this.addToConsole(args.join(' '), "error");
+                    },
+                    warn: (...args) => {
+                        this.addToConsole(`⚠️ ${args.join(' ')}`, "warning");
+                    },
+                    info: (...args) => {
+                        this.addToConsole(`ℹ️ ${args.join(' ')}`, "info");
+                    }
+                },
+                setTimeout,
+                setInterval,
+                clearTimeout,
+                clearInterval
+            };
+
+            // Ejecutar con función asíncrona
+            const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+            const fn = new AsyncFunction('sandbox', `
+                with(sandbox) {
+                    try {
+                        ${code}
+                    } catch(e) {
+                        console.error('Error:', e.message);
+                    }
+                }
+            `);
+            
+            await Promise.race([
+                fn(sandbox),
+                new Promise((_, reject) => setTimeout(
+                    () => reject(new Error("⏰ Timeout excedido (10 segundos)")), 
+                    10000
+                ))
+            ]);
+            
+        } catch (error) {
+            this.addToConsole(`❌ Error: ${error.message}`, 'error');
+        }
+    }
+
+    addToConsole(text, type = 'normal') {
+        const timestamp = new Date().toLocaleTimeString();
+        let formattedText = '';
+
+        switch (type) {
+            case 'error':
+                formattedText = `[${timestamp}] ❌ ${text}\n`;
+                break;
+            case 'warning':
+                formattedText = `[${timestamp}] ⚠️ ${text}\n`;
+                break;
+            case 'info':
+                formattedText = `[${timestamp}] ℹ️ ${text}\n`;
+                break;
+            case 'success':
+                formattedText = `[${timestamp}] ✅ ${text}\n`;
+                break;
+            default:
+                formattedText = `[${timestamp}] ${text}\n`;
+        }
+
+        this.consoleOutput.value += formattedText;
+        this.consoleOutput.scrollTop = this.consoleOutput.scrollHeight;
+    }
+
+    clearConsoleOutput() {
+        this.consoleOutput.value = '';
+        this.addToConsole('🧹 Consola limpiada', 'info');
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        new ConsolaPrincipal();
+    }, 1000);
+});
+```
+
+js/consola-alterna.js (TU ARCHIVO ACTUAL - solo cambiar nombre)
+
+```javascript
+// ===== CONSOLA ALTERNA - FUNCIONES BÁSICAS =====
+// Este es tu archivo alternate-console.js actual, solo cambiamos el nombre de la clase
+class ConsolaAlterna {
+    constructor() {
+        this.initializeElements();
+        this.setupEventListeners();
+        this.commandHistory = [];
+        this.historyIndex = -1;
+    }
+
+    initializeElements() {
+        // Elementos del canal alterno
+        this.alternateInput = document.getElementById('alternateConsoleInput');
+        this.alternateOutput = document.getElementById('alternateConsoleOutput');
+        this.runButton = document.getElementById('runAlternateConsole');
+        this.clearInputButton = document.getElementById('clearAlternateInput');
+        this.clearOutputButton = document.getElementById('clearAlternateOutput');
+    }
+
+    setupEventListeners() {
+        // Botón ejecutar
+        this.runButton.addEventListener('click', () => {
+            this.executeAlternateCode();
+        });
+
+        // Botón limpiar código
+        this.clearInputButton.addEventListener('click', () => {
+            this.clearAlternateInput();
+        });
+
+        // Botón limpiar respuesta
+        this.clearOutputButton.addEventListener('click', () => {
+            this.clearAlternateOutput();
+        });
+
+        // Atajos de teclado
+        this.alternateInput.addEventListener('keydown', (e) => {
+            // Ctrl+Enter para ejecutar
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                this.executeAlternateCode();
+            }
+            
+            // Ctrl+L para limpiar código
+            if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                this.clearAlternateInput();
+            }
+            
+            // Ctrl+K para limpiar respuesta
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                this.clearAlternateOutput();
+            }
+        });
+    }
+
+    executeAlternateCode() {
+        const code = this.alternateInput.value.trim();
+        
+        if (!code) {
+            this.addToAlternateOutput('❌ No hay código para ejecutar', 'error');
+            return;
+        }
+
+        // Agregar al historial si es diferente al último comando
+        if (this.commandHistory.length === 0 || this.commandHistory[this.commandHistory.length - 1] !== code) {
+            this.commandHistory.push(code);
+            if (this.commandHistory.length > 20) {
+                this.commandHistory.shift();
+            }
+        }
+        this.historyIndex = -1;
+
+        this.addToAlternateOutput('▶️ Ejecutando código...', 'info');
+        this.addToAlternateOutput(code, 'code');
+
+        try {
+            // Capturar console.log y otros métodos
+            const originalConsole = {
+                log: console.log,
+                error: console.error,
+                warn: console.warn,
+                info: console.info
+            };
+
+            // Redirigir console.log al output alterno
+            console.log = (...args) => {
+                const message = args.map(arg => 
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                ).join(' ');
+                this.addToAlternateOutput(message, 'log');
+                originalConsole.log.apply(console, args);
+            };
+
+            console.error = (...args) => {
+                const message = args.map(arg => 
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                ).join(' ');
+                this.addToAlternateOutput(`❌ ${message}`, 'error');
+                originalConsole.error.apply(console, args);
+            };
+
+            console.warn = (...args) => {
+                const message = args.map(arg => 
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                ).join(' ');
+                this.addToAlternateOutput(`⚠️ ${message}`, 'warning');
+                originalConsole.warn.apply(console, args);
+            };
+
+            // Ejecutar el código
+            const result = new Function(code)();
+            
+            // Mostrar el resultado si no es undefined
+            if (result !== undefined) {
+                this.addToAlternateOutput(`✅ Resultado: ${String(result)}`, 'result');
+            } else {
+                this.addToAlternateOutput('✅ Código ejecutado correctamente', 'success');
+            }
+
+            // Restaurar console original
+            console.log = originalConsole.log;
+            console.error = originalConsole.error;
+            console.warn = originalConsole.warn;
+            console.info = originalConsole.info;
+
+        } catch (error) {
+            this.addToAlternateOutput(`❌ Error: ${error.message}`, 'error');
+        }
+    }
+
+    addToAlternateOutput(text, type = 'normal') {
+        const timestamp = new Date().toLocaleTimeString();
+        let formattedText = '';
+
+        switch (type) {
+            case 'error':
+                formattedText = `[${timestamp}] ❌ ${text}\n`;
+                break;
+            case 'warning':
+                formattedText = `[${timestamp}] ⚠️ ${text}\n`;
+                break;
+            case 'info':
+                formattedText = `[${timestamp}] ℹ️ ${text}\n`;
+                break;
+            case 'success':
+                formattedText = `[${timestamp}] ✅ ${text}\n`;
+                break;
+            case 'code':
+                formattedText = `[${timestamp}] 📝 Código:\n${text}\n${'-'.repeat(50)}\n`;
+                break;
+            case 'result':
+                formattedText = `[${timestamp}] 💡 ${text}\n`;
+                break;
+            case 'log':
+                formattedText = `[${timestamp}] ${text}\n`;
+                break;
+            default:
+                formattedText = `[${timestamp}] ${text}\n`;
+        }
+
+        this.alternateOutput.value += formattedText;
+        this.alternateOutput.scrollTop = this.alternateOutput.scrollHeight;
+    }
+
+    clearAlternateInput() {
+        this.alternateInput.value = '';
+        this.alternateInput.focus();
+        this.addToAlternateOutput('🗑️ Área de código limpiada', 'info');
+    }
+
+    clearAlternateOutput() {
+        this.alternateOutput.value = '';
+        this.addToAlternateOutput('🧹 Respuesta de consola limpiada', 'info');
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    new ConsolaAlterna();
+});
+```
+
+---
+
+📝 MODIFICACIONES EN index.html:
+
+Cambia las referencias a scripts en el <head>:
+
+```html
+<!-- En lugar de cargar solo index.js -->
+<script src="js/index.js"></script>
+
+<!-- Cargar los tres archivos separados -->
+<script src="js/index.js"></script>
+<script src="js/consola-principal.js"></script>
+<script src="js/consola-alterna.js"></script>
+```
+
+---
+
+🗑️ ELIMINAR DE index.js:
+
+Busca y elimina EXACTAMENTE estas secciones:
+
+1. Desde la línea que dice: // ===== CONFIGURACIÓN DE LA CONSOLA =====
+   Hasta: // Inicializar canal alterno de consola initializeAlternateConsole();
+2. Y también elimina toda la función: function initializeAlternateConsole() { ... }
+
+Los bloques específicos a eliminar son:
+
+```javascript
+// ===== CONFIGURACIÓN DE LA CONSOLA =====
+const consoleOutput = document.getElementById('consoleOutput');
+// ... todo el código de consolas hasta ...
+initializeAlternateConsole();
+```
+
+```javascript
+// Función para inicializar el canal alterno de consola
+function initializeAlternateConsole() {
+    // ... todo el contenido de esta función ...
+}
+```
+
+---
+
+✅ RESUMEN DE CAMBIOS:
+
+1. Mantienes tu alternate-console.js (solo lo renombras a consola-alterna.js)
+2. Creas consola-principal.js nuevo
+3. Modificas index.html para cargar ambos
+4. Eliminas solo el código de consolas de index.js
+
+¿Así está mejor? Usamos tu código existente y solo añadimos lo necesario para separar las consolas.
+
+
+

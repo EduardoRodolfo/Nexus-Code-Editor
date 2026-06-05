@@ -1,0 +1,62 @@
+﻿¡Claro que sí, amigo! 🌈 Aquí tienes un selector de colores completo para el background del body, listo para insertar en tu HTML:
+
+```html
+<!-- Selector de Colores para el Background -->
+<div style="padding: 20px; background: #f0f0f0; border-radius: 10px; margin: 20px;">
+    <h3 style="margin-bottom: 15px;">🎨 Selector de Color de Fondo</h3>
+    
+    <!-- Selector de color -->
+    <input type="color" id="colorPicker" value="#ffffff" style="margin-bottom: 10px;">
+    
+    <!-- Botones de colores predefinidos -->
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+        <button onclick="cambiarColor('#ff6b6b')" style="background: #ff6b6b; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Rojo</button>
+        <button onclick="cambiarColor('#4ecdc4')" style="background: #4ecdc4; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Verde</button>
+        <button onclick="cambiarColor('#45b7d1')" style="background: #45b7d1; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Azul</button>
+        <button onclick="cambiarColor('#ffbe0b')" style="background: #ffbe0b; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Amarillo</button>
+        <button onclick="cambiarColor('#fb5607')" style="background: #fb5607; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Naranja</button>
+    </div>
+    
+    <!-- Input para código hexadecimal -->
+    <div>
+        <input type="text" id="hexInput" placeholder="#ffffff" style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; margin-right: 10px;">
+        <button onclick="cambiarColorHex()" style="background: #6c5ce7; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Aplicar</button>
+    </div>
+</div>
+
+<script>
+// Función para cambiar el color del background
+function cambiarColor(color) {
+    document.body.style.backgroundColor = color;
+    document.getElementById('colorPicker').value = color;
+    document.getElementById('hexInput').value = color;
+}
+
+// Función para el selector de color
+document.getElementById('colorPicker').addEventListener('input', function(e) {
+    cambiarColor(e.target.value);
+});
+
+// Función para el input hexadecimal
+function cambiarColorHex() {
+    const hexValue = document.getElementById('hexInput').value;
+    if (/^#[0-9A-F]{6}$/i.test(hexValue)) {
+        cambiarColor(hexValue);
+    } else {
+        alert('Por favor ingresa un código hexadecimal válido (ej: #ff0000)');
+    }
+}
+
+// Inicializar con color blanco
+cambiarColor('#ffffff');
+</script>
+```
+
+Características que incluye:
+
+· 🎨 Selector de color nativo de HTML5
+· 🚀 Botones de colores predefinidos
+· ✏️ Input para código hexadecimal personalizado
+· 🔄 Sincronización entre todos los controles
+
+¡Solo copia y pega esto en tu HTML y listo! ¿Necesitas que modifique algo o agregue más funcionalidades? ¡Estoy aquí para ayudar! 😊

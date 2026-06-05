@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventario con Filtros</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .producto { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>Inventario</h1>
+  <label>Filtrar por categoría:</label>
+  <select id="filtro">
+    <option value="todos">Todos</option>
+    <option value="tecnología">Tecnología</option>
+    <option value="ropa">Ropa</option>
+  </select>
+  <div id="lista"></div>
+
+  <script>
+    const inventario = [
+      { nombre: "Laptop", categoria: "tecnología", precio: 1200 },
+      { nombre: "Camisa", categoria: "ropa", precio: 30 },
+      { nombre: "Auriculares", categoria: "tecnología", precio: 80 }
+    ];
+
+    const lista = document.getElementById("lista");
+    const filtro = document.getElementById("filtro");
+
+    filtro.onchange = () => mostrar(filtro.value);
+
+    function mostrar(categoria) {
+      lista.innerHTML = "";
+      inventario
+        .filter(p => categoria === "todos" || p.categoria === categoria)
+        .forEach(p => {
+          const div = document.createElement("div");
+          div.className = "producto";
+          div.textContent = `${p.nombre} - $${p.precio}`;
+          lista.appendChild(div);
+        });
+    }
+
+    mostrar("todos");
+  </script>
+</body>
+</html>

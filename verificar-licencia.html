@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔑 Nexus - Verificar Licencia</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #0a0e1a;
+            color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: #111827;
+            border: 1px solid #2a3a5c;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 { color: #00d4aa; margin-bottom: 10px; }
+        p { color: #8892b0; margin-bottom: 20px; }
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #1a2235;
+            border: 1px solid #2a3a5c;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 1em;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        input:focus { border-color: #00d4aa; }
+        button {
+            background: linear-gradient(135deg, #00d4aa, #00b894);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover { filter: brightness(1.1); }
+        .resultado {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .resultado.exito { background: rgba(34,197,94,0.1); border: 1px solid #22c55e; display: block; }
+        .resultado.error { background: rgba(239,68,68,0.1); border: 1px solid #ef4444; display: block; }
+        .resultado h3 { margin-bottom: 10px; }
+        .resultado.exito h3 { color: #22c55e; }
+        .resultado.error h3 { color: #ef4444; }
+        .features { text-align: left; margin: 15px 0; }
+        .features li { padding: 5px 0; list-style: none; }
+        .features li i { margin-right: 8px; }
+        .footer { margin-top: 20px; font-size: 0.8em; color: #4a5568; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 Nexus Code Editor</h1>
+        <p>Ingresa tu licencia para desbloquear las funciones premium.</p>
+        
+        <input type="text" id="inputLicencia" placeholder="Ej: NEXUS-ABC123DEF456" maxlength="30" autocomplete="off">
+        <button onclick="verificarLicencia()">🔓 Verificar Licencia</button>
+        
+        <div class="resultado" id="resultado"></div>
+        
+        <div class="footer">
+            <p>¿No tienes licencia? <a href="pagos.html" style="color:#00d4aa;">Adquiere una aquí</a></p>
+        </div>
+    </div>
+    
+    <script>
+        async function verificarLicencia() {
+            const input = document.getElementById('inputLicencia');
+            const resultado = document.getElementById('resultado');
+            const licencia = input.value.trim().toUpperCase();
+            
+            if (!licencia) {
+                resultado.className = 'resultado error';
+                resultado.innerHTML = '<h3>❌ Error</h3><p>Ingresa un código de licencia.</p>';
+                return;
+            }
+            
+            resultado.className = 'resultado';
+            resultado.innerHTML = '<p>⏳ Verificando licencia...</p>';
+            resultado.style.display = 'block';
+            
+            try {
+                const res = await fetch('api-qvapay.php?action=verificar&licencia=' + encodeURIComponent(licencia));
+                const data = await res.json();
+                
+                if (data.valida) {
+                    // Licencia válida - mostrar funciones desbloqueadas
+                    const funciones = data.plan === 'enterprise' ? [
+                        '✅ Empaquetar a Android, Windows y Linux',
+                        '✅ IA local (todos los modelos)',
+                        '✅ Chat con IA ilimitado',
+                        '✅ Plugins exclusivos',
+                        '✅ Licencia comercial',
+                        '✅ Personalización completa',
+                        '✅ Soporte 24/7 prioritario',
+                        '✅ Actualizaciones vitalicias'
+                    ] : [
+                        '✅ Empaquetar a Android, Windows y Linux',
+                        '✅ IA local (todos los modelos)',
+                        '✅ Chat con IA ilimitado',
+                        '✅ Plugins exclusivos',
+                        '✅ Soporte por email'
+                    ];
+                    
+                    resultado.className = 'resultado exito';
+                    resultado.innerHTML = `
+                        <h3>🎉 ¡Licencia Válida!</h3>
+                        <p><strong>Plan:</strong> ${data.plan === 'enterprise' ? '🏢 Nexus Enterprise' : '⚡ Nexus Pro'}</p>
+                        <p><strong>Licencia:</strong> ${data.licencia}</p>
+                        <p><strong>Email:</strong> ${data.email}</p>
+                        <p><strong>Desde:</strong> ${data.fecha}</p>
+                        <hr style="border-color:#2a3a5c; margin:15px 0;">
+                        <h4 style="color:#22c55e; margin-bottom:10px;">🔓 Funciones desbloqueadas:</h4>
+                        <ul class="features">
+                            ${funciones.map(f => `<li>${f}</li>`).join('')}
+                        </ul>
+                        <button onclick="window.location.href='nexus-ia-bridge.html'" style="background:#22c55e; color:#000; border:none; padding:10px 20px; border-radius:6px; cursor:pointer; font-weight:700; margin-top:10px;">
+                            🚀 Ir a Nexus
+                        </button>
+                    `;
+                } else {
+                    resultado.className = 'resultado error';
+                    resultado.innerHTML = `
+                        <h3>❌ Licencia no válida</h3>
+                        <p>${data.error || 'No encontrada o expirada.'}</p>
+                        <p style="margin-top:10px;">¿Compraste pero no recibiste la licencia? <a href="mailto:eduardo@nexus-coder.com" style="color:#00d4aa;">Contáctame</a></p>
+                    `;
+                }
+            } catch(e) {
+                resultado.className = 'resultado error';
+                resultado.innerHTML = '<h3>❌ Error de conexión</h3><p>No se pudo verificar la licencia. Intenta de nuevo.</p>';
+            }
+            
+            input.value = '';
+        }
+        
+        // Verificar al presionar Enter
+        document.getElementById('inputLicencia').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') verificarLicencia();
+        });
+    </script>
+</body>
+</html>
