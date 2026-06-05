@@ -1,0 +1,11 @@
+node_modules/
+.nyc_output/
+coverage/
+
+lib/
+
+.env
+.vscode/
+*.swp
+*.tgz
+npm-debug.log*

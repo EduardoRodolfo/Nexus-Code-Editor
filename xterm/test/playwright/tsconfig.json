@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "es6"
+    ],
+    "rootDir": ".",
+    "outDir": "../../out-test/playwright",
+    "types": [
+      "../../node_modules/@types/node",
+      "../../node_modules/@lunapaint/png-codec"
+    ],
+    "sourceMap": true,
+    "removeComments": true,
+    "pretty": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "declaration": true,
+    "moduleResolution": "node",
+    "paths": {
+      "browser/*": [
+        "../../src/browser/*"
+      ],
+      "common/*": [
+        "../../src/common/*"
+      ]
+    },
+    "target": "ESNext",
+    "module": "commonjs",
+    "composite": true
+  },
+  "include": [
+    "./**/*",
+    "../../typings/xterm.d.ts"
+  ],
+  "references": [
+    {
+      "path": "../../src/browser"
+    },
+    {
+      "path": "../../src/common"
+    }
+  ]
+}

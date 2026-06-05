@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "sourceMap": true,
+    "outDir": "../out",
+    "rootDir": ".",
+    "strict": true,
+    "noUnusedLocals": true,
+    "preserveWatchOutput": true,
+    "types": [
+      "../../../node_modules/@types/mocha",
+      // HACK: src shouldn't use node types but it's needed for index.test.ts
+      "../../../node_modules/@types/node"
+    ],
+    "paths": {
+      "@xterm/addon-ligatures" : [
+        "../typings/addon-ligatures.d.ts"
+      ]
+    }
+  },
+  "include": [
+    "./**/*",
+    "../../../typings/xterm.d.ts"
+  ]
+}
