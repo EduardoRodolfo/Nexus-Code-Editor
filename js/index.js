@@ -638,7 +638,7 @@ function verificarLicencia() {
         return { modo: 'free', activo: false };
     }
     
-    fetch(`api-qvapay.php?action=verificar&apikey=${encodeURIComponent(apiKey)}`)
+    fetch(`https://nexus-api-b0ue.onrender.com/api-qvapay.php?action=verificar&apikey=${encodeURIComponent(apiKey)}`)
         .then(res => res.json())
         .then(data => {
             if (data.valida) {
