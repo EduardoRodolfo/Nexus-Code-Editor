@@ -19,6 +19,7 @@ define('SITE_URL', 'http://localhost/nexus');
 
 // ===== PLANES =====
 $PLANES = [
+    'full' => ['nombre' => 'Nexus Full', 'precio' => 18, 'moneda' => 'EUR'],
     'pro' => ['nombre' => 'Nexus Pro', 'precio' => 19.99, 'moneda' => 'USD'],
     'premium' => ['nombre' => 'Nexus Premium', 'precio' => 39.99, 'moneda' => 'USD']
 ];
