@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit(0);
 define('QVAPAY_APP_ID', '47ccd302-22c0-4628-af99-729f85f42d0f');
 define('QVAPAY_SECRET_KEY', 'ad4904620d20adf967c168a1db5ab9da8c8cc71a967ba34960');
 define('QVAPAY_API_URL', 'https://qvapay.com/api/v1');
-define('SITE_URL', 'http://localhost/nexus');
+define('SITE_URL', 'https://EduardoRodolfo.github.io/Nexus-Code-Editor');
 
 // ===== PLANES =====
 $PLANES = [

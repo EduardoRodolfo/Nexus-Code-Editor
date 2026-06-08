@@ -27,7 +27,8 @@ if ($status !== 'completed' && $status !== 'success') {
 }
 
 // Determinar el plan desde external_id (ej: NEXUS-pro-12345)
-$plan = 'pro';
+$plan = 'full';
+if (strpos($externalId, 'pro') !== false) $plan = 'pro';
 if (strpos($externalId, 'premium') !== false) $plan = 'premium';
 
 // Generar API Key y guardar licencia
@@ -48,7 +49,7 @@ $licencias[] = [
     'licencia' => $licenciaId,
     'plan' => $plan,
     'email' => $email,
-    'monto' => $plan === 'pro' ? 19.99 : 39.99,
+    'monto' => $plan === 'full' ? 18 : ($plan === 'pro' ? 19.99 : 39.99),
     'moneda' => 'USD',
     'api_key' => $apiKeyGenerada,
     'fecha' => date('Y-m-d H:i:s'),
@@ -60,6 +61,22 @@ file_put_contents($archivo, json_encode($licencias, JSON_PRETTY_PRINT | JSON_UNE
 // Enviar email al usuario
 enviarEmailLicencia($email, 'Usuario', $apiKeyGenerada, $plan);
 
+// ============================================================
+// 📊 REGISTRO DE VENTAS (acumulativo)
+// ============================================================
+$ventasArchivo = __DIR__ . '/ventas.json';
+$ventas = file_exists($ventasArchivo) ? json_decode(file_get_contents($ventasArchivo), true) ?? [] : [];
+$ventas[] = [
+    'fecha' => date('Y-m-d H:i:s'),
+    'plan' => $plan,
+    'email' => $email,
+    'api_key' => $apiKeyGenerada,
+    'monto' => $plan === 'full' ? 18 : ($plan === 'pro' ? 19.99 : 39.99),
+    'moneda' => 'EUR',
+    'origen' => 'qvapay_webhook'
+];
+file_put_contents($ventasArchivo, json_encode($ventas, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
 echo json_encode(['success' => true, 'message' => 'Licencia activada', 'api_key' => $apiKeyGenerada]);
 
 function enviarEmailLicencia($email, $nombre, $apiKey, $plan) {
@@ -70,7 +87,7 @@ function enviarEmailLicencia($email, $nombre, $apiKey, $plan) {
         <p style='text-align:center;'>Tu licencia <strong style='color:#00d4aa;'>Nexus " . ucfirst($plan) . "</strong> está activa.</p>
         <p style='text-align:center;'>🔑 <strong>Tu API Key:</strong></p>
         <div style='background:#0a0a1a;padding:15px;border-radius:8px;text-align:center;font-size:1.2em;letter-spacing:2px;color:#22c55e;border:1px dashed #22c55e;margin:20px 0;'>$apiKey</div>
-        <p style='text-align:center;'><a href='http://localhost/nexus/index.html?apikey=$apiKey' style='display:inline-block;background:#00d4aa;color:#000;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;'>🚀 Activar Nexus</a></p>
+        <p style='text-align:center;'><a href='https://EduardoRodolfo.github.io/Nexus-Code-Editor/index.html?apikey=$apiKey' style='display:inline-block;background:#00d4aa;color:#000;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;'>🚀 Activar Nexus</a></p>
         </div></body></html>";
     
     $headers = "MIME-Version: 1.0\r\nContent-type: text/html; charset=utf-8\r\nFrom: Nexus Code Editor <noreply@nexus-coder.com>\r\n";
