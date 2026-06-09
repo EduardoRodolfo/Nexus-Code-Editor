@@ -346,7 +346,8 @@
                     <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:10px; margin:8px 0;">
                         <p style="color:#f59e0b; font-size:0.8em;">
                             ⚡ Envía exactamente <strong>${PRECIO_USDT} USDT</strong> a la dirección de arriba<br>
-                            📩 Envía comprobante a: <strong style="color:#22c55e;">eduardo@nexus-coder.com</strong>
+                            📩 Envía comprobante a: <strong style="color:#22c55e;">eduardorodolfo@protonmail.com</strong>
+                            📩 Contáctanos: <strong>eduardorodolfo@protonmail.com</strong>
                         </p>
                     </div>
                     <div style="background:rgba(34,197,94,0.1); border:1px solid #22c55e; border-radius:8px; padding:12px; margin:15px 0;">
@@ -428,31 +429,37 @@
         // PAGAR CON QVAPAY
         // ============================================
         function pagarConQvaPay() {
-            const email = document.getElementById('emailInput')?.value.trim();
-            if (!email || !email.includes('@')) {
-                mostrarToast('⚠️ Ingresa un email válido', 'err');
-                return;
-            }
-            
-            fetch('https://nexus-api-b0ue.onrender.com/api-qvapay.php?action=crear_factura', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `plan=full&email=${encodeURIComponent(email)}`
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.api_key) {
-                    mostrarToast('✅ Licencia generada: ' + data.api_key, 'ok');
-                    mostrarResultadoPago(data.api_key, email);
-                } else {
-                    mostrarToast('❌ Error: ' + (data.error || 'Desconocido'), 'err');
-                }
-            })
-            .catch(error => {
-                mostrarToast('❌ Error de conexión: ' + error.message, 'err');
-            });
+    const email = document.getElementById('emailInput')?.value.trim();
+    if (!email || !email.includes('@')) {
+        mostrarToast('⚠️ Ingresa un email válido', 'err');
+        return;
+    }
+    
+    mostrarToast('🔄 Creando factura...', 'info');
+    
+    fetch('https://nexus-api-b0ue.onrender.com/api-qvapay.php?action=crear_factura', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `plan=full&email=${encodeURIComponent(email)}`
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.url) {
+            // ✅ REDIRIGIR A QVAPAY PARA PAGAR
+            mostrarToast('🔄 Redirigiendo a QvaPay...', 'info');
+            window.location.href = data.url;
+        } else if (data.api_key) {
+            // Modo simulación (si falla QvaPay)
+            mostrarToast('✅ API Key generada: ' + data.api_key, 'ok');
+            mostrarResultadoPago(data.api_key, email);
+        } else {
+            mostrarToast('❌ Error: ' + (data.error || 'Desconocido'), 'err');
         }
-        
+    })
+    .catch(error => {
+        mostrarToast('❌ Error de conexión: ' + error.message, 'err');
+    });
+}
         // ============================================
         // SIMULAR PAGO
         // ============================================
