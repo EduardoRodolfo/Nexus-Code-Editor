@@ -96,8 +96,8 @@ $action = $_GET['action'] ?? '';
 switch ($action) {
     
    case 'crear_factura':
-    $plan = $_POST['plan'] ?? '';
-    $email = $_POST['email'] ?? '';
+        $plan = $_POST['plan'] ?? $_GET['plan'] ?? '';
+    $email = $_POST['email'] ?? $_GET['email'] ?? '';
     
     if (!isset($PLANES[$plan])) die(json_encode(['success' => false, 'error' => 'Plan no válido']));
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) die(json_encode(['success' => false, 'error' => 'Email no válido']));
@@ -203,7 +203,7 @@ switch ($action) {
         ]);
     }
     break;
-    
+
     case 'verificar':
         $apiKey = $_GET['apikey'] ?? $_POST['apikey'] ?? '';
         if (empty($apiKey)) die(json_encode(['success' => false, 'error' => 'API Key requerida']));
