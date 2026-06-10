@@ -192,7 +192,6 @@ switch ($action) {
         ]);
     }
     break;
-    
     case 'verificar':
         $apiKey = $_GET['apikey'] ?? $_POST['apikey'] ?? '';
         if (empty($apiKey)) die(json_encode(['success' => false, 'error' => 'API Key requerida']));
