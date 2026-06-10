@@ -96,17 +96,61 @@ $action = $_GET['action'] ?? '';
 switch ($action) {
     
     case 'crear_factura':
-        $plan = $_POST['plan'] ?? '';
-        $email = $_POST['email'] ?? '';
-        
-        if (!isset($PLANES[$plan])) die(json_encode(['success' => false, 'error' => 'Plan no válido']));
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) die(json_encode(['success' => false, 'error' => 'Email no válido']));
-        
-        $planData = $PLANES[$plan];
-        
-        // Modo simulación (para pruebas)
-        $licenciaId = 'NEXUS-' . strtoupper($plan) . '-' . time();
+    $plan = $_POST['plan'] ?? '';
+    $email = $_POST['email'] ?? '';
+    
+    if (!isset($PLANES[$plan])) die(json_encode(['success' => false, 'error' => 'Plan no válido']));
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) die(json_encode(['success' => false, 'error' => 'Email no válido']));
+    
+    $planData = $PLANES[$plan];
+    $externalId = 'NEXUS-' . $plan . '-' . time();
+    
+    // ============================================
+    // CREAR FACTURA EN QVAPAY (REAL)
+    // ============================================
+    $payload = json_encode([
+        'amount' => $planData['precio'],
+        'currency' => 'USD',
+        'external_id' => $externalId,
+        'description' => 'Nexus ' . $planData['nombre'] . ' - Licencia de por vida',
+        'customer_email' => $email,
+        'success_url' => SITE_URL . '/pagos.html?status=success&plan=' . $plan . '&external_id=' . $externalId,
+        'cancel_url' => SITE_URL . '/pagos.html?status=canceled',
+        'notification_url' => 'https://nexus-api-b0ue.onrender.com/webhook-qvapay.php'
+    ]);
+    
+    $ch = curl_init(QVAPAY_API_URL . '/invoice');
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $payload,
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'app-id: ' . QVAPAY_APP_ID,
+            'app-secret: ' . QVAPAY_SECRET_KEY
+        ],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 30
+    ]);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    $result = json_decode($response, true);
+    
+    if ($httpCode === 200 && isset($result['data']['url'])) {
+        // ✅ Factura creada exitosamente - devolver URL de pago
+        echo json_encode([
+            'success' => true,
+            'url' => $result['data']['url'],
+            'invoice_id' => $result['data']['id'] ?? $externalId,
+            'external_id' => $externalId,
+            'message' => 'Redirigiendo a QvaPay...'
+        ]);
+    } else {
+        // ⚠️ Si falla QvaPay, usar modo simulación
         $apiKey = generarApiKey($plan);
+        $licenciaId = 'NEXUS-' . strtoupper($plan) . '-' . time();
         
         guardarLicencia($licenciaId, $plan, $email, $planData['precio'], $apiKey);
         enviarEmailLicencia($email, 'Usuario', $apiKey, $plan);
@@ -114,12 +158,12 @@ switch ($action) {
         echo json_encode([
             'success' => true,
             'modo' => 'simulacion',
-            'message' => '✅ Licencia generada. Revisa tu email.',
-            'licencia' => $licenciaId,
+            'message' => '✅ Licencia generada (modo simulación). Revisa tu email.',
             'api_key' => $apiKey,
             'plan' => $plan
         ]);
-        break;
+    }
+    break;
     
     case 'verificar':
         $apiKey = $_GET['apikey'] ?? $_POST['apikey'] ?? '';
@@ -139,11 +183,7 @@ switch ($action) {
         break;
     
     case 'planes':
-        echo json_encode(['success' => true, 'planes' => [
-            'free' => ['nombre' => 'Nexus Free', 'precio' => 0, 'moneda' => 'USD'],
-            'pro' => ['nombre' => 'Nexus Pro', 'precio' => 19.99, 'moneda' => 'USD'],
-            'premium' => ['nombre' => 'Nexus Premium', 'precio' => 39.99, 'moneda' => 'USD']
-        ]]);
+    echo json_encode(['success' => true, 'planes' => $PLANES]);
         break;
     
     default:
