@@ -100,9 +100,6 @@ switch ($action) {
     $plan = $_POST['plan'] ?? $_GET['plan'] ?? '';
     $email = $_POST['email'] ?? $_GET['email'] ?? '';
     
-    // ⚠️ FORZAR PLAN A 'full' PARA PRUEBA
-    $plan = 'full';
-    
     if (!isset($PLANES[$plan])) die(json_encode(['success' => false, 'error' => 'Plan no válido: ' . $plan]));
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) die(json_encode(['success' => false, 'error' => 'Email no válido']));
     
@@ -141,7 +138,10 @@ switch ($action) {
     $result = json_decode($response, true);
     
     // Depuración en log
-    file_put_contents(__DIR__ . '/logs/api-qvapay.log', 
+    // Crear carpeta logs si no existe
+$logDir = __DIR__ . '/logs';
+if (!is_dir($logDir)) mkdir($logDir, 0777, true);
+file_put_contents($logDir . '/api-qvapay.log', 
         date('[Y-m-d H:i:s] ') . "HTTP $httpCode | " . json_encode($result) . "\n", 
         FILE_APPEND
     );
