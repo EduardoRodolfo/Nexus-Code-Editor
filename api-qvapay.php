@@ -185,6 +185,34 @@ switch ($action) {
     case 'planes':
     echo json_encode(['success' => true, 'planes' => $PLANES]);
         break;
+
+            case 'test_qvapay':
+        // Probar conexión con QvaPay
+        $ch = curl_init(QVAPAY_API_URL . '/info');
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode(['test' => true]),
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'app-id: ' . QVAPAY_APP_ID,
+                'app-secret: ' . QVAPAY_SECRET_KEY
+            ],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 15
+        ]);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+        
+        echo json_encode([
+            'success' => $httpCode === 200,
+            'http_code' => $httpCode,
+            'curl_error' => $error,
+            'app_id' => QVAPAY_APP_ID,
+            'api_url' => QVAPAY_API_URL
+        ]);
+        break;
     
     default:
         echo json_encode([
