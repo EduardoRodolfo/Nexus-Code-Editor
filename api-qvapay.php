@@ -106,19 +106,20 @@ switch ($action) {
     $externalId = 'NEXUS-' . $plan . '-' . time();
     
     // ============================================
-    // CREAR FACTURA EN QVAPAY (REAL)
+    // CREAR FACTURA EN QVAPAY v2 (REAL)
     // ============================================
     $payload = json_encode([
         'amount' => $planData['precio'],
         'currency' => 'USD',
         'external_id' => $externalId,
-        'description' => 'Nexus ' . $planData['nombre'] . ' - Licencia de por vida',
+        'description' => 'Nexus ' . $planData['nombre'],
         'customer_email' => $email,
         'success_url' => SITE_URL . '/pagos.html?status=success&plan=' . $plan . '&external_id=' . $externalId,
         'cancel_url' => SITE_URL . '/pagos.html?status=canceled',
         'notification_url' => 'https://nexus-api-b0ue.onrender.com/webhook-qvapay.php'
     ]);
     
+    // QvaPay v2 usa POST /invoice con headers app-id y app-secret
     $ch = curl_init(QVAPAY_API_URL . '/invoice');
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
@@ -129,24 +130,48 @@ switch ($action) {
             'app-secret: ' . QVAPAY_SECRET_KEY
         ],
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 30
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_FOLLOWLOCATION => true  // 🔥 SEGUIR REDIRECCIONES
     ]);
     
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
     curl_close($ch);
     
     $result = json_decode($response, true);
     
-    if ($httpCode === 200 && isset($result['data']['url'])) {
-        // ✅ Factura creada exitosamente - devolver URL de pago
-        echo json_encode([
-            'success' => true,
-            'url' => $result['data']['url'],
-            'invoice_id' => $result['data']['id'] ?? $externalId,
-            'external_id' => $externalId,
-            'message' => 'Redirigiendo a QvaPay...'
-        ]);
+    // Probar diferentes formatos de respuesta de QvaPay
+    $invoiceUrl = '';
+    if (isset($result['data']['url'])) {
+        $invoiceUrl = $result['data']['url'];
+    } elseif (isset($result['url'])) {
+        $invoiceUrl = $result['url'];
+    } elseif (isset($result['invoice_url'])) {
+        $invoiceUrl = $result['invoice_url'];
+    } elseif (isset($result['data']['invoice_url'])) {
+        $invoiceUrl = $result['data']['invoice_url'];
+    }
+    
+    if ($httpCode === 200 || $httpCode === 201 || $httpCode === 302) {
+        if (!empty($invoiceUrl)) {
+            // ✅ Redirigir a QvaPay
+            echo json_encode([
+                'success' => true,
+                'url' => $invoiceUrl,
+                'invoice_id' => $result['data']['id'] ?? $externalId,
+                'external_id' => $externalId,
+                'message' => 'Redirigiendo a QvaPay...'
+            ]);
+        } else {
+            // Si no hay URL pero la respuesta fue exitosa, igual intentar
+            echo json_encode([
+                'success' => true,
+                'url' => '',
+                'message' => 'Factura creada, pero no se encontró URL de pago',
+                'respuesta_api' => $result
+            ]);
+        }
     } else {
         // ⚠️ Si falla QvaPay, usar modo simulación
         $apiKey = generarApiKey($plan);
@@ -160,7 +185,10 @@ switch ($action) {
             'modo' => 'simulacion',
             'message' => '✅ Licencia generada (modo simulación). Revisa tu email.',
             'api_key' => $apiKey,
-            'plan' => $plan
+            'plan' => $plan,
+            'debug_http' => $httpCode,
+            'debug_error' => $error,
+            'debug_response' => $result
         ]);
     }
     break;
