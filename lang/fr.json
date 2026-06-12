@@ -98,12 +98,27 @@
     "footer": "Appuyez sur les touches pour exécuter le raccourci"
   },
   "tutorials": {
-    "logic": "📖 Logique de programmation",
-    "javascript": "📖 JavaScript",
-    "html": "📖 HTML",
-    "css": "📖 CSS",
-    "jsMedium": "📖 JavaScript Niveau intermédiaire"
-  },
+    "title": "📚 Tutoriels",
+    "html": "📘 HTML",
+    "css": "🎨 CSS",
+    "javascript": "📙 JavaScript",
+    "logic": "📖 Logique de Programmation",
+    "jsMedium": "📖 JavaScript Intermédiaire",
+    "free": "🆓 GRATUIT",
+    "full": "👑 FULL",
+    "buyFull": "🚀 Acheter Nexus FULL · 18€",
+    "unlock": "🔓 Débloquer les leçons restantes",
+    "unlockMsg": "Les leçons sont exclusives aux utilisateurs Nexus FULL.",
+    "fontSmall": "Petite",
+    "fontNormal": "Normale",
+    "fontLarge": "Grande",
+    "fontXl": "Très grande",
+    "toc": "📋 Contenu",
+    "exercises": "🧪 Exercices",
+    "project": "🧪 Projet final",
+    "backNexus": "🏠 Nexus",
+    "exclusiveFull": "🔒 Cette leçon est exclusive aux utilisateurs FULL"
+},
   "common": {
     "loading": "Chargement...",
     "error": "Erreur",

@@ -97,13 +97,28 @@
     "while": "While",
     "footer": "Presiona las teclas para ejecutar el atajo"
   },
-  "tutorials": {
+ "tutorials": {
+    "title": "📚 Tutoriales",
+    "html": "📘 HTML",
+    "css": "🎨 CSS", 
+    "javascript": "📙 JavaScript",
     "logic": "📖 Lógica de Programación",
-    "javascript": "📖 JavaScript",
-    "html": "📖 HTML",
-    "css": "📖 CSS",
-    "jsMedium": "📖 JavaScript Nivel Medio"
-  },
+    "jsMedium": "📖 JavaScript Nivel Medio",
+    "free": "🆓 GRATIS",
+    "full": "👑 FULL",
+    "buyFull": "🚀 Comprar Nexus FULL · 18€",
+    "unlock": "🔓 Desbloquea las lecciones restantes",
+    "unlockMsg": "Las lecciones son exclusivas para usuarios Nexus FULL.",
+    "fontSmall": "Pequeña",
+    "fontNormal": "Normal",
+    "fontLarge": "Grande",
+    "fontXl": "Muy grande",
+    "toc": "📋 Contenidos",
+    "exercises": "🧪 Ejercicios",
+    "project": "🧪 Proyecto final",
+    "backNexus": "🏠 Nexus",
+    "exclusiveFull": "🔒 Esta lección es exclusiva para usuarios FULL"
+},
   "common": {
     "loading": "Cargando...",
     "error": "Error",

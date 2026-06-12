@@ -98,12 +98,27 @@
     "footer": "Pressione as teclas para executar o atalho"
   },
   "tutorials": {
+    "title": "📚 Tutoriais",
+    "html": "📘 HTML",
+    "css": "🎨 CSS",
+    "javascript": "📙 JavaScript",
     "logic": "📖 Lógica de Programação",
-    "javascript": "📖 JavaScript",
-    "html": "📖 HTML",
-    "css": "📖 CSS",
-    "jsMedium": "📖 JavaScript Nível Médio"
-  },
+    "jsMedium": "📖 JavaScript Intermediário",
+    "free": "🆓 GRÁTIS",
+    "full": "👑 FULL",
+    "buyFull": "🚀 Comprar Nexus FULL · 18€",
+    "unlock": "🔓 Desbloqueie as lições restantes",
+    "unlockMsg": "As lições são exclusivas para usuários Nexus FULL.",
+    "fontSmall": "Pequena",
+    "fontNormal": "Normal",
+    "fontLarge": "Grande",
+    "fontXl": "Muito grande",
+    "toc": "📋 Conteúdos",
+    "exercises": "🧪 Exercícios",
+    "project": "🧪 Projeto final",
+    "backNexus": "🏠 Nexus",
+    "exclusiveFull": "🔒 Esta lição é exclusiva para usuários FULL"
+},
   "common": {
     "loading": "Carregando...",
     "error": "Erro",

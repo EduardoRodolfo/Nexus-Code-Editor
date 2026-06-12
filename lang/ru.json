@@ -98,12 +98,27 @@
     "footer": "Нажмите клавиши для выполнения"
   },
   "tutorials": {
+    "title": "📚 Учебники",
+    "html": "📘 HTML",
+    "css": "🎨 CSS",
+    "javascript": "📙 JavaScript",
     "logic": "📖 Логика программирования",
-    "javascript": "📖 JavaScript",
-    "html": "📖 HTML",
-    "css": "📖 CSS",
-    "jsMedium": "📖 JavaScript Средний уровень"
-  },
+    "jsMedium": "📖 JavaScript Средний",
+    "free": "🆓 БЕСПЛАТНО",
+    "full": "👑 FULL",
+    "buyFull": "🚀 Купить Nexus FULL · 18€",
+    "unlock": "🔓 Разблокировать остальные уроки",
+    "unlockMsg": "Уроки доступны только пользователям Nexus FULL.",
+    "fontSmall": "Маленький",
+    "fontNormal": "Обычный",
+    "fontLarge": "Большой",
+    "fontXl": "Очень большой",
+    "toc": "📋 Содержание",
+    "exercises": "🧪 Упражнения",
+    "project": "🧪 Финальный проект",
+    "backNexus": "🏠 Nexus",
+    "exclusiveFull": "🔒 Этот урок доступен только пользователям FULL"
+},
   "common": {
     "loading": "Загрузка...",
     "error": "Ошибка",

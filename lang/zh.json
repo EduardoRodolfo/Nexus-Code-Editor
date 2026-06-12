@@ -98,12 +98,27 @@
     "footer": "按键执行快捷键"
   },
   "tutorials": {
+    "title": "📚 教程",
+    "html": "📘 HTML",
+    "css": "🎨 CSS",
+    "javascript": "📙 JavaScript",
     "logic": "📖 编程逻辑",
-    "javascript": "📖 JavaScript",
-    "html": "📖 HTML",
-    "css": "📖 CSS",
-    "jsMedium": "📖 JavaScript 中级"
-  },
+    "jsMedium": "📖 JavaScript 中级",
+    "free": "🆓 免费",
+    "full": "👑 FULL",
+    "buyFull": "🚀 购买Nexus FULL · 18€",
+    "unlock": "🔓 解锁剩余课程",
+    "unlockMsg": "课程仅限Nexus FULL用户使用。",
+    "fontSmall": "小",
+    "fontNormal": "标准",
+    "fontLarge": "大",
+    "fontXl": "特大",
+    "toc": "📋 目录",
+    "exercises": "🧪 练习",
+    "project": "🧪 最终项目",
+    "backNexus": "🏠 Nexus",
+    "exclusiveFull": "🔒 此课程仅限FULL用户使用"
+},
   "common": {
     "loading": "加载中...",
     "error": "错误",

@@ -98,12 +98,27 @@
     "footer": "Premi i tasti per eseguire la scorciatoia"
   },
   "tutorials": {
-    "logic": "📖 Logica di programmazione",
-    "javascript": "📖 JavaScript",
-    "html": "📖 HTML",
-    "css": "📖 CSS",
-    "jsMedium": "📖 JavaScript Livello intermedio"
-  },
+    "title": "📚 Tutorial",
+    "html": "📘 HTML",
+    "css": "🎨 CSS",
+    "javascript": "📙 JavaScript",
+    "logic": "📖 Logica di Programmazione",
+    "jsMedium": "📖 JavaScript Intermedio",
+    "free": "🆓 GRATIS",
+    "full": "👑 FULL",
+    "buyFull": "🚀 Acquista Nexus FULL · 18€",
+    "unlock": "🔓 Sblocca le lezioni rimanenti",
+    "unlockMsg": "Le lezioni sono esclusive per gli utenti Nexus FULL.",
+    "fontSmall": "Piccola",
+    "fontNormal": "Normale",
+    "fontLarge": "Grande",
+    "fontXl": "Molto grande",
+    "toc": "📋 Contenuti",
+    "exercises": "🧪 Esercizi",
+    "project": "🧪 Progetto finale",
+    "backNexus": "🏠 Nexus",
+    "exclusiveFull": "🔒 Questa lezione è esclusiva per utenti FULL"
+},
   "common": {
     "loading": "Caricamento...",
     "error": "Errore",
