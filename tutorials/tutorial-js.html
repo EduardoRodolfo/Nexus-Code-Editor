@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📙 Tutorial JavaScript - Nexus Code Editor</title>
+    <link rel="stylesheet" href="../tutorials/css/tutorial.css">
+    <style>
+        .toast {
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0,0,0,.4);
+            animation: si .3s ease;
+            font-size: .82rem;
+            max-width: 350px;
+        }
+        .toast.ok { background: #22c55e; }
+        .toast.err { background: #ef4444; color: #fff; }
+        .toast.info { background: #00d4aa; }
+        @keyframes si { from { transform: translateX(80px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .consola-ejemplo {
+            background: #0a0a1a;
+            border: 1px solid #2a3a5c;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #22c55e;
+            min-height: 40px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+        .btn-ejecutar {
+            background: #00d4aa;
+            color: #000;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px 0;
+            transition: 0.2s;
+        }
+        .btn-ejecutar:hover {
+            filter: brightness(1.1);
+            transform: scale(1.02);
+        }
+        .demo-interactivo {
+            background: #1a1a2e;
+            border: 1px solid #2a3a5c;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .demo-interactivo input {
+            background: #0a0a1a;
+            border: 1px solid #2a3a5c;
+            color: #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 5px;
+            width: 150px;
+        }
+        .demo-interactivo .resultado {
+            color: #22c55e;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="tutorial-container">
+        
+        <!-- ===== ENCABEZADO ===== -->
+        <div class="tutorial-header">
+            <h1>📙 Tutorial JavaScript</h1>
+            <p>Aprende JavaScript desde cero con ejemplos interactivos</p>
+            <p style="color:#6b7280; font-size:0.8em; margin-top:5px;">
+                📖 15 lecciones · 🆓 3 gratis · 🔒 12 exclusivas FULL
+            </p>
+        </div>
+
+        <!-- ===== BARRA DE HERRAMIENTAS ===== -->
+        <div class="toolbar">
+            <label>🔤 Tamaño:</label>
+            <button onclick="disminuirFuente()">A−</button>
+            <span id="fontIndicator" style="color:#00d4aa; font-weight:600; min-width:80px;">Normal</span>
+            <button onclick="aumentarFuente()">A+</button>
+            <span style="flex:1;"></span>
+            <span id="badgeFull" class="badge-full"></span>
+            <button onclick="location.href='../index.html'">🏠 Nexus</button>
+        </div>
+
+        <!-- ===== TABLA DE CONTENIDOS ===== -->
+        <div class="toc">
+            <h3>📋 Contenidos</h3>
+            <ol>
+                <li><a href="#leccion1">📙 ¿Qué es JavaScript?</a></li>
+                <li><a href="#leccion2">🔤 Variables y tipos</a></li>
+                <li><a href="#leccion3">🧮 Operadores</a></li>
+                <li data-plan="full"><a href="#leccion4">📝 Strings (cadenas)</a></li>
+                <li data-plan="full"><a href="#leccion5">🔢 Números y Math</a></li>
+                <li data-plan="full"><a href="#leccion6">❓ Condicionales</a></li>
+                <li data-plan="full"><a href="#leccion7">🔄 Bucles</a></li>
+                <li data-plan="full"><a href="#leccion8">📋 Arrays</a></li>
+                <li data-plan="full"><a href="#leccion9">🎯 Funciones</a></li>
+                <li data-plan="full"><a href="#leccion10">🧩 Objetos</a></li>
+                <li data-plan="full"><a href="#leccion11">🎭 DOM</a></li>
+                <li data-plan="full"><a href="#leccion12">⚡ Eventos</a></li>
+                <li data-plan="full"><a href="#leccion13">🔁 Arrow Functions</a></li>
+                <li data-plan="full"><a href="#leccion14">🧪 Try/Catch</a></li>
+                <li data-plan="full"><a href="#leccion15">🧪 Proyecto final</a></li>
+            </ol>
+        </div>
+
+        <!-- ===== LECCIÓN 1 - GRATIS ===== -->
+        <div class="leccion" id="leccion1">
+            <h2>📙 Lección 1: ¿Qué es JavaScript?</h2>
+            <p>JavaScript (<strong>JS</strong>) es el lenguaje que hace que las páginas web sean <strong>interactivas</strong>. HTML es estructura, CSS es estilo, JS es <strong>comportamiento</strong>.</p>
+            <h3>📖 Explicación</h3>
+            <p>Con JS puedes: responder clics, validar formularios, crear animaciones, conectar con servidores y mucho más.</p>
+            <div class="code-block">
+<span class="comment">// 📌 JS se escribe dentro de &lt;script&gt;</span>
+<span class="comment">// Puede ir en el &lt;head&gt;, al final del &lt;body&gt; o en archivo externo</span>
+
+<span class="comment">// Mensaje en consola del navegador (F12)</span>
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="string">"¡Hola, mundo!"</span>);
+
+<span class="comment">// Mensaje emergente</span>
+<span class="tag">alert</span>(<span class="string">"¡Bienvenido a Nexus!"</span>);
+
+<span class="comment">// Mensaje en la página</span>
+<span class="tag">document</span>.<span class="attr">write</span>(<span class="string">"Hola desde JS"</span>);
+            </div>
+            <div class="demo-interactivo">
+                <button class="btn-ejecutar" onclick="alert('¡Hola desde Nexus! 🚀')">💬 Probar alert()</button>
+                <button class="btn-ejecutar" onclick="console.log('Mensaje en consola')">📋 Probar console.log()</button>
+            </div>
+            <h3>🧪 Ejercicio</h3>
+            <div class="ejercicio">
+                <p>Abre la consola (F12) y escribe: <code>console.log("Aprendiendo JS");</code></p>
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 2 - GRATIS ===== -->
+        <div class="leccion" id="leccion2">
+            <h2>🔤 Lección 2: Variables y tipos</h2>
+            <p>Las variables guardan datos. En JS se usan: <code>let</code>, <code>const</code> (y antes <code>var</code>).</p>
+            <div class="code-block">
+<span class="comment">// 📦 Declarar variables</span>
+<span class="tag">let</span> nombre = <span class="string">"Ana"</span>;       <span class="comment">// Texto (string)</span>
+<span class="tag">let</span> edad = <span class="number">25</span>;              <span class="comment">// Número (number)</span>
+<span class="tag">let</span> activo = <span class="string">true</span>;          <span class="comment">// Booleano (true/false)</span>
+<span class="tag">const</span> PI = <span class="number">3.1416</span>;          <span class="comment">// Constante (no cambia)</span>
+<span class="tag">let</span> datos = <span class="string">null</span>;            <span class="comment">// Vacío (null)</span>
+<span class="tag">let</span> indefinido;                <span class="comment">// undefined (sin valor)</span>
+
+<span class="comment">// Ver tipo de variable</span>
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="tag">typeof</span> nombre);  <span class="comment">// → "string"</span>
+
+<span class="comment">// Concatenar texto</span>
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="string">"Hola, "</span> + nombre + <span class="string">", tienes "</span> + edad + <span class="string">" años"</span>);
+            </div>
+            <div class="demo-interactivo">
+                <button class="btn-ejecutar" onclick="mostrarVariables()">🔤 Probar variables</button>
+                <div class="resultado" id="resultadoVariables"></div>
+            </div>
+            <script>
+                function mostrarVariables() {
+                    let nombre = "Ana";
+                    let edad = 25;
+                    document.getElementById('resultadoVariables').textContent = 
+                        `Hola, ${nombre}. Tienes ${edad} años. Tipo: ${typeof nombre}, ${typeof edad}`;
+                }
+            </script>
+            <h3>🧪 Ejercicio</h3>
+            <div class="ejercicio">
+                <p>Crea 3 variables: <code>ciudad</code> (string), <code>pais</code> (string), <code>habitantes</code> (number). Muestralas en consola.</p>
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 3 - GRATIS ===== -->
+        <div class="leccion" id="leccion3">
+            <h2>🧮 Lección 3: Operadores</h2>
+            <p>Los operadores realizan operaciones con variables.</p>
+            <div class="code-block">
+<span class="comment">// ➕ Aritméticos</span>
+<span class="tag">let</span> suma = <span class="number">5</span> + <span class="number">3</span>;        <span class="comment">// 8</span>
+<span class="tag">let</span> resta = <span class="number">10</span> - <span class="number">4</span>;       <span class="comment">// 6</span>
+<span class="tag">let</span> mult = <span class="number">3</span> * <span class="number">4</span>;         <span class="comment">// 12</span>
+<span class="tag">let</span> div = <span class="number">20</span> / <span class="number">5</span>;          <span class="comment">// 4</span>
+<span class="tag">let</span> modulo = <span class="number">10</span> % <span class="number">3</span>;     <span class="comment">// 1 (resto de 10÷3)</span>
+
+<span class="comment">// 🔗 Comparación (devuelven true/false)</span>
+<span class="number">5</span> == <span class="string">"5"</span>    <span class="comment">// true (compara valor)</span>
+<span class="number">5</span> === <span class="string">"5"</span>   <span class="comment">// false (compara valor Y tipo)</span>
+<span class="number">10</span> &gt; <span class="number">5</span>     <span class="comment">// true</span>
+<span class="number">3</span> &lt;= <span class="number">3</span>    <span class="comment">// true</span>
+
+<span class="comment">// ✅ Lógicos</span>
+<span class="tag">let</span> verdadero = <span class="string">true</span> && <span class="string">true</span>;   <span class="comment">// AND → true</span>
+<span class="tag">let</span> falso = <span class="string">true</span> || <span class="string">false</span>;      <span class="comment">// OR → true</span>
+<span class="tag">let</span> negado = !<span class="string">true</span>;                <span class="comment">// NOT → false</span>
+            </div>
+            <div class="demo-interactivo">
+                <p>Calculadora simple:</p>
+                <input type="number" id="num1" placeholder="Número 1" value="10">
+                <input type="number" id="num2" placeholder="Número 2" value="5">
+                <button class="btn-ejecutar" onclick="calcular()">🧮 Calcular</button>
+                <div class="resultado" id="resultadoCalculo"></div>
+            </div>
+            <script>
+                function calcular() {
+                    let a = Number(document.getElementById('num1').value);
+                    let b = Number(document.getElementById('num2').value);
+                    document.getElementById('resultadoCalculo').innerHTML = `
+                        Suma: ${a+b} | Resta: ${a-b} | Mult: ${a*b} | Div: ${a/b} | Módulo: ${a%b}
+                    `;
+                }
+            </script>
+            <h3>🧪 Ejercicio</h3>
+            <div class="ejercicio">
+                <p>Declara <code>let a=15, b=4</code>. Calcula suma, resta, multiplicación, división y módulo. Muestra en consola.</p>
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 4 - FULL ===== -->
+        <div class="leccion" id="leccion4" data-plan="full">
+            <h2>📝 Lección 4: Strings (cadenas)</h2>
+            <p>Los strings son texto. JS tiene métodos útiles para manipularlos.</p>
+            <div class="code-block">
+<span class="tag">let</span> texto = <span class="string">"  Aprendiendo JavaScript  "</span>;
+
+<span class="comment">// Métodos comunes</span>
+<span class="tag">console</span>.<span class="attr">log</span>(texto.<span class="attr">length</span>);           <span class="comment">// longitud → 28</span>
+<span class="tag">console</span>.<span class="attr">log</span>(texto.<span class="attr">toUpperCase</span>());      <span class="comment">// MAYÚSCULAS</span>
+<span class="tag">console</span>.<span class="attr">log</span>(texto.<span class="attr">toLowerCase</span>());      <span class="comment">// minúsculas</span>
+<span class="tag">console</span>.<span class="attr">log</span>(texto.<span class="attr">trim</span>());             <span class="comment">// quita espacios</span>
+<span class="tag">console</span>.<span class="attr">log</span>(texto.<span class="attr">includes</span>(<span class="string">"Java"</span>));   <span class="comment">// ¿contiene? → true</span>
+<span class="tag">console</span>.<span class="attr">log</span>(texto.<span class="attr">replace</span>(<span class="string">"Java"</span>, <span class="string">"Type"</span>)); <span class="comment">// reemplazar</span>
+
+<span class="comment">// Template strings (backticks ``)</span>
+<span class="tag">let</span> nombre = <span class="string">"Ana"</span>;
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="string">`Hola, ${nombre}!`</span>);  <span class="comment">// "Hola, Ana!"</span>
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 5 - FULL ===== -->
+        <div class="leccion" id="leccion5" data-plan="full">
+            <h2>🔢 Lección 5: Números y Math</h2>
+            <p>JS tiene un objeto <code>Math</code> para operaciones matemáticas.</p>
+            <div class="code-block">
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="tag">Math</span>.<span class="attr">PI</span>);           <span class="comment">// 3.14159...</span>
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="tag">Math</span>.<span class="attr">round</span>(<span class="number">4.7</span>));   <span class="comment">// redondear → 5</span>
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="tag">Math</span>.<span class="attr">ceil</span>(<span class="number">4.1</span>));    <span class="comment">// redondear arriba → 5</span>
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="tag">Math</span>.<span class="attr">floor</span>(<span class="number">4.9</span>));   <span class="comment">// redondear abajo → 4</span>
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="tag">Math</span>.<span class="attr">random</span>());      <span class="comment">// aleatorio 0-1</span>
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="tag">Math</span>.<span class="attr">max</span>(<span class="number">1</span>, <span class="number">5</span>, <span class="number">3</span>));  <span class="comment">// máximo → 5</span>
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="tag">Math</span>.<span class="attr">min</span>(<span class="number">1</span>, <span class="number">5</span>, <span class="number">3</span>));  <span class="comment">// mínimo → 1</span>
+
+<span class="comment">// Número aleatorio entre 1 y 10</span>
+<span class="tag">let</span> aleatorio = <span class="tag">Math</span>.<span class="attr">floor</span>(<span class="tag">Math</span>.<span class="attr">random</span>() * <span class="number">10</span>) + <span class="number">1</span>;
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 6 - FULL ===== -->
+        <div class="leccion" id="leccion6" data-plan="full">
+            <h2>❓ Lección 6: Condicionales</h2>
+            <p>Toma decisiones con <code>if</code>, <code>else if</code>, <code>else</code>.</p>
+            <div class="code-block">
+<span class="tag">let</span> edad = <span class="number">18</span>;
+
+<span class="tag">if</span> (edad &gt;= <span class="number">18</span>) {
+    <span class="tag">console</span>.<span class="attr">log</span>(<span class="string">"Eres mayor de edad"</span>);
+} <span class="tag">else</span> {
+    <span class="tag">console</span>.<span class="attr">log</span>(<span class="string">"Eres menor de edad"</span>);
+}
+
+<span class="comment">// Múltiples condiciones</span>
+<span class="tag">let</span> nota = <span class="number">85</span>;
+<span class="tag">if</span> (nota &gt;= <span class="number">90</span>) {
+    <span class="tag">console</span>.<span class="attr">log</span>(<span class="string">"Excelente"</span>);
+} <span class="tag">else if</span> (nota &gt;= <span class="number">70</span>) {
+    <span class="tag">console</span>.<span class="attr">log</span>(<span class="string">"Aprobado"</span>);
+} <span class="tag">else</span> {
+    <span class="tag">console</span>.<span class="attr">log</span>(<span class="string">"Reprobado"</span>);
+}
+
+<span class="comment">// Operador ternario (if simplificado)</span>
+<span class="tag">let</span> mensaje = edad &gt;= <span class="number">18</span> ? <span class="string">"Adulto"</span> : <span class="string">"Menor"</span>;
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 7 - FULL ===== -->
+        <div class="leccion" id="leccion7" data-plan="full">
+            <h2>🔄 Lección 7: Bucles</h2>
+            <p>Repite código varias veces con <code>for</code> y <code>while</code>.</p>
+            <div class="code-block">
+<span class="comment">// For: cuando sabes cuántas veces repetir</span>
+<span class="tag">for</span> (<span class="tag">let</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) {
+    <span class="tag">console</span>.<span class="attr">log</span>(<span class="string">`Vuelta número ${i+1}`</span>);
+}
+<span class="comment">// → Vuelta número 1, 2, 3, 4, 5</span>
+
+<span class="comment">// While: cuando no sabes cuántas veces</span>
+<span class="tag">let</span> contador = <span class="number">0</span>;
+<span class="tag">while</span> (contador &lt; <span class="number">3</span>) {
+    <span class="tag">console</span>.<span class="attr">log</span>(<span class="string">`Contador: ${contador}`</span>);
+    contador++;
+}
+
+<span class="comment">// Recorrer un array</span>
+<span class="tag">let</span> frutas = [<span class="string">"manzana"</span>, <span class="string">"pera"</span>, <span class="string">"uva"</span>];
+<span class="tag">for</span> (<span class="tag">let</span> fruta <span class="tag">of</span> frutas) {
+    <span class="tag">console</span>.<span class="attr">log</span>(fruta);
+}
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 8 - FULL ===== -->
+        <div class="leccion" id="leccion8" data-plan="full">
+            <h2>📋 Lección 8: Arrays</h2>
+            <p>Los arrays guardan <strong>listas</strong> de datos.</p>
+            <div class="code-block">
+<span class="comment">// Crear array</span>
+<span class="tag">let</span> colores = [<span class="string">"rojo"</span>, <span class="string">"verde"</span>, <span class="string">"azul"</span>];
+
+<span class="comment">// Acceder</span>
+<span class="tag">console</span>.<span class="attr">log</span>(colores[<span class="number">0</span>]);  <span class="comment">// "rojo"</span>
+<span class="tag">console</span>.<span class="attr">log</span>(colores.<span class="attr">length</span>); <span class="comment">// 3</span>
+
+<span class="comment">// Métodos útiles</span>
+colores.<span class="attr">push</span>(<span class="string">"amarillo"</span>);  <span class="comment">// agregar al final</span>
+colores.<span class="attr">pop</span>();                <span class="comment">// quitar el último</span>
+colores.<span class="attr">unshift</span>(<span class="string">"negro"</span>);   <span class="comment">// agregar al inicio</span>
+colores.<span class="attr">shift</span>();              <span class="comment">// quitar el primero</span>
+colores.<span class="attr">indexOf</span>(<span class="string">"verde"</span>);    <span class="comment">// buscar posición</span>
+colores.<span class="attr">includes</span>(<span class="string">"rojo"</span>);    <span class="comment">// ¿está? → true/false</span>
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 9 - FULL ===== -->
+        <div class="leccion" id="leccion9" data-plan="full">
+            <h2>🎯 Lección 9: Funciones</h2>
+            <p>Las funciones <strong> encapsulan</strong> código reutilizable.</p>
+            <div class="code-block">
+<span class="comment">// Declarar función</span>
+<span class="tag">function</span> <span class="attr">saludar</span>(nombre) {
+    <span class="tag">return</span> <span class="string">`¡Hola, ${nombre}!`</span>;
+}
+
+<span class="comment">// Usar función</span>
+<span class="tag">let</span> mensaje = <span class="attr">saludar</span>(<span class="string">"Ana"</span>);
+<span class="tag">console</span>.<span class="attr">log</span>(mensaje);  <span class="comment">// "¡Hola, Ana!"</span>
+
+<span class="comment">// Función con varios parámetros</span>
+<span class="tag">function</span> <span class="attr">sumar</span>(a, b) {
+    <span class="tag">return</span> a + b;
+}
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="attr">sumar</span>(<span class="number">5</span>, <span class="number">3</span>));  <span class="comment">// 8</span>
+            </div>
+            <div class="demo-interactivo">
+                <button class="btn-ejecutar" onclick="usarFuncion()">🎯 Probar función</button>
+                <div class="resultado" id="resultadoFuncion"></div>
+            </div>
+            <script>
+                function sumar(a, b) { return a + b; }
+                function usarFuncion() {
+                    document.getElementById('resultadoFuncion').textContent = 
+                        `sumar(10, 5) = ${sumar(10, 5)} | sumar(100, 200) = ${sumar(100, 200)}`;
+                }
+            </script>
+        </div>
+
+        <!-- ===== LECCIÓN 10 - FULL ===== -->
+        <div class="leccion" id="leccion10" data-plan="full">
+            <h2>🧩 Lección 10: Objetos</h2>
+            <p>Los objetos agrupan datos relacionados.</p>
+            <div class="code-block">
+<span class="comment">// Crear objeto</span>
+<span class="tag">let</span> persona = {
+    nombre: <span class="string">"Ana"</span>,
+    edad: <span class="number">25</span>,
+    ciudad: <span class="string">"La Habana"</span>,
+    saludar: <span class="tag">function</span>() {
+        <span class="tag">return</span> <span class="string">`Hola, soy ${this.nombre}`</span>;
+    }
+};
+
+<span class="comment">// Acceder a propiedades</span>
+<span class="tag">console</span>.<span class="attr">log</span>(persona.nombre);      <span class="comment">// "Ana"</span>
+<span class="tag">console</span>.<span class="attr">log</span>(persona[<span class="string">"edad"</span>]);   <span class="comment">// 25</span>
+<span class="tag">console</span>.<span class="attr">log</span>(persona.saludar());  <span class="comment">// "Hola, soy Ana"</span>
+
+<span class="comment">// Agregar propiedad</span>
+persona.pais = <span class="string">"Cuba"</span>;
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 11 - FULL ===== -->
+        <div class="leccion" id="leccion11" data-plan="full">
+            <h2>🎭 Lección 11: DOM</h2>
+            <p>El DOM permite <strong>manipular HTML</strong> desde JS.</p>
+            <div class="code-block">
+<span class="comment">// Seleccionar elementos</span>
+<span class="tag">document</span>.<span class="attr">getElementById</span>(<span class="string">"miId"</span>);
+<span class="tag">document</span>.<span class="attr">querySelector</span>(<span class="string">".clase"</span>);
+<span class="tag">document</span>.<span class="attr">querySelectorAll</span>(<span class="string">"p"</span>);
+
+<span class="comment">// Cambiar contenido</span>
+<span class="tag">document</span>.<span class="attr">getElementById</span>(<span class="string">"titulo"</span>).<span class="attr">textContent</span> = <span class="string">"Nuevo título"</span>;
+
+<span class="comment">// Cambiar estilos</span>
+<span class="tag">document</span>.<span class="attr">getElementById</span>(<span class="string">"caja"</span>).<span class="attr">style</span>.<span class="attr">color</span> = <span class="string">"red"</span>;
+
+<span class="comment">// Crear elemento</span>
+<span class="tag">let</span> nuevo = <span class="tag">document</span>.<span class="attr">createElement</span>(<span class="string">"p"</span>);
+nuevo.<span class="attr">textContent</span> = <span class="string">"Elemento creado con JS"</span>;
+<span class="tag">document</span>.<span class="attr">body</span>.<span class="attr">appendChild</span>(nuevo);
+            </div>
+            <div class="demo-interactivo">
+                <div id="cajaDom" style="padding:10px; background:#2a3a5c; border-radius:6px; text-align:center;">
+                    🎯 Haz clic para cambiar esto
+                </div>
+                <button class="btn-ejecutar" onclick="cambiarDOM()">🎭 Cambiar DOM</button>
+            </div>
+            <script>
+                function cambiarDOM() {
+                    let caja = document.getElementById('cajaDom');
+                    caja.textContent = '✅ ¡Texto cambiado con JS!';
+                    caja.style.background = '#22c55e';
+                    caja.style.color = '#000';
+                    caja.style.fontWeight = '700';
+                }
+            </script>
+        </div>
+
+        <!-- ===== LECCIÓN 12 - FULL ===== -->
+        <div class="leccion" id="leccion12" data-plan="full">
+            <h2>⚡ Lección 12: Eventos</h2>
+            <p>Los eventos responden a acciones del usuario: clic, teclado, mouse...</p>
+            <div class="code-block">
+<span class="comment">// Evento click</span>
+<span class="tag">document</span>.<span class="attr">getElementById</span>(<span class="string">"btn"</span>).<span class="attr">addEventListener</span>(<span class="string">"click"</span>, <span class="tag">function</span>() {
+    <span class="tag">alert</span>(<span class="string">"¡Clic!"</span>);
+});
+
+<span class="comment">// Evento mouseover (pasar mouse)</span>
+<span class="tag">document</span>.<span class="attr">getElementById</span>(<span class="string">"caja"</span>).<span class="attr">addEventListener</span>(<span class="string">"mouseover"</span>, <span class="tag">function</span>() {
+    <span class="tag">this</span>.<span class="attr">style</span>.<span class="attr">background</span> = <span class="string">"#22c55e"</span>;
+});
+
+<span class="comment">// Evento keydown (tecla presionada)</span>
+<span class="tag">document</span>.<span class="attr">addEventListener</span>(<span class="string">"keydown"</span>, <span class="tag">function</span>(e) {
+        <span class="tag">console</span>.<span class="attr">log</span>(<span class="string">`Tecla presionada: ${e.key}`</span>);
+});
+            </div>
+            <div class="demo-interactivo">
+                <button class="btn-ejecutar" id="btnEvento">⚡ Haz clic</button>
+                <div class="consola-ejemplo" id="consolaEvento">Aquí se mostrarán los eventos...</div>
+            </div>
+            <script>
+                document.getElementById('btnEvento').addEventListener('click', function() {
+                    document.getElementById('consolaEvento').textContent = '✅ Evento click disparado a las ' + new Date().toLocaleTimeString();
+                });
+            </script>
+        </div>
+
+        <!-- ===== LECCIÓN 13 - FULL ===== -->
+        <div class="leccion" id="leccion13" data-plan="full">
+            <h2>🔁 Lección 13: Arrow Functions</h2>
+            <p>Las arrow functions <code>() => {}</code> son una forma más corta de escribir funciones.</p>
+            <div class="code-block">
+<span class="comment">// Función normal</span>
+<span class="tag">function</span> <span class="attr">sumar</span>(a, b) {
+    <span class="tag">return</span> a + b;
+}
+
+<span class="comment">// Arrow function (equivalente)</span>
+<span class="tag">const</span> <span class="attr">sumarArrow</span> = (a, b) => a + b;
+
+<span class="comment">// Si solo tiene un parámetro, se pueden omitir los paréntesis</span>
+<span class="tag">const</span> <span class="attr">cuadrado</span> = x => x * x;
+
+<span class="comment">// Si tiene varias líneas, usan { } y return</span>
+<span class="tag">const</span> <span class="attr">saludar</span> = (nombre) => {
+    <span class="tag">let</span> mensaje = <span class="string">`¡Hola, ${nombre}!`</span>;
+    <span class="tag">return</span> mensaje;
+};
+
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="attr">sumarArrow</span>(<span class="number">5</span>, <span class="number">3</span>));  <span class="comment">// 8</span>
+<span class="tag">console</span>.<span class="attr">log</span>(<span class="attr">cuadrado</span>(<span class="number">4</span>));      <span class="comment">// 16</span>
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 14 - FULL ===== -->
+        <div class="leccion" id="leccion14" data-plan="full">
+            <h2>🧪 Lección 14: Try/Catch (Manejo de errores)</h2>
+            <p>Captura errores para que tu programa no se rompa.</p>
+            <div class="code-block">
+<span class="tag">try</span> {
+    <span class="comment">// Código que puede fallar</span>
+    <span class="tag">let</span> resultado = <span class="number">10</span> / <span class="number">0</span>;
+    <span class="tag">console</span>.<span class="attr">log</span>(<span class="string">"Todo bien"</span>);
+    
+    <span class="comment">// Lanzar error intencional</span>
+    <span class="tag">if</span> (resultado === <span class="tag">Infinity</span>) {
+        <span class="tag">throw</span> <span class="tag">new</span> <span class="attr">Error</span>(<span class="string">"División infinita"</span>);
+    }
+} <span class="tag">catch</span> (error) {
+    <span class="tag">console</span>.<span class="attr">error</span>(<span class="string">"❌ Error:"</span>, error.message);
+} <span class="tag">finally</span> {
+    <span class="tag">console</span>.<span class="attr">log</span>(<span class="string">"✅ Esto se ejecuta siempre"</span>);
+}
+            </div>
+            <div class="demo-interactivo">
+                <button class="btn-ejecutar" onclick="probarTryCatch()">🧪 Probar Try/Catch</button>
+                <div class="consola-ejemplo" id="consolaTryCatch">Haz clic para probar...</div>
+            </div>
+            <script>
+                function probarTryCatch() {
+                    try {
+                        let num = prompt("Ingresa un número:");
+                        if (isNaN(num)) throw new Error("¡No es un número!");
+                        document.getElementById('consolaTryCatch').textContent = `✅ Ingresaste: ${num}`;
+                    } catch (e) {
+                        document.getElementById('consolaTryCatch').textContent = `❌ Error: ${e.message}`;
+                    }
+                }
+            </script>
+        </div>
+
+        <!-- ===== LECCIÓN 15 - FULL ===== -->
+        <div class="leccion" id="leccion15" data-plan="full">
+            <h2>🧪 Lección 15: Proyecto final</h2>
+            <p>Construye un <strong>contador interactivo</strong> usando todo lo aprendido.</p>
+            <div class="code-block">
+<span class="comment">/* HTML */</span>
+&lt;<span class="tag">div</span> <span class="attr">id</span>=<span class="string">"contador"</span>&gt;
+    &lt;<span class="tag">h2</span>&gt;Contador: &lt;<span class="tag">span</span> <span class="attr">id</span>=<span class="string">"valor"</span>&gt;0&lt;/<span class="tag">span</span>&gt;&lt;/<span class="tag">h2</span>&gt;
+    &lt;<span class="tag">button</span> <span class="attr">id</span>=<span class="string">"btnRestar"</span>&gt;-1&lt;/<span class="tag">button</span>&gt;
+    &lt;<span class="tag">button</span> <span class="attr">id</span>=<span class="string">"btnReset"</span>&gt;0&lt;/<span class="tag">button</span>&gt;
+    &lt;<span class="tag">button</span> <span class="attr">id</span>=<span class="string">"btnSumar"</span>&gt;+1&lt;/<span class="tag">button</span>&gt;
+&lt;/<span class="tag">div</span>&gt;
+
+<span class="comment">/* JavaScript */</span>
+<span class="tag">let</span> valor = <span class="number">0</span>;
+<span class="tag">const</span> spanValor = <span class="tag">document</span>.<span class="attr">getElementById</span>(<span class="string">"valor"</span>);
+
+<span class="tag">document</span>.<span class="attr">getElementById</span>(<span class="string">"btnSumar"</span>).<span class="attr">addEventListener</span>(<span class="string">"click"</span>, () => {
+    valor++;
+    spanValor.<span class="attr">textContent</span> = valor;
+});
+
+<span class="tag">document</span>.<span class="attr">getElementById</span>(<span class="string">"btnRestar"</span>).<span class="attr">addEventListener</span>(<span class="string">"click"</span>, () => {
+    valor--;
+    spanValor.<span class="attr">textContent</span> = valor;
+});
+
+<span class="tag">document</span>.<span class="attr">getElementById</span>(<span class="string">"btnReset"</span>).<span class="attr">addEventListener</span>(<span class="string">"click"</span>, () => {
+    valor = <span class="number">0</span>;
+    spanValor.<span class="attr">textContent</span> = valor;
+});
+            </div>
+            <div class="demo-interactivo" style="text-align:center;">
+                <h3 style="color:#00d4aa;">Contador: <span id="valorContador" style="color:#22c55e; font-size:2em;">0</span></h3>
+                <button class="btn-ejecutar" onclick="restar()">−1</button>
+                <button class="btn-ejecutar" onclick="resetear()" style="background:#6366f1;">⟲ 0</button>
+                <button class="btn-ejecutar" onclick="sumar()">+1</button>
+            </div>
+            <script>
+                let valorContador = 0;
+                function sumar() { valorContador++; document.getElementById('valorContador').textContent = valorContador; }
+                function restar() { valorContador--; document.getElementById('valorContador').textContent = valorContador; }
+                function resetear() { valorContador = 0; document.getElementById('valorContador').textContent = 0; }
+            </script>
+            <h3>🧪 Proyecto</h3>
+            <div class="ejercicio">
+                <p><strong>🏆 Mejora el contador:</strong></p>
+                <ul style="color:#cbd5e1; margin-left:20px;">
+                    <li>Agrega botón +5 y −5</li>
+                    <li>Si el contador llega a 10, cambia color a verde</li>
+                    <li>Si llega a −10, cambia color a rojo</li>
+                    <li>No dejes que baje de −20 ni suba de 20</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ===== BLOQUEO FULL ===== -->
+        <div class="full-message">
+            <h2>🔓 Desbloquea las 12 lecciones restantes</h2>
+            <p>Lecciones 4 a 15 exclusivas para <strong>Nexus FULL</strong>.</p>
+            <p style="font-size:1.2em; color:#00d4aa; font-weight:700;">18€ · Pago único · Acceso de por vida</p>
+            <a href="../pagos.html" class="btn-comprar">🚀 Comprar Nexus FULL · 18€</a>
+        </div>
+
+    </div>
+
+    <script src="../tutorials/js/tutorial.js"></script>
+</body>
+</html>        

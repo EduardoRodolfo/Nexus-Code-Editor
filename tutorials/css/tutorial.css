@@ -1,0 +1,337 @@
+/* ========================================
+   🎨 ESTILOS COMUNES PARA TUTORIALES NEXUS
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0a0e1a;
+    color: #e2e8f0;
+    line-height: 1.8;
+    font-size: 16px;
+    transition: font-size 0.2s;
+}
+
+/* 🏗️ CONTENEDOR PRINCIPAL */
+.tutorial-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 📌 ENCABEZADO DEL TUTORIAL */
+.tutorial-header {
+    background: linear-gradient(135deg, #0a1628, #0d2137);
+    border: 1px solid #2a3a5c;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.tutorial-header h1 {
+    color: #00d4aa;
+    font-size: 1.8em;
+    margin-bottom: 8px;
+}
+
+.tutorial-header p {
+    color: #8892b0;
+    font-size: 0.95em;
+}
+
+/* 🎛️ BARRA DE HERRAMIENTAS */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    background: #111827;
+    border: 1px solid #2a3a5c;
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin-bottom: 25px;
+}
+
+.toolbar label {
+    color: #8892b0;
+    font-size: 0.85em;
+}
+
+.toolbar button {
+    background: #2a3a5c;
+    color: #e2e8f0;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: 0.2s;
+}
+
+.toolbar button:hover {
+    background: #3a4a6c;
+}
+
+.toolbar .btn-full {
+    background: #22c55e;
+    color: #000;
+    font-weight: 700;
+}
+
+.toolbar .btn-full:hover {
+    background: #16a34a;
+}
+
+.toolbar .badge-full {
+    background: #22c55e;
+    color: #000;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 700;
+    display: none;
+}
+
+.toolbar .badge-full.visible {
+    display: inline-block;
+}
+
+/* 📚 LECCIÓN */
+.leccion {
+    background: #111827;
+    border: 1px solid #2a3a5c;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+    transition: 0.3s;
+}
+
+.leccion:hover {
+    border-color: #3a4a6c;
+}
+
+.leccion.bloqueada {
+    opacity: 0.5;
+    position: relative;
+}
+
+.leccion.bloqueada::after {
+    content: '🔒 Esta lección es exclusiva para usuarios FULL';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.85);
+    color: #22c55e;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    z-index: 2;
+}
+
+.leccion h2 {
+    color: #00d4aa;
+    font-size: 1.25em;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #2a3a5c;
+}
+
+.leccion h3 {
+    color: #22c55e;
+    font-size: 1.1em;
+    margin: 15px 0 8px;
+}
+
+.leccion p {
+    color: #cbd5e1;
+    margin-bottom: 10px;
+}
+
+/* 💻 CONTENEDOR DE CÓDIGO */
+.code-block {
+    background: #0a0a1a;
+    border: 1px solid #2a3a5c;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: #22c55e;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.code-block .comment {
+    color: #6b7280;
+    font-style: italic;
+}
+
+.code-block .tag {
+    color: #6366f1;
+}
+
+.code-block .attr {
+    color: #f59e0b;
+}
+
+.code-block .string {
+    color: #22c55e;
+}
+
+.code-block .number {
+    color: #ef4444;
+}
+
+/* 🖥️ OUTPUT (iframe de demostración) */
+.output-frame {
+    width: 100%;
+    min-height: 120px;
+    background: #fff;
+    border: 1px solid #2a3a5c;
+    border-radius: 6px;
+    margin: 10px 0;
+}
+
+.output-frame.dark {
+    background: #1a1a2e;
+}
+
+/* 🧪 EJERCICIO */
+.ejercicio {
+    background: #0d2137;
+    border: 1px solid #2a5a7c;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.ejercicio h3 {
+    color: #f59e0b;
+}
+
+.ejercicio p {
+    color: #cbd5e1;
+}
+
+/* 📊 TABLA DE CONTENIDOS */
+.toc {
+    background: #111827;
+    border: 1px solid #2a3a5c;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+}
+
+.toc h3 {
+    color: #00d4aa;
+    margin-bottom: 10px;
+}
+
+.toc ol {
+    list-style: none;
+    counter-reset: toc-counter;
+}
+
+.toc ol li {
+    counter-increment: toc-counter;
+    padding: 5px 0;
+    border-bottom: 1px solid #1a2235;
+}
+
+.toc ol li::before {
+    content: counter(toc-counter) ". ";
+    color: #00d4aa;
+    font-weight: 700;
+    margin-right: 8px;
+}
+
+.toc ol li a {
+    color: #e2e8f0;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.toc ol li a:hover {
+    color: #00d4aa;
+}
+
+.toc ol li.bloqueado a {
+    color: #6b7280;
+}
+
+.toc ol li.bloqueado a:hover {
+    color: #22c55e;
+}
+
+/* 🔒 MENSAJE DE BLOQUEO */
+.full-message {
+    background: linear-gradient(135deg, #0a1628, #0d2137);
+    border: 2px solid #22c55e;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    margin: 30px 0;
+}
+
+.full-message h2 {
+    color: #22c55e;
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
+
+.full-message p {
+    color: #8892b0;
+    margin-bottom: 15px;
+}
+
+.full-message .btn-comprar {
+    background: linear-gradient(135deg, #00d4aa, #00b894);
+    color: #000;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.full-message .btn-comprar:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+}
+
+/* 📱 RESPONSIVE */
+@media (max-width: 600px) {
+    .tutorial-container {
+        padding: 10px;
+    }
+    .tutorial-header h1 {
+        font-size: 1.3em;
+    }
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .code-block {
+        font-size: 0.8em;
+    }
+}
+
+/* ♿ ACCESIBILIDAD */
+.font-small  { font-size: 14px; }
+.font-medium { font-size: 16px; }
+.font-large  { font-size: 20px; }
+.font-xl     { font-size: 24px; }

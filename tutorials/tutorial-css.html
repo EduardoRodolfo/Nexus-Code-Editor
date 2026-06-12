@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Tutorial CSS - Nexus Code Editor</title>
+    <link rel="stylesheet" href="../tutorials/css/tutorial.css">
+    <style>
+        .toast {
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0,0,0,.4);
+            animation: si .3s ease;
+            font-size: .82rem;
+            max-width: 350px;
+        }
+        .toast.ok { background: #22c55e; }
+        .toast.err { background: #ef4444; color: #fff; }
+        .toast.info { background: #00d4aa; }
+        @keyframes si { from { transform: translateX(80px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .demo-box {
+            background: #1a1a2e;
+            border: 1px solid #2a3a5c;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            color: #e2e8f0;
+        }
+        .demo-box.bg-color { background: #6366f1; color: #fff; text-align: center; padding: 20px; }
+        .demo-box.bg-gradient { background: linear-gradient(135deg, #6366f1, #22c55e); color: #fff; text-align: center; padding: 20px; }
+        .demo-box.font { font-family: 'Georgia', serif; font-size: 1.2em; }
+        .demo-box.border { border: 3px solid #22c55e; border-radius: 12px; padding: 15px; }
+        .demo-box.shadow { box-shadow: 0 8px 30px rgba(0,212,170,.3); padding: 20px; }
+        .demo-box.flex {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .demo-box.flex div {
+            background: #2a3a5c;
+            padding: 10px 20px;
+            border-radius: 4px;
+            flex: 1;
+            text-align: center;
+        }
+        .demo-box.grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .demo-box.grid div {
+            background: #2a3a5c;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .demo-box.anim {
+            width: 80px;
+            height: 80px;
+            background: #22c55e;
+            border-radius: 8px;
+            animation: mover 2s infinite alternate;
+        }
+        @keyframes mover {
+            from { transform: translateX(0); background: #22c55e; }
+            to { transform: translateX(200px); background: #6366f1; }
+        }
+        .demo-box.responsive {
+            background: #2a3a5c;
+            padding: 20px;
+            text-align: center;
+        }
+        @media (max-width: 400px) {
+            .demo-box.responsive { background: #6366f1; }
+        }
+        .pseudo-demo a {
+            color: #6366f1;
+            text-decoration: none;
+            padding: 5px 10px;
+            transition: 0.3s;
+        }
+        .pseudo-demo a:hover {
+            color: #22c55e;
+            background: #2a3a5c;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="tutorial-container">
+        
+        <!-- ===== ENCABEZADO ===== -->
+        <div class="tutorial-header">
+            <h1>🎨 Tutorial CSS</h1>
+            <p>Aprende CSS desde cero con ejemplos prácticos</p>
+            <p style="color:#6b7280; font-size:0.8em; margin-top:5px;">
+                📖 15 lecciones · 🆓 3 gratis · 🔒 12 exclusivas FULL
+            </p>
+        </div>
+
+        <!-- ===== BARRA DE HERRAMIENTAS ===== -->
+        <div class="toolbar">
+            <label>🔤 Tamaño:</label>
+            <button onclick="disminuirFuente()" title="Reducir">A−</button>
+            <span id="fontIndicator" style="color:#00d4aa; font-weight:600; min-width:80px;">Normal</span>
+            <button onclick="aumentarFuente()" title="Aumentar">A+</button>
+            <span style="flex:1;"></span>
+            <span id="badgeFull" class="badge-full"></span>
+            <button onclick="location.href='../index.html'">🏠 Nexus</button>
+        </div>
+
+        <!-- ===== TABLA DE CONTENIDOS ===== -->
+        <div class="toc">
+            <h3>📋 Contenidos</h3>
+            <ol>
+                <li><a href="#leccion1">🎨 ¿Qué es CSS?</a></li>
+                <li><a href="#leccion2">✏️ Sintaxis básica</a></li>
+                <li><a href="#leccion3">🔗 Colores y fondos</a></li>
+                <li data-plan="full"><a href="#leccion4">📝 Tipografía</a></li>
+                <li data-plan="full"><a href="#leccion5">📦 Modelo de caja</a></li>
+                <li data-plan="full"><a href="#leccion6">📐 Márgenes y paddings</a></li>
+                <li data-plan="full"><a href="#leccion7">🖼️ Bordes y sombras</a></li>
+                <li data-plan="full"><a href="#leccion8">🧭 Flexbox</a></li>
+                <li data-plan="full"><a href="#leccion9">📊 Grid</a></li>
+                <li data-plan="full"><a href="#leccion10">✨ Animaciones</a></li>
+                <li data-plan="full"><a href="#leccion11">📱 Responsive</a></li>
+                <li data-plan="full"><a href="#leccion12">🎭 Pseudoclases</a></li>
+                <li data-plan="full"><a href="#leccion13">🧩 Variables CSS</a></li>
+                <li data-plan="full"><a href="#leccion14">🔧 Selectores</a></li>
+                <li data-plan="full"><a href="#leccion15">🧪 Proyecto final</a></li>
+            </ol>
+        </div>
+
+        <!-- ===== LECCIÓN 1 - GRATIS ===== -->
+        <div class="leccion" id="leccion1">
+            <h2>🎨 Lección 1: ¿Qué es CSS?</h2>
+            <p>CSS (<strong>Cascading Style Sheets</strong>) da estilo a la web. HTML es el esqueleto, CSS es la <strong>ropa</strong>.</p>
+            <h3>📖 Explicación</h3>
+            <p>Se usa de 3 formas:</p>
+            <div class="code-block">
+<span class="comment">/* 1️⃣ En línea */</span>
+&lt;<span class="tag">p</span> <span class="attr">style</span>=<span class="string">"color:red"</span>&gt;Texto&lt;/<span class="tag">p</span>&gt;
+
+<span class="comment">/* 2️⃣ En el &lt;head&gt; */</span>
+&lt;<span class="tag">style</span>&gt; <span class="tag">p</span> { <span class="attr">color</span>: <span class="string">blue</span>; } &lt;/<span class="tag">style</span>&gt;
+
+<span class="comment">/* 3️⃣ Archivo externo ✅ */</span>
+&lt;<span class="tag">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"estilos.css"</span>&gt;
+            </div>
+            <h3>🧪 Ejercicio</h3>
+            <div class="ejercicio">
+                <p>Crea un HTML con CSS externo: título verde, fondo gris claro.</p>
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 2 - GRATIS ===== -->
+        <div class="leccion" id="leccion2">
+            <h2>✏️ Lección 2: Sintaxis básica</h2>
+            <p>Regla CSS: <strong>selector { propiedad: valor; }</strong></p>
+            <div class="code-block">
+<span class="tag">h1</span> {
+    <span class="attr">color</span>: <span class="string">#00d4aa</span>;
+    <span class="attr">font-size</span>: <span class="string">32px</span>;
+    <span class="attr">text-align</span>: <span class="string">center</span>;
+}
+<span class="tag">p</span> {
+    <span class="attr">color</span>: <span class="string">#e2e8f0</span>;
+    <span class="attr">line-height</span>: <span class="string">1.6</span>;
+}
+            </div>
+            <h3>🧪 Ejercicio</h3>
+            <div class="ejercicio">
+                <p>CSS para que todos los párrafos tengan color azul, 18px, centrados.</p>
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 3 - GRATIS ===== -->
+        <div class="leccion" id="leccion3">
+            <h2>🔗 Lección 3: Colores y fondos</h2>
+            <p>Colores: nombre, hex (#rrggbb), rgb(), degradados.</p>
+            <div class="code-block">
+<span class="comment">/* Nombres */</span>
+<span class="tag">p</span> { <span class="attr">color</span>: <span class="string">red</span>; }
+<span class="comment">/* Hexadecimal */</span>
+<span class="tag">h1</span> { <span class="attr">color</span>: <span class="string">#00d4aa</span>; }
+<span class="comment">/* RGB */</span>
+<span class="tag">div</span> { <span class="attr">color</span>: <span class="string">rgb(100,200,150)</span>; }
+<span class="comment">/* Degradado */</span>
+<span class="tag">.caja</span> {
+    <span class="attr">background</span>: <span class="string">linear-gradient(135deg, #0a1628, #0d2137)</span>;
+}
+            </div>
+            <div class="demo-box bg-gradient">🎨 Degradado en vivo</div>
+            <h3>🧪 Ejercicio</h3>
+            <div class="ejercicio">
+                <p>Div con fondo degradado azul a morado y texto blanco.</p>
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 4 - FULL ===== -->
+        <div class="leccion" id="leccion4" data-plan="full">
+            <h2>📝 Lección 4: Tipografía</h2>
+            <p>Controla fuentes, tamaños, pesos y estilos de texto.</p>
+            <div class="code-block">
+<span class="tag">body</span> {
+    <span class="attr">font-family</span>: <span class="string">'Segoe UI', Arial, sans-serif</span>;
+    <span class="attr">font-size</span>: <span class="string">16px</span>;
+    <span class="attr">font-weight</span>: <span class="string">400</span>;
+    <span class="attr">line-height</span>: <span class="string">1.8</span>;
+}
+<span class="tag">h1</span> {
+    <span class="attr">font-size</span>: <span class="string">2.5em</span>;
+    <span class="attr">font-weight</span>: <span class="string">700</span>;
+}
+<span class="tag">.italic</span> { <span class="attr">font-style</span>: <span class="string">italic</span>; }
+<span class="tag">.uppercase</span> { <span class="attr">text-transform</span>: <span class="string">uppercase</span>; }
+            </div>
+            <div class="demo-box font">📝 Georgia, 1.2em - Texto de ejemplo</div>
+        </div>
+
+        <!-- ===== LECCIÓN 5 - FULL ===== -->
+        <div class="leccion" id="leccion5" data-plan="full">
+            <h2>📦 Lección 5: Modelo de caja</h2>
+            <p>Todo elemento HTML es una <strong>caja</strong> con: content, padding, border, margin.</p>
+            <div class="code-block">
+<span class="comment">/* Cada elemento ocupa espacio así: */</span>
+<span class="tag">div</span> {
+    <span class="attr">width</span>: <span class="string">200px</span>;
+    <span class="attr">padding</span>: <span class="string">20px</span>;
+    <span class="attr">border</span>: <span class="string">2px solid #22c55e</span>;
+    <span class="attr">margin</span>: <span class="string">10px</span>;
+    <span class="comment">/* Total: 200 + 20+20 + 2+2 + 10+10 = 264px */</span>
+}
+<span class="comment">/* box-sizing: border-box incluye padding y border en width */</span>
+<span class="tag">*</span> { <span class="attr">box-sizing</span>: <span class="string">border-box</span>; }
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 6 - FULL ===== -->
+        <div class="leccion" id="leccion6" data-plan="full">
+            <h2>📐 Lección 6: Márgenes y paddings</h2>
+            <p><strong>Margin</strong> = espacio <em>fuera</em> del elemento. <strong>Padding</strong> = espacio <em>dentro</em>.</p>
+            <div class="code-block">
+<span class="comment">/* Márgenes */</span>
+<span class="tag">div</span> {
+    <span class="attr">margin-top</span>: <span class="string">10px</span>;
+    <span class="attr">margin-right</span>: <span class="string">20px</span>;
+    <span class="attr">margin-bottom</span>: <span class="string">10px</span>;
+    <span class="attr">margin-left</span>: <span class="string">20px</span>;
+    <span class="comment">/* Shorthand: margin: 10px 20px; */</span>
+}
+<span class="comment">/* Paddings */</span>
+<span class="tag">div</span> {
+    <span class="attr">padding</span>: <span class="string">15px 30px</span>;
+    <span class="comment">/* 15px arriba/abajo, 30px izq/der */</span>
+}
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 7 - FULL ===== -->
+        <div class="leccion" id="leccion7" data-plan="full">
+            <h2>🖼️ Lección 7: Bordes y sombras</h2>
+            <p>Bordes decorativos y sombras para dar profundidad.</p>
+            <div class="code-block">
+<span class="comment">/* Bordes */</span>
+<span class="tag">.caja</span> {
+    <span class="attr">border</span>: <span class="string">2px solid #22c55e</span>;
+    <span class="attr">border-radius</span>: <span class="string">12px</span>;
+}
+<span class="comment">/* Sombras */</span>
+<span class="tag">.caja</span> {
+    <span class="attr">box-shadow</span>: <span class="string">0 8px 30px rgba(0,0,0,.4)</span>;
+}
+<span class="comment">/* Sombra de texto */</span>
+<span class="tag">h1</span> {
+    <span class="attr">text-shadow</span>: <span class="string">2px 2px 4px rgba(0,0,0,.5)</span>;
+}
+            </div>
+            <div class="demo-box border">🖼️ Borde verde + esquinas redondeadas</div>
+            <div class="demo-box shadow">✨ Sombra suave</div>
+        </div>
+
+        <!-- ===== LECCIÓN 8 - FULL ===== -->
+        <div class="leccion" id="leccion8" data-plan="full">
+            <h2>🧭 Lección 8: Flexbox</h2>
+            <p>Flexbox distribuye elementos en una fila o columna <strong>sin esfuerzo</strong>.</p>
+            <div class="code-block">
+<span class="tag">.contenedor</span> {
+    <span class="attr">display</span>: <span class="string">flex</span>;
+    <span class="attr">gap</span>: <span class="string">10px</span>;
+    <span class="attr">justify-content</span>: <span class="string">center</span>;
+    <span class="attr">align-items</span>: <span class="string">center</span>;
+    <span class="attr">flex-wrap</span>: <span class="string">wrap</span>;
+}
+<span class="tag">.item</span> {
+    <span class="attr">flex</span>: <span class="string">1</span>;
+    <span class="attr">text-align</span>: <span class="string">center</span>;
+}
+            </div>
+            <div class="demo-box flex">
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 9 - FULL ===== -->
+        <div class="leccion" id="leccion9" data-plan="full">
+            <h2>📊 Lección 9: Grid</h2>
+            <p>Grid crea layouts de 2 dimensiones (filas y columnas).</p>
+            <div class="code-block">
+<span class="tag">.grid</span> {
+    <span class="attr">display</span>: <span class="string">grid</span>;
+    <span class="attr">grid-template-columns</span>: <span class="string">repeat(3, 1fr)</span>;
+    <span class="attr">gap</span>: <span class="string">15px</span>;
+}
+            </div>
+            <div class="demo-box grid">
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+                <div>4</div>
+                <div>5</div>
+                <div>6</div>
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 10 - FULL ===== -->
+        <div class="leccion" id="leccion10" data-plan="full">
+            <h2>✨ Lección 10: Animaciones</h2>
+            <p>CSS puede animar elementos sin JavaScript.</p>
+            <div class="code-block">
+<span class="tag">@keyframes</span> <span class="attr">mover</span> {
+    <span class="tag">from</span> { <span class="attr">transform</span>: <span class="string">translateX(0)</span>; }
+    <span class="tag">to</span>   { <span class="attr">transform</span>: <span class="string">translateX(200px)</span>; }
+}
+<span class="tag">.caja</span> {
+    <span class="attr">animation</span>: <span class="string">mover 2s infinite alternate</span>;
+}
+            </div>
+            <div class="demo-box anim"></div>
+        </div>
+
+        <!-- ===== LECCIÓN 11 - FULL ===== -->
+        <div class="leccion" id="leccion11" data-plan="full">
+            <h2>📱 Lección 11: Responsive Design</h2>
+            <p>Haz que tu web se vea bien en <strong>cualquier pantalla</strong>.</p>
+            <div class="code-block">
+<span class="comment">/* Media queries */</span>
+<span class="tag">@media</span> (<span class="attr">max-width</span>: <span class="string">600px</span>) {
+    <span class="tag">body</span> { <span class="attr">font-size</span>: <span class="string">14px</span>; }
+    <span class="tag">.columna</span> { <span class="attr">flex-direction</span>: <span class="string">column</span>; }
+}
+            </div>
+            <div class="demo-box responsive">
+                📱 Cambia el tamaño de la ventana (≤400px cambia a morado)
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 12 - FULL ===== -->
+        <div class="leccion" id="leccion12" data-plan="full">
+            <h2>🎭 Lección 12: Pseudoclases</h2>
+            <p>Estados especiales de los elementos: <code>:hover</code>, <code>:focus</code>, <code>:nth-child</code>.</p>
+            <div class="code-block">
+<span class="comment">/* Pasa el mouse */</span>
+<span class="tag">a:hover</span> {
+    <span class="attr">color</span>: <span class="string">#22c55e</span>;
+    <span class="attr">background</span>: <span class="string">#2a3a5c</span>;
+}
+<span class="comment">/* Elemento en posición par */</span>
+<span class="tag">li:nth-child(even)</span> {
+    <span class="attr">background</span>: <span class="string">#1a1a2e</span>;
+}
+            </div>
+            <div class="pseudo-demo">
+                <a href="#">🖱️ Pasa el mouse aquí</a>
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 13 - FULL ===== -->
+        <div class="leccion" id="leccion13" data-plan="full">
+            <h2>🧩 Lección 13: Variables CSS</h2>
+            <p>Guarda valores reutilizables en <strong>variables</strong> (custom properties).</p>
+            <div class="code-block">
+<span class="comment">/* Definir variables */</span>
+<span class="tag">:root</span> {
+    <span class="attr">--color-primario</span>: <span class="string">#00d4aa</span>;
+    <span class="attr">--color-fondo</span>: <span class="string">#0a0e1a</span>;
+    <span class="attr">--radius</span>: <span class="string">8px</span>;
+}
+<span class="comment">/* Usar variables */</span>
+<span class="tag">button</span> {
+    <span class="attr">background</span>: <span class="string">var(--color-primario)</span>;
+    <span class="attr">border-radius</span>: <span class="string">var(--radius)</span>;
+}
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 14 - FULL ===== -->
+        <div class="leccion" id="leccion14" data-plan="full">
+            <h2>🔧 Lección 14: Selectores avanzados</h2>
+            <p>Selecciona elementos específicos sin clases extras.</p>
+            <div class="code-block">
+<span class="comment">/* Hijo directo */</span>
+<span class="tag">div &gt; p</span> { <span class="attr">color</span>: <span class="string">#22c55e</span>; }
+<span class="comment">/* Hermano adyacente */</span>
+<span class="tag">h2 + p</span> { <span class="attr">font-weight</span>: <span class="string">700</span>; }
+<span class="comment">/* Atributo */</span>
+<span class="tag">input[type="email"]</span> {
+    <span class="attr">border-color</span>: <span class="string">#6366f1</span>;
+}
+<span class="comment">/* Negación */</span>
+<span class="tag">div:not(.excluido)</span> {
+    <span class="attr">opacity</span>: <span class="string">1</span>;
+}
+            </div>
+        </div>
+
+        <!-- ===== LECCIÓN 15 - FULL ===== -->
+        <div class="leccion" id="leccion15" data-plan="full">
+            <h2>🧪 Lección 15: Proyecto final</h2>
+            <p>Construye una <strong>tarjeta de presentación</strong> con todo lo aprendido.</p>
+            <div class="code-block">
+<span class="comment">/* HTML */</span>
+&lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="string">"tarjeta"</span>&gt;
+    &lt;<span class="tag">img</span> <span class="attr">src</span>=<span class="string">"foto.jpg"</span> <span class="attr">alt</span>=<span class="string">"Avatar"</span>&gt;
+    &lt;<span class="tag">h2</span>&gt;Tu Nombre&lt;/<span class="tag">h2</span>&gt;
+    &lt;<span class="tag">p</span>&gt;Desarrollador web&lt;/<span class="tag">p</span>&gt;
+    &lt;<span class="tag">button</span>&gt;Contactar&lt;/<span class="tag">button</span>&gt;
+&lt;/<span class="tag">div</span>&gt;
+
+<span class="comment">/* CSS */</span>
+<span class="tag">.tarjeta</span> {
+    <span class="attr">background</span>: <span class="string">#111827</span>;
+    <span class="attr">border-radius</span>: <span class="string">12px</span>;
+    <span class="attr">padding</span>: <span class="string">25px</span>;
+    <span class="attr">text-align</span>: <span class="string">center</span>;
+    <span class="attr">box-shadow</span>: <span class="string">0 8px 30px rgba(0,0,0,.4)</span>;
+    <span class="attr">max-width</span>: <span class="string">300px</span>;
+    <span class="attr">margin</span>: <span class="string">0 auto</span>;
+}
+<span class="tag">.tarjeta img</span> {
+    <span class="attr">width</span>: <span class="string">100px</span>;
+    <span class="attr">border-radius</span>: <span class="string">50%</span>;
+}
+<span class="tag">.tarjeta button</span> {
+    <span class="attr">background</span>: <span class="string">#00d4aa</span>;
+    <span class="attr">border</span>: <span class="string">none</span>;
+    <span class="attr">padding</span>: <span class="string">10px 25px</span>;
+    <span class="attr">border-radius</span>: <span class="string">6px</span>;
+    <span class="attr">cursor</span>: <span class="string">pointer</span>;
+}
+<span class="tag">.tarjeta button:hover</span> {
+    <span class="attr">filter</span>: <span class="string">brightness(1.1)</span>;
+}
+            </div>
+            <h3>🧪 Proyecto</h3>
+            <div class="ejercicio">
+                <p><strong>🏆 Crea una tarjeta</strong> con foto, nombre, cargo y botón. Aplica: flexbox, sombra, borde redondeado, hover, responsive.</p>
+            </div>
+        </div>
+
+        <!-- ===== BLOQUEO FULL ===== -->
+        <div class="full-message">
+            <h2>🔓 Desbloquea las 12 lecciones FULL</h2>
+            <p>Lecciones 4 a 15 exclusivas para <strong>Nexus FULL</strong>.</p>
+            <p style="font-size:1.2em; color:#00d4aa; font-weight:700;">18€ · Pago único · Acceso de por vida</p>
+            <a href="../pagos.html" class="btn-comprar">🚀 Comprar Nexus FULL · 18€</a>
+        </div>
+
+    </div>
+
+    <script src="../tutorials/js/tutorial.js"></script>
+</body>
+</html>

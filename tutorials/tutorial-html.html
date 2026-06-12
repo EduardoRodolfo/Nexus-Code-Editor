@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📘 Tutorial HTML - Nexus Code Editor</title>
+    <link rel="stylesheet" href="../tutorials/css/tutorial.css">
+    <link rel="stylesheet" href="../fontawesome-free-7.2.0-web/css/all.min.css">
+    <style>
+        .toast {
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0,0,0,.4);
+            animation: si .3s ease;
+            font-size: .82rem;
+            max-width: 350px;
+        }
+        .toast.ok { background: #22c55e; }
+        .toast.err { background: #ef4444; color: #fff; }
+        .toast.info { background: #00d4aa; }
+        @keyframes si { from { transform: translateX(80px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="tutorial-container">
+        
+        <!-- ===== ENCABEZADO ===== -->
+        <div class="tutorial-header">
+            <h1>📘 Tutorial HTML</h1>
+            <p>Aprende HTML desde cero con ejemplos prácticos</p>
+            <p style="color:#6b7280; font-size:0.8em; margin-top:5px;">
+                📖 15 lecciones · 🆓 3 gratis · 🔒 12 exclusivas FULL
+            </p>
+        </div>
+
+        <!-- ===== BARRA DE HERRAMIENTAS ===== -->
+        <div class="toolbar">
+            <label>🔤 Tamaño de fuente:</label>
+            <button onclick="disminuirFuente()" title="Reducir fuente">A−</button>
+            <span id="fontIndicator" style="color:#00d4aa; font-weight:600; min-width:80px;">Normal</span>
+            <button onclick="aumentarFuente()" title="Aumentar fuente">A+</button>
+            
+            <span style="flex:1;"></span>
+            
+            <span id="badgeFull" class="badge-full"></span>
+            
+            <button onclick="window.location.href='../index.html'" title="Volver a Nexus">
+                <i class="fas fa-home"></i> Nexus
+            </button>
+        </div>
+
+        <!-- ===== TABLA DE CONTENIDOS ===== -->
+        <div class="toc">
+            <h3>📋 Tabla de Contenidos</h3>
+            <ol>
+                <li><a href="#leccion1">🏗️ Estructura básica de HTML</a></li>
+                <li><a href="#leccion2">📝 Encabezados (H1-H6)</a></li>
+                <li><a href="#leccion3">📄 Párrafos y texto</a></li>
+                <li data-plan="full"><a href="#leccion4">🔗 Enlaces</a></li>
+                <li data-plan="full"><a href="#leccion5">🖼️ Imágenes</a></li>
+                <li data-plan="full"><a href="#leccion6">📋 Listas</a></li>
+                <li data-plan="full"><a href="#leccion7">📊 Tablas</a></li>
+                <li data-plan="full"><a href="#leccion8">🧱 Divisiones (div)</a></li>
+                <li data-plan="full"><a href="#leccion9">📝 Formularios</a></li>
+                <li data-plan="full"><a href="#leccion10">⌨️ Inputs</a></li>
+                <li data-plan="full"><a href="#leccion11">🎨 Estilos en línea</a></li>
+                <li data-plan="full"><a href="#leccion12">🎵 Audio y Video</a></li>
+                <li data-plan="full"><a href="#leccion13">📐 Semántica HTML5</a></li>
+                <li data-plan="full"><a href="#leccion14">♿ Accesibilidad</a></li>
+                <li data-plan="full"><a href="#leccion15">🧪 Proyecto final</a></li>
+            </ol>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- 🆓 LECCIÓN 1 - GRATIS -->
+        <!-- ============================================ -->
+        <div class="leccion" id="leccion1">
+            <h2>🏗️ Lección 1: Estructura básica de HTML</h2>
+            
+            <p>HTML significa <strong>HyperText Markup Language</strong>. Es el lenguaje base de toda página web. Piensa en HTML como el <strong>esqueleto</strong> de una página.</p>
+            
+            <h3>📖 Explicación</h3>
+            <p>Todo documento HTML tiene una estructura fija. Debe comenzar con <code>&lt;!DOCTYPE html&gt;</code> y contener las etiquetas <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code> y <code>&lt;body&gt;</code>.</p>
+            
+            <div class="code-block">
+<span class="comment">&lt;!-- 📄 Esta es la estructura mínima de HTML --&gt;</span>
+&lt;<span class="tag">!DOCTYPE</span> <span class="attr">html</span>&gt;
+&lt;<span class="tag">html</span> <span class="attr">lang</span>=<span class="string">"es"</span>&gt;
+    &lt;<span class="tag">head</span>&gt;
+        &lt;<span class="tag">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;
+        &lt;<span class="tag">title</span>&gt;Mi primera página&lt;/<span class="tag">title</span>&gt;
+    &lt;/<span class="tag">head</span>&gt;
+    &lt;<span class="tag">body</span>&gt;
+        &lt;<span class="tag">h1</span>&gt;¡Hola, Mundo!&lt;/<span class="tag">h1</span>&gt;
+        &lt;<span class="tag">p</span>&gt;Esta es mi primera página web.&lt;/<span class="tag">p</span>&gt;
+    &lt;/<span class="tag">body</span>&gt;
+&lt;/<span class="tag">html</span>&gt;
+            </div>
+            
+            <h3>🧪 Ejercicio</h3>
+            <div class="ejercicio">
+                <p><strong>✏️ Crea tu primera página:</strong></p>
+                <p>Escribe un documento HTML que tenga:</p>
+                <ul style="color:#cbd5e1; margin-left:20px;">
+                    <li>Un título de pestaña: "Mi página web"</li>
+                    <li>Un encabezado H1 que diga: "Bienvenido a Nexus"</li>
+                    <li>Un párrafo que diga: "Estoy aprendiendo HTML"</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- 🆓 LECCIÓN 2 - GRATIS -->
+        <!-- ============================================ -->
+        <div class="leccion" id="leccion2">
+            <h2>📝 Lección 2: Encabezados (H1 a H6)</h2>
+            
+            <p>Los encabezados se usan para <strong>titular</strong> secciones. Van de <code>&lt;h1&gt;</code> (más importante) a <code>&lt;h6&gt;</code> (menos importante).</p>
+            
+            <div class="code-block">
+<span class="comment">&lt;!-- 🔤 Los 6 niveles de encabezado --&gt;</span>
+&lt;<span class="tag">h1</span>&gt;Título principal (solo uno por página)&lt;/<span class="tag">h1</span>&gt;
+&lt;<span class="tag">h2</span>&gt;Subtítulo&lt;/<span class="tag">h2</span>&gt;
+&lt;<span class="tag">h3</span>&gt;Sección&lt;/<span class="tag">h3</span>&gt;
+&lt;<span class="tag">h4</span>&gt;Subsección&lt;/<span class="tag">h4</span>&gt;
+&lt;<span class="tag">h5</span>&gt;Detalle&lt;/<span class="tag">h5</span>&gt;
+&lt;<span class="tag">h6</span>&gt;Nota pequeña&lt;/<span class="tag">h6</span>&gt;
+            </div>
+
+            <h3>🧪 Ejercicio</h3>
+            <div class="ejercicio">
+                <p><strong>✏️ Crea una jerarquía de títulos:</strong></p>
+                <p>Haz una página con:</p>
+                <ul style="color:#cbd5e1; margin-left:20px;">
+                    <li>H1: "Mi Receta Favorita"</li>
+                    <li>H2: "Ingredientes"</li>
+                    <li>H3: "Para la masa"</li>
+                    <li>H3: "Para el relleno"</li>
+                    <li>H2: "Preparación"</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- 🆓 LECCIÓN 3 - GRATIS -->
+        <!-- ============================================ -->
+        <div class="leccion" id="leccion3">
+            <h2>📄 Lección 3: Párrafos y texto</h2>
+            
+            <p>El texto en HTML se escribe dentro de etiquetas como <code>&lt;p&gt;</code> (párrafo).</p>
+            
+            <div class="code-block">
+<span class="comment">&lt;!-- 📝 Etiquetas de texto más usadas --&gt;</span>
+&lt;<span class="tag">p</span>&gt;Esto es un párrafo normal.&lt;/<span class="tag">p</span>&gt;
+&lt;<span class="tag">p</span>&gt;Este es <strong>texto en negrita</strong> y este es &lt;<span class="tag">em</span>&gt;texto en cursiva&lt;/<span class="tag">em</span>&gt;.&lt;/<span class="tag">p</span>&gt;
+&lt;<span class="tag">p</span>&gt;También podemos <span class="tag">&lt;u&gt;</span>subrayar&lt;/<span class="tag">u</span>&gt; texto.&lt;/<span class="tag">p</span>&gt;
+
+<span class="comment">&lt;!-- Salto de línea --&gt;</span>
+&lt;<span class="tag">p</span>&gt;Primera línea&lt;<span class="tag">br</span>&gt;Segunda línea&lt;/<span class="tag">p</span>&gt;
+            </div>
+
+            <h3>🧪 Ejercicio</h3>
+            <div class="ejercicio">
+                <p><strong>✏️ Crea un párrafo con formato:</strong></p>
+                <p>Escribe un párrafo que hable sobre ti usando <strong>negrita</strong>, <em>cursiva</em> y saltos de línea.</p>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- 🔒 LECCIONES FULL (bloqueadas) -->
+        <!-- ============================================ -->
+
+        <div class="leccion" id="leccion4" data-plan="full">
+            <h2>🔗 Lección 4: Enlaces</h2>
+            <p>Los enlaces se crean con <code>&lt;a&gt;</code> y permiten navegar entre páginas.</p>
+            <div class="code-block">
+<span class="comment">&lt;!-- 🌐 Tipos de enlaces --&gt;</span>
+<span class="comment">&lt;!-- Enlace externo --&gt;</span>
+&lt;<span class="tag">a</span> <span class="attr">href</span>=<span class="string">"https://ejemplo.com"</span>&gt;Ir a ejemplo&lt;/<span class="tag">a</span>&gt;
+
+<span class="comment">&lt;!-- Enlace interno (misma página) --&gt;</span>
+&lt;<span class="tag">a</span> <span class="attr">href</span>=<span class="string">"#seccion2"</span>&gt;Ir a sección 2&lt;/<span class="tag">a</span>&gt;
+
+<span class="comment">&lt;!-- Enlace que abre en nueva pestaña --&gt;</span>
+&lt;<span class="tag">a</span> <span class="attr">href</span>=<span class="string">"https://ejemplo.com"</span> <span class="attr">target</span>=<span class="string">"_blank"</span>&gt;Abrir en nueva pestaña&lt;/<span class="tag">a</span>&gt;
+            </div>
+        </div>
+
+        <div class="leccion" id="leccion5" data-plan="full">
+            <h2>🖼️ Lección 5: Imágenes</h2>
+            <p>Las imágenes se insertan con <code>&lt;img&gt;</code>. No necesita etiqueta de cierre.</p>
+            <div class="code-block">
+<span class="comment">&lt;!-- 🖼️ Insertar imagen --&gt;</span>
+&lt;<span class="tag">img</span> <span class="attr">src</span>=<span class="string">"foto.jpg"</span> <span class="attr">alt</span>=<span class="string">"Descripción de la imagen"</span>&gt;
+
+<span class="comment">&lt;!-- Con ancho y alto --&gt;</span>
+&lt;<span class="tag">img</span> <span class="attr">src</span>=<span class="string">"foto.jpg"</span> <span class="attr">width</span>=<span class="string">"300"</span> <span class="attr">height</span>=<span class="string">"200"</span> <span class="attr">alt</span>=<span class="string">"Descripción"</span>&gt;
+            </div>
+        </div>
+
+        <div class="leccion" id="leccion6" data-plan="full">
+            <h2>📋 Lección 6: Listas</h2>
+            <p>Las listas pueden ser ordenadas (<code>&lt;ol&gt;</code>) o desordenadas (<code>&lt;ul&gt;</code>).</p>
+            <div class="code-block">
+<span class="comment">&lt;!-- 📋 Lista desordenada (viñetas) --&gt;</span>
+&lt;<span class="tag">ul</span>&gt;
+    &lt;<span class="tag">li</span>&gt;HTML&lt;/<span class="tag">li</span>&gt;
+    &lt;<span class="tag">li</span>&gt;CSS&lt;/<span class="tag">li</span>&gt;
+    &lt;<span class="tag">li</span>&gt;JavaScript&lt;/<span class="tag">li</span>&gt;
+&lt;/<span class="tag">ul</span>&gt;
+
+<span class="comment">&lt;!-- Lista ordenada (números) --&gt;</span>
+&lt;<span class="tag">ol</span>&gt;
+    &lt;<span class="tag">li</span>&gt;Primer paso&lt;/<span class="tag">li</span>&gt;
+    &lt;<span class="tag">li</span>&gt;Segundo paso&lt;/<span class="tag">li</span>&gt;
+&lt;/<span class="tag">ol</span>&gt;
+            </div>
+        </div>
+
+        <div class="leccion" id="leccion7" data-plan="full">
+            <h2>📊 Lección 7: Tablas</h2>
+            <p>Las tablas organizan datos en filas y columnas.</p>
+            <div class="code-block">
+<span class="comment">&lt;!-- 📊 Tabla simple --&gt;</span>
+&lt;<span class="tag">table</span>&gt;
+    &lt;<span class="tag">tr</span>&gt;
+        &lt;<span class="tag">th</span>&gt;Nombre&lt;/<span class="tag">th</span>&gt;
+        &lt;<span class="tag">th</span>&gt;Edad&lt;/<span class="tag">th</span>&gt;
+    &lt;/<span class="tag">tr</span>&gt;
+    &lt;<span class="tag">tr</span>&gt;
+        &lt;<span class="tag">td</span>&gt;Ana&lt;/<span class="tag">td</span>&gt;
+        &lt;<span class="tag">td</span>&gt;25&lt;/<span class="tag">td</span>&gt;
+    &lt;/<span class="tag">tr</span>&gt;
+&lt;/<span class="tag">table</span>&gt;
+            </div>
+        </div>
+
+        <div class="leccion" id="leccion8" data-plan="full">
+            <h2>🧱 Lección 8: Divisiones (div)</h2>
+            <p><code>&lt;div&gt;</code> agrupa contenido para darle estilo o estructura.</p>
+            <div class="code-block">
+<span class="comment">&lt;!-- 🧱 Divisiones para estructurar --&gt;</span>
+&lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="string">"header"</span>&gt;
+    &lt;<span class="tag">h1</span>&gt;Mi sitio web&lt;/<span class="tag">h1</span>&gt;
+&lt;/<span class="tag">div</span>&gt;
+
+&lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="string">"contenido"</span>&gt;
+    &lt;<span class="tag">p</span>&gt;Aquí va el contenido principal.&lt;/<span class="tag">p</span>&gt;
+&lt;/<span class="tag">div</span>&gt;
+
+&lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="string">"footer"</span>&gt;
+    &lt;<span class="tag">p</span>&gt;© 2026 Mi sitio&lt;/<span class="tag">p</span>&gt;
+&lt;/<span class="tag">div</span>&gt;
+            </div>
+        </div>
+
+        <div class="leccion" id="leccion9" data-plan="full">
+            <h2>📝 Lección 9: Formularios</h2>
+            <p>Los formularios recogen datos del usuario.</p>
+            <div class="code-block">
+<span class="comment">&lt;!-- 📝 Formulario básico --&gt;</span>
+&lt;<span class="tag">form</span> <span class="attr">action</span>=<span class="string">"/guardar"</span> <span class="attr">method</span>=<span class="string">"POST"</span>&gt;
+    &lt;<span class="tag">label</span>&gt;Nombre:&lt;/<span class="tag">label</span>&gt;
+    &lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"nombre"</span>&gt;
+    
+    &lt;<span class="tag">label</span>&gt;Email:&lt;/<span class="tag">label</span>&gt;
+    &lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"email"</span> <span class="attr">name</span>=<span class="string">"email"</span>&gt;
+    
+    &lt;<span class="tag">button</span> <span class="attr">type</span>=<span class="string">"submit"</span>&gt;Enviar&lt;/<span class="tag">button</span>&gt;
+&lt;/<span class="tag">form</span>&gt;
+            </div>
+        </div>
+
+        <div class="leccion" id="leccion10" data-plan="full">
+            <h2>⌨️ Lección 10: Tipos de Input</h2>
+            <p>Hay muchos tipos de input para diferentes datos.</p>
+            <div class="code-block">
+<span class="comment">&lt;!-- ⌨️ Tipos de input más usados --&gt;</span>
+&lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"text"</span>&gt; <span class="comment">&lt;!-- Texto --&gt;</span>
+&lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"password"</span>&gt; <span class="comment">&lt;!-- Contraseña --&gt;</span>
+&lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"email"</span>&gt; <span class="comment">&lt;!-- Email --&gt;</span>
+&lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"number"</span>&gt; <span class="comment">&lt;!-- Número --&gt;</span>
+&lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"date"</span>&gt; <span class="comment">&lt;!-- Fecha --&gt;</span>
+&lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"color"</span>&gt; <span class="comment">&lt;!-- Color --&gt;</span>
+&lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"file"</span>&gt; <span class="comment">&lt;!-- Archivo --&gt;</span>
+&lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"checkbox"</span>&gt; <span class="comment">&lt;!-- Casilla --&gt;</span>
+&lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"radio"</span>&gt; <span class="comment">&lt;!-- Botón de opción --&gt;</span>
+            </div>
+        </div>
+
+        <div class="leccion" id="leccion11" data-plan="full">
+            <h2>🎨 Lección 11: Estilos en línea</h2>
+            <p>Se puede agregar CSS directamente a una etiqueta con el atributo <code>style</code>.</p>
+            <div class="code-block">
+<span class="comment">&lt;!-- 🎨 Estilos en línea --&gt;</span>
+&lt;<span class="tag">p</span> <span class="attr">style</span>=<span class="string">"color: blue; font-size: 20px;"</span>&gt;
+    Este texto es azul y grande.
+&lt;/<span class="tag">p</span>&gt;
+
+&lt;<span class="tag">div</span> <span class="attr">style</span>=<span class="string">"background: #f0f0f0; padding: 20px; border-radius: 8px;"</span>&gt;
+    &lt;<span class="tag">h2</span>&gt;Sección con estilo&lt;/<span class="tag">h2</span>&gt;
+&lt;/<span class="tag">div</span>&gt;
+            </div>
+        </div>
+
+        <div class="leccion" id="leccion12" data-plan="full">
+            <h2>🎵 Lección 12: Audio y Video</h2>
+            <p>HTML5 permite insertar multimedia directamente.</p>
+            <div class="code-block">
+<span class="comment">&lt;!-- 🎵 Audio --&gt;</span>
+&lt;<span class="tag">audio</span> <span class="attr">controls</span>&gt;
+    &lt;<span class="tag">source</span> <span class="attr">src</span>=<span class="string">"musica.mp3"</span>&gt;
+    Tu navegador no soporta audio.
+&lt;/<span class="tag">audio</span>&gt;
+
+<span class="comment">&lt;!-- 🎬 Video --&gt;</span>
+&lt;<span class="tag">video</span> <span class="attr">width</span>=<span class="string">"320"</span> <span class="attr">height</span>=<span class="string">"240"</span> <span class="attr">controls</span>&gt;
+    &lt;<span class="tag">source</span> <span class="attr">src</span>=<span class="string">"video.mp4"</span>&gt;
+    Tu navegador no soporta video.
+&lt;/<span class="tag">video</span>&gt;
+            </div>
+        </div>
+
+        <div class="leccion" id="leccion13" data-plan="full">
+            <h2>📐 Lección 13: Semántica HTML5</h2>
+            <p>Las etiquetas semánticas dan significado al contenido.</p>
+            <div class="code-block">
+<span class="comment">&lt;!-- 📐 Etiquetas semánticas --&gt;</span>
+&lt;<span class="tag">header</span>&gt;Encabezado de la página&lt;/<span class="tag">header</span>&gt;
+&lt;<span class="tag">nav</span>&gt;Menú de navegación&lt;/<span class="tag">nav</span>&gt;
+&lt;<span class="tag">main</span>&gt;Contenido principal&lt;/<span class="tag">main</span>&gt;
+    &lt;<span class="tag">section</span>&gt;Una sección&lt;/<span class="tag">section</span>&gt;
+    &lt;<span class="tag">article</span>&gt;Un artículo&lt;/<span class="tag">article</span>&gt;
+    &lt;<span class="tag">aside</span>&gt;Contenido lateral&lt;/<span class="tag">aside</span>&gt;
+&lt;/<span class="tag">main</span>&gt;
+&lt;<span class="tag">footer</span>&gt;Pie de página&lt;/<span class="tag">footer</span>&gt;
+            </div>
+        </div>
+
+        <div class="leccion" id="leccion14" data-plan="full">
+            <h2>♿ Lección 14: Accesibilidad</h2>
+            <p>Haz tus páginas accesibles para todos.</p>
+            <div class="code-block">
+<span class="comment">&lt;!-- ♿ Buenas prácticas de accesibilidad --&gt;</span>
+<span class="comment">&lt;!-- Texto alternativo en imágenes --&gt;</span>
+&lt;<span class="tag">img</span> <span class="attr">src</span>=<span class="string">"logo.png"</span> <span class="attr">alt</span>=<span class="string">"Logo de Nexus Code Editor"</span>&gt;
+
+<span class="comment">&lt;!-- Etiquetas en formularios --&gt;</span>
+&lt;<span class="tag">label</span> <span class="attr">for</span>=<span class="string">"nombre"</span>&gt;Nombre completo:&lt;/<span class="tag">label</span>&gt;
+&lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"nombre"</span> <span class="attr">name</span>=<span class="string">"nombre"</span>&gt;
+
+<span class="comment">&lt;!-- Roles ARIA --&gt;</span>
+&lt;<span class="tag">button</span> <span class="attr">aria-label</span>=<span class="string">"Cerrar ventana"</span>&gt;X&lt;/<span class="tag">button</span>&gt;
+            </div>
+        </div>
+
+        <div class="leccion" id="leccion15" data-plan="full">
+            <h2>🧪 Lección 15: Proyecto final</h2>
+            <p>Construye tu primera página web completa combinando todo lo aprendido.</p>
+            <div class="code-block">
+<span class="comment">&lt;!-- 🧪 Proyecto: Página personal --&gt;</span>
+&lt;<span class="tag">!DOCTYPE</span> <span class="attr">html</span>&gt;
+&lt;<span class="tag">html</span> <span class="attr">lang</span>=<span class="string">"es"</span>&gt;
+&lt;<span class="tag">head</span>&gt;
+    &lt;<span class="tag">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;
+    &lt;<span class="tag">title</span>&gt;Mi Página Personal&lt;/<span class="tag">title</span>&gt;
+&lt;/<span class="tag">head</span>&gt;
+&lt;<span class="tag">body</span>&gt;
+    &lt;<span class="tag">header</span>&gt;
+        &lt;<span class="tag">h1</span>&gt;Tu Nombre&lt;/<span class="tag">h1</span>&gt;
+        &lt;<span class="tag">p</span>&gt;Desarrollador web&lt;/<span class="tag">p</span>&gt;
+    &lt;/<span class="tag">header</span>&gt;
+    
+    &lt;<span class="tag">nav</span>&gt;
+        &lt;<span class="tag">ul</span>&gt;
+            &lt;<span class="tag">li</span>&gt;&lt;<span class="tag">a</span> <span class="attr">href</span>=<span class="string">"#sobre-mi"</span>&gt;Sobre mí&lt;/<span class="tag">a</span>&gt;&lt;/<span class="tag">li</span>&gt;
+            &lt;<span class="tag">li</span>&gt;&lt;<span class="tag">a</span> <span class="attr">href</span>=<span class="string">"#proyectos"</span>&gt;Proyectos&lt;/<span class="tag">a</span>&gt;&lt;/<span class="tag">li</span>&gt;
+            &lt;<span class="tag">li</span>&gt;&lt;<span class="tag">a</span> <span class="attr">href</span>=<span class="string">"#contacto"</span>&gt;Contacto&lt;/<span class="tag">a</span>&gt;&lt;/<span class="tag">li</span>&gt;
+        &lt;/<span class="tag">ul</span>&gt;
+    &lt;/<span class="tag">nav</span>&gt;
+    
+    &lt;<span class="tag">main</span>&gt;
+        &lt;<span class="tag">section</span> <span class="attr">id</span>=<span class="string">"sobre-mi"</span>&gt;
+            &lt;<span class="tag">h2</span>&gt;Sobre mí&lt;/<span class="tag">h2</span>&gt;
+            &lt;<span class="tag">p</span>&gt;Soy un desarrollador apasionado por la web.&lt;/<span class="tag">p</span>&gt;
+            &lt;<span class="tag">img</span> <span class="attr">src</span>=<span class="string">"foto.jpg"</span> <span class="attr">alt</span>=<span class="string">"Mi foto"</span>&gt;
+        &lt;/<span class="tag">section</span>&gt;
+        
+        &lt;<span class="tag">section</span> <span class="attr">id</span>=<span class="string">"proyectos"</span>&gt;
+            &lt;<span class="tag">h2</span>&gt;Mis proyectos&lt;/<span class="tag">h2</span>&gt;
+            &lt;<span class="tag">ul</span>&gt;
+                &lt;<span class="tag">li</span>&gt;Nexus Code Editor&lt;/<span class="tag">li</span>&gt;
+                &lt;<span class="tag">li</span>&gt;App de tareas&lt;/<span class="tag">li</span>&gt;
+            &lt;/<span class="tag">ul</span>&gt;
+        &lt;/<span class="tag">section</span>&gt;
+        
+        &lt;<span class="tag">section</span> <span class="attr">id</span>=<span class="string">"contacto"</span>&gt;
+            &lt;<span class="tag">h2</span>&gt;Contacto&lt;/<span class="tag">h2</span>&gt;
+            &lt;<span class="tag">form</span>&gt;
+                &lt;<span class="tag">label</span>&gt;Nombre:&lt;/<span class="tag">label</span>&gt;
+                &lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="string">"text"</span>&gt;
+                &lt;<span class="tag">label</span>&gt;Mensaje:&lt;/<span class="tag">label</span>&gt;
+                &lt;<span class="tag">textarea</span>&gt;&lt;/<span class="tag">textarea</span>&gt;
+                &lt;<span class="tag">button</span>&gt;Enviar&lt;/<span class="tag">button</span>&gt;
+            &lt;/<span class="tag">form</span>&gt;
+        &lt;/<span class="tag">section</span>&gt;
+    &lt;/<span class="tag">main</span>&gt;
+    
+    &lt;<span class="tag">footer</span>&gt;
+        &lt;<span class="tag">p</span>&gt;© 2026 Tu Nombre. Todos los derechos reservados.&lt;/<span class="tag">p</span>&gt;
+    &lt;/<span class="tag">footer</span>&gt;
+&lt;/<span class="tag">body</span>&gt;
+&lt;/<span class="tag">html</span>&gt;
+            </div>
+
+            <h3>🧪 Ejercicio final</h3>
+            <div class="ejercicio">
+                <p><strong>🏆 Construye tu página personal:</strong></p>
+                <p>Crea una página HTML completa que incluya:</p>
+                <ul style="color:#cbd5e1; margin-left:20px;">
+                    <li>Header con tu nombre</li>
+                    <li>Menú de navegación con 3 enlaces</li>
+                    <li>3 secciones (Sobre mí, Proyectos, Contacto)</li>
+                    <li>Una imagen</li>
+                    <li>Una lista</li>
+                    <li>Un formulario de contacto</li>
+                    <li>Footer con copyright</li>
+                </ul>
+                <p style="color:#22c55e; margin-top:10px;">💡 ¡Este proyecto usa TODO lo que aprendiste!</p>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- 🔒 MENSAJE PARA USUARIOS FREE -->
+        <!-- ============================================ -->
+        <div class="full-message">
+            <h2>🔓 Desbloquea las 12 lecciones restantes</h2>
+            <p>Las lecciones 4 a 15 son exclusivas para usuarios <strong>Nexus FULL</strong>.</p>
+            <p style="font-size:1.2em; color:#00d4aa; font-weight:700;">18€ · Pago único · Acceso de por vida</p>
+            <a href="../pagos.html" class="btn-comprar">
+                🚀 Comprar Nexus FULL · 18€
+            </a>
+        </div>
+
+    </div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="../tutorials/js/tutorial.js"></script>
+</body>
+</html>            
